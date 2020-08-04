@@ -1,11 +1,11 @@
 # Usage
 
-1. Visit <APP ENGINE URL>
+1. Visit (APP ENGINE URL)
 2. Enter a url to scrape (like https://gardencreamery.square.site/)
-3. Optionally enter an selector (like "div.div.div.div.p:kinako,div.div.div.div.p:cantaloupe") to use as a filter
+3. Optionally enter an selector (like "4:kinako,4:cantaloupe") to use as a filter
 4. Preview web page output.
 5. Follow the reported twitter account to receive notifications with screenshots of the updated web page.
-6. Future: include a cookie to visit a page on behalf of a user
+6. Future: include a cookie to visit a page on behalf of a user.
 
 # Architecture
 
