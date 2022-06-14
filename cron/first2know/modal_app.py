@@ -3,7 +3,7 @@ import time
 
 import modal
 
-from ...backend.first2know import screenshot # pylint: disable=relative-beyond-top-level
+import screenshot
 
 stub = modal.Stub()
 
