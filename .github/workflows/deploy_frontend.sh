@@ -6,6 +6,7 @@ SA_KEY="$1"
 
 cd "$(dirname "$0")"
 
+git log
 DIFF="$(git diff HEAD^ ../../frontend/first2know)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
