@@ -15,4 +15,5 @@ else
   bash ./deploy_to_modal.sh "$MODAL_KEY"
 fi
 
+# curl --fail https://dcep93-first2know-app.modal.run/
 curl --fail https://dcep93-ythvfqj.modal.run/
