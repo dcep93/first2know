@@ -18,6 +18,7 @@ async def run_cron():
     print(time.time())
     to_fetch = [
         {"url": "https://chess.com", "fetch_params": {}, "css_selector": None},
+        {"url": "https://www.chess.com/member/dcep93", "fetch_params": {}, "css_selector": None},
     ]
     with concurrent.futures.ThreadPoolExecutor(CONCURRENT_THREADS) as executor:
         all_fetched = executor.map(fetch, to_fetch)
