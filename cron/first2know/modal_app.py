@@ -6,6 +6,7 @@ import concurrent.futures
 import modal
 
 import firebase_wrapper
+import recorded_sha
 import screenshot
 import twitter_wrapper
 
@@ -16,7 +17,7 @@ modal_app = screenshot.get_modal_stub()
 
 @modal_app.function(schedule=modal.Period(days=1))
 async def run_cron():
-    print("run_cron")
+    print(f"run_cron {recorded_sha.recorded_sha}")
     to_handle = await firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(CONCURRENT_THREADS) as executor:
         handled = executor.map(lambda source: handle(**source), to_handle)
