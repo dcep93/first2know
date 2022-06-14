@@ -10,7 +10,3 @@ jobs:
       - uses: actions/checkout@v2
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.MODAL_KEY }}'
-      - run: bash .github/workflows/record_sha.sh
-      - run: bash .github/workflows/build_react.sh
-      - run: bash .github/workflows/deploy_to_firebase.sh '${{ secrets.SA_KEY }}'
-      - run: bash .github/workflows/deploy_to_modal.sh '${{ secrets.MODAL_KEY }}'
