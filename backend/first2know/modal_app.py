@@ -11,17 +11,7 @@ import recorded_sha
 import screenshot
 
 web_app = FastAPI()
-image =  modal.DebianSlim()
-image.run_commands([
-    "apt-get install -y software-properties-common",
-    "apt-add-repository non-free",
-    "apt-add-repository contrib",
-    "apt-get update",
-    "pip install playwright==1.20.0",
-    "playwright install-deps chromium",
-    "playwright install chromium",
-])
-modal_app = modal.Stub(image=image)
+modal_app = screenshot.get_modal_stub()
 
 
 @web_app.get("/")
