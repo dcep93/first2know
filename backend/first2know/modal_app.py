@@ -1,6 +1,9 @@
 import cron
 import server
 
-@cron.modal_app.asgi()
+modal_app = cron.modal_app
+web_app = server.web_app
+
+@modal_app.asgi()
 def app():
-    return server.web_app
+    return web_app
