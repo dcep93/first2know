@@ -22,6 +22,16 @@ async def get_echo(url: str):
     return HTMLResponse(url)
 
 
+@web_app.get("/screenshot/{url:path}")
+async def get_screenshot(url: str):
+    try:
+        img_data = await asyncio.wait_for(screenshot.screenshot(url, None, {}), 60.0)
+        return StreamingResponse(io.BytesIO(img_data), media_type="image/png")
+    except Exception:
+        traceback.print_exc()
+        return None
+
+
 @web_app.get("/screenshot_info/{url:path}")
 async def get_screenshot_info(url: str):
     try:
@@ -32,11 +42,11 @@ async def get_screenshot_info(url: str):
         return None
 
 
-@web_app.get("/screenshot/{url:path}")
-async def get_screenshot(url: str):
+@web_app.get("/screenshot_raw/{url:path}")
+async def get_screenshot_raw(url: str):
     try:
         img_data = await asyncio.wait_for(screenshot.screenshot(url, None, {}), 60.0)
-        return StreamingResponse(io.BytesIO(img_data), media_type="image/png")
+        return HTMLResponse(img_data)
     except Exception:
         traceback.print_exc()
         return None
