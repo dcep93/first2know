@@ -1,11 +1,12 @@
 import asyncio
-import time
 
 import concurrent.futures
 
 import modal
 
+import firebase_wrapper
 import screenshot
+import twitter_wrapper
 
 CONCURRENT_THREADS = 8
 
@@ -15,24 +16,24 @@ modal_app = screenshot.get_modal_stub()
 @modal_app.function(schedule=modal.Period(minutes=1))
 async def run_cron():
     print("run_cron")
-    print(time.time())
-    to_fetch = [
-        {"url": "https://chess.com", "fetch_params": {}, "css_selector": None},
-        {"url": "https://www.chess.com/member/dcep93", "fetch_params": {}, "css_selector": None},
-    ]
+    to_handle = await firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(CONCURRENT_THREADS) as executor:
-        all_fetched = executor.map(fetch, to_fetch)
+        handled = executor.map(lambda source: handle(**source), to_handle)
 
-    for i, f in enumerate(all_fetched):
-        fetched = await f
-        print(to_fetch[i]["url"], len(fetched))
+    for h in handled:
+        await h
     print("done")
 
-async def fetch(obj) -> bytes:
-    url = obj["url"]
-    return url
-    # TODO dcep93
-    # fetch_params = obj["fetch_params"]
-    # css_selector = obj["css_selector"]
-    # img_data = await asyncio.wait_for(screenshot.screenshot(url, fetch_params, css_selector,), 60.0)
-    # return img_data
+async def handle(url, fetch_params, css_selector, img_data, key):
+    screenshot_coroutine = screenshot.screenshot(url, fetch_params, css_selector)
+    current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
+
+    if current_data is None:
+        return
+    if img_data == current_data:
+        return
+
+    firebase_coroutine = firebase_wrapper.write(key, current_data)
+    twitter_coroutine = twitter_wrapper.tweet(current_data)
+    await firebase_coroutine
+    await twitter_coroutine
