@@ -5,8 +5,6 @@ import traceback
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 
-import modal
-
 import recorded_sha
 import screenshot
 
