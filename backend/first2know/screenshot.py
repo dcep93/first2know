@@ -22,8 +22,8 @@ async def screenshot(
     fetch_params: typing.Dict[str, str],
 ) -> bytes:
     # TODO dcep93
-    # if True:
-    #     return bytes(url, 'utf-8')
+    if True:
+        return bytes(url, 'utf-8')
     from playwright.async_api import async_playwright # type: ignore
 
     async with async_playwright() as p:
