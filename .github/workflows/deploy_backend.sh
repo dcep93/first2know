@@ -16,4 +16,4 @@ else
   bash ./deploy_to_modal.sh "$MODAL_KEY" "$TWITTER_KEY"
 fi
 
-curl --fail https://dcep93-first2know-server-app.modal.run/
+curl --fail https://dcep93-first2know-app.modal.run/
