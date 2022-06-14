@@ -8,5 +8,7 @@ jobs:
     steps:
       - uses: n1hility/cancel-previous-runs@v2
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.MODAL_KEY }}'
