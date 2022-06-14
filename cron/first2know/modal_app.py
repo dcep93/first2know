@@ -12,7 +12,7 @@ CONCURRENT_THREADS = 8
 modal_app = screenshot.get_modal_stub()
 
 
-@modal_app.function(schedule=modal.Period(minutes=2))
+@modal_app.function(schedule=modal.Period(minutes=1))
 async def run_cron():
     print("run_cron")
     print(time.time())
