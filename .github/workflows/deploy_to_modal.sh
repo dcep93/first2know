@@ -9,7 +9,7 @@ MODAL_PIP_URL="https://modal.com/api/client-library/us-JOXmaxhr5FVrM66sBK1J29/mo
 pip install --force-reinstall "$MODAL_PIP_URL"
 modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 
-cd backend/first2know
+cd ../../backend/first2know
 modal app deploy screenshot.py:modal_app --name=first2know
 
 curl https://dcep93-first2know-app.modal.run/warm
