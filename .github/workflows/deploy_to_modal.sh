@@ -4,11 +4,8 @@ set -euo pipefail
 
 MODAL_KEY="$1"
 
-echo "TODO $MODAL_KEY TODO"
-
 pip install --force-reinstall https://modal.com/api/client-library/us-JOXmaxhr5FVrM66sBK1J29/modal-0.0.15-py3-none-any.whl
-
-exit 0
+modal token set --token-id ak-38vXak6m5VJheg1cvrKQul --token-secret "$MODAL_KEY"
 
 cd backend/first2know
 modal app deploy screenshot.py:modal_app --name=first2know
