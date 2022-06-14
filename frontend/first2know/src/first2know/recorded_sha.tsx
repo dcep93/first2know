@@ -1,1 +1,1 @@
-export const recorded_sha = "unknown";
+export const recorded_sha = "unknown 1";
