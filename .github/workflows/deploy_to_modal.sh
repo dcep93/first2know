@@ -4,7 +4,9 @@ set -euo pipefail
 
 MODAL_KEY="$1"
 
-echo "TODO $MODAL_KEY"
+echo "TODO $MODAL_KEY TODO"
+
+pip install --force-reinstall https://modal.com/api/client-library/us-JOXmaxhr5FVrM66sBK1J29/modal-0.0.15-py3-none-any.whl
 
 exit 0
 
