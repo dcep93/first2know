@@ -1,3 +1,5 @@
+import typing
+
 import modal
 
 def get_modal_stub():
@@ -14,7 +16,11 @@ def get_modal_stub():
     modal_app = modal.Stub(image=image)
     return modal_app
 
-async def screenshot(url):
+async def screenshot(
+    url: str,
+    css_selector: typing.Optional[str],
+    fetch_params: typing.Dict[str, str],
+) -> bytes:
     from playwright.async_api import async_playwright # type: ignore
 
     async with async_playwright() as p:
