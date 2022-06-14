@@ -5,9 +5,9 @@ import modal
 
 import screenshot
 
-stub = modal.Stub()
+modal_app = modal.Stub()
 
-@stub.function(schedule=modal.Period(minutes=1))
+@modal_app.function(schedule=modal.Period(minutes=1))
 async def run_cron():
     print("run_cron")
     print(time.time())
