@@ -1,1 +1,0 @@
-../../backend/first2know/screenshot.py

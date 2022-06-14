@@ -1,21 +1,5 @@
 import typing
 
-import modal
-
-def get_modal_stub():
-    image =  modal.DebianSlim()
-    image.run_commands([
-        "apt-get install -y software-properties-common",
-        "apt-add-repository non-free",
-        "apt-add-repository contrib",
-        "apt-get update",
-        "pip install playwright==1.20.0",
-        "playwright install-deps chromium",
-        "playwright install chromium",
-    ])
-    modal_app = modal.Stub(image=image)
-    return modal_app
-
 async def screenshot(
     url: str,
     css_selector: typing.Optional[str],
