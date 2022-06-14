@@ -1,11 +1,12 @@
 import asyncio
-import io
 import traceback
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 
 import modal
+
+import recorded_sha
 
 web_app = FastAPI()
 modal_app = modal.App(image = modal.DebianSlim(
@@ -36,9 +37,9 @@ async def screenshot_get(url):
 
 
 
-@web_app.get("/")
+@web_app.get("/warm")
 async def warm(request: Request):
-    return {}
+    return recorded_sha.recorded_sha
 
 
 @web_app.get("/echo/{url:path}")
