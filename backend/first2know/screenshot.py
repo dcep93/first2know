@@ -27,6 +27,7 @@ async def screenshot_get(url):
     from playwright.async_api import async_playwright # type: ignore
 
     async with async_playwright() as p:
+        print("Fetching url", url)
         browser = await p.chromium.launch()
         page = await browser.new_page()
         await page.goto(url)
@@ -40,7 +41,7 @@ async def screenshot_get(url):
 
 @web_app.get("/warm")
 async def warm(request: Request):
-    return HTMLResponse(recorded_sha.recorded_sha)
+    return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
 @web_app.get("/echo/{url:path}")
@@ -50,9 +51,8 @@ async def echo(url: str):
 
 @web_app.get("/screenshot_info/{url:path}")
 async def screenshot_info(url: str):
-    print("Fetching url", url, "x")
     try:
-        img_data = await asyncio.wait_for(screenshot_get(url), 40.0)
+        img_data = await asyncio.wait_for(screenshot_get(url), 60.0)
         return len(img_data)
     except Exception:
         traceback.print_exc()
@@ -61,9 +61,8 @@ async def screenshot_info(url: str):
 
 @web_app.get("/screenshot/{url:path}")
 async def screenshot(url: str):
-    print("Fetching url", url)
     try:
-        img_data = await asyncio.wait_for(screenshot_get(url), 40.0)
+        img_data = await asyncio.wait_for(screenshot_get(url), 60.0)
         return StreamingResponse(io.BytesIO(img_data), media_type="image/png")
     except Exception:
         traceback.print_exc()
