@@ -9,7 +9,7 @@ import firebase_wrapper
 import screenshot
 import twitter_wrapper
 
-CONCURRENT_THREADS = 16
+CONCURRENT_THREADS = 8
 
 modal_app = screenshot.get_modal_stub()
 
