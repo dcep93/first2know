@@ -39,18 +39,18 @@ async def screenshot_get(url):
 
 
 
-@web_app.get("/warm")
-async def warm(request: Request):
+@web_app.get("/")
+async def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
 @web_app.get("/echo/{url:path}")
-async def echo(url: str):
+async def get_echo(url: str):
     return HTMLResponse(url)
 
 
 @web_app.get("/screenshot_info/{url:path}")
-async def screenshot_info(url: str):
+async def get_screenshot_info(url: str):
     try:
         img_data = await asyncio.wait_for(screenshot_get(url), 60.0)
         return len(img_data)
@@ -60,7 +60,7 @@ async def screenshot_info(url: str):
 
 
 @web_app.get("/screenshot/{url:path}")
-async def screenshot(url: str):
+async def get_screenshot(url: str):
     try:
         img_data = await asyncio.wait_for(screenshot_get(url), 60.0)
         return StreamingResponse(io.BytesIO(img_data), media_type="image/png")

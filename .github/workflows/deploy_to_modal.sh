@@ -11,6 +11,3 @@ modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 
 cd ../../backend/first2know
 modal app deploy screenshot.py:modal_app --name=first2know
-
-curl https://dcep93-first2know-app.modal.run/warm
-curl https://dcep93-first2know-app.modal.run/echo/https://chess.com

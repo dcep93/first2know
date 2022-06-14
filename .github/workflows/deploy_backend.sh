@@ -9,8 +9,10 @@ cd "$(dirname "$0")"
 DIFF="$(git diff HEAD^ ../../backend/first2know)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
-  exit 0
+else
+  echo "$DIFF"
+  bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
+  bash ./deploy_to_modal.sh "$MODAL_KEY"
 fi
-echo "$DIFF"
-bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
-bash ./deploy_to_modal.sh "$MODAL_KEY"
+
+curl --fail https://dcep93-ythvfqj.modal.run/
