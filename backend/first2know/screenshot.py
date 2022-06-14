@@ -1,4 +1,5 @@
 import asyncio
+import io
 import traceback
 
 from fastapi import FastAPI, Request
@@ -39,7 +40,7 @@ async def screenshot_get(url):
 
 @web_app.get("/warm")
 async def warm(request: Request):
-    return recorded_sha.recorded_sha
+    return HTMLResponse(recorded_sha.recorded_sha)
 
 
 @web_app.get("/echo/{url:path}")
@@ -63,7 +64,7 @@ async def screenshot(url: str):
     print("Fetching url", url)
     try:
         img_data = await asyncio.wait_for(screenshot_get(url), 40.0)
-        return StreamingResponse(img_data, media_type="image/png")
+        return StreamingResponse(io.BytesIO(img_data), media_type="image/png")
     except Exception:
         traceback.print_exc()
         return None
