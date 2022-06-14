@@ -12,5 +12,5 @@ if [[ -z "$DIFF" ]]; then
   exit 0
 fi
 echo "$DIFF"
-bash ./record_sha.sh "export const recorded_sha = \`%s\n%s\`;\n" "../../backend/first2know/recorded_sha.py"
+bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
 bash ./deploy_to_modal.sh "$MODAL_KEY"
