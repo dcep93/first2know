@@ -7,7 +7,7 @@ TWITTER_KEY="$2"
 
 cd "$(dirname "$0")"
 
-DIFF="x$(git diff HEAD^ ../../cron/first2know)"
+DIFF="$(git diff HEAD^ ../../cron/first2know)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
 else
