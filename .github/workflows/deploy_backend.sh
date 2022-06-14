@@ -16,4 +16,4 @@ else
 fi
 
 # curl --fail https://dcep93-first2know-app.modal.run/
-curl --fail https://dcep93-ythvfqj.modal.run/
+curl --fail https://dcep93-xskuhdr.modal.run/
