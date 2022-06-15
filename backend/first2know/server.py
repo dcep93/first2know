@@ -24,6 +24,7 @@ async def get_encrypt(data: str):
     return HTMLResponse(firebase_wrapper.encrypt(data))
 
 
+# TODO dcep93 test
 @web_app.post("/screenshot")
 async def post_screenshot(
     url: str,
