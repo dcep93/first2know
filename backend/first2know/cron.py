@@ -1,4 +1,5 @@
 import asyncio
+import json
 import typing
 
 import concurrent.futures
@@ -47,9 +48,14 @@ async def handle(
     img_data: str,
     key: str,
     user: str,
-    fetch_params: typing.Dict[str, str]={},
+    e_fetch_params: typing.Optional[str]=None,
     css_selector: typing.Optional[str]=None,
 ):
+    if e_fetch_params is None:
+        fetch_params = {}
+    else:
+        decrypted = firebase_wrapper.decrypt(e_fetch_params)
+        fetch_params = json.loads(decrypted)
     screenshot_coroutine = screenshot.screenshot(url, css_selector, fetch_params)
     current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
 

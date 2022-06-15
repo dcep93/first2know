@@ -27,7 +27,6 @@ def init():
 def get_to_handle():
     raw = Vars._app.get("to_handle", None)
     to_handle: typing.Dict[str, typing.Any] = raw # type: ignore
-    # TODO dcep93 encrypt fetch_params
     return to_handle.values()
 
 def write_img_data(key: str, img_data: str):
