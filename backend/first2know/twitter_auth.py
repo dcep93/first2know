@@ -3,24 +3,13 @@ import json
 import requests
 import typing
 
-def memoize(f):
-    d = {}
-    def g(*args):
-        if args in d:
-            return d[args]
-        val = f(*args)
-        d[args] = val
-        return val
-    return g
+client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 
-@memoize
-def get_raw_auth():
-    username = input("username: ")
-    password = input("password: ")
-    return f"{username}:{password}"
+def main():
+    client_secret = input("client_secret: ")
+    raw_auth = f"{client_id}:{client_secret}"
+    encoded_auth = base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
 
-def get_auth_code():
-    client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
     params = [
         "response_type=code",
         f"client_id={client_id}",
@@ -32,15 +21,8 @@ def get_auth_code():
     ]
     url = f"https://twitter.com/i/oauth2/authorize?{'&'.join(params)}"
     print(url)
-    return input("paste code: ")
+    auth_code = input("paste code: ")
 
-def get_encoded_auth():
-    raw_auth = get_raw_auth()
-    return base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
-
-def get_access_and_refresh():
-    encoded_auth = get_encoded_auth()
-    auth_code = get_auth_code()
     resp = requests.post('https://api.twitter.com/2/oauth2/token',
         headers={
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -57,14 +39,10 @@ def get_access_and_refresh():
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    return r.get("access_token"), r.get("refresh_token")
+    r["encoded_auth"] = encoded_auth
+    print(r)
 
-def get_refresh_token():
-    return get_access_and_refresh()[1]
-
-def get_access_token():
-    encoded_auth = get_encoded_auth()
-    refresh_token = get_refresh_token()
+def refresh_access_token(encoded_auth: str, refresh_token: str):
     resp = requests.post('https://api.twitter.com/2/oauth2/token',
         headers={
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -79,8 +57,7 @@ def get_access_token():
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    print(r)
-    return r.get("access_token")
+    return r["access_token"], r["refresh_token"]
 
 # tweet_ids = ['1261326399320715264', '1278347468690915330']
 def read_tweets(access_token: str, tweet_ids: typing.List[str]):
@@ -111,3 +88,6 @@ def post_tweet(access_token: str, message_obj: typing.Dict[str, str]):
         raise Exception(resp.text)
     r = json.loads(resp.text)
     return r["data"]
+
+if __name__ == "__main__":
+    main()

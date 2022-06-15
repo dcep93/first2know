@@ -10,6 +10,10 @@ import recorded_sha
 import screenshot
 import twitter_wrapper
 
+# TODO dcep93
+encoded_auth = ""
+refresh_token = ""
+
 CONCURRENT_THREADS = 8
 
 image =  modal.DebianSlim()
@@ -27,7 +31,10 @@ modal_app = modal.Stub(image=image)
 @modal_app.function(schedule=modal.Period(days=1))
 async def run_cron():
     print(f"run_cron {recorded_sha.recorded_sha}")
-    to_handle = await firebase_wrapper.get_to_handle()
+
+    twitter_wrapper.update_access_token(encoded_auth, refresh_token)
+
+    to_handle = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(CONCURRENT_THREADS) as executor:
         handled = executor.map(lambda source: handle(**source), to_handle)
 
@@ -51,7 +58,5 @@ async def handle(
     if img_data == current_data:
         return
 
-    firebase_coroutine = firebase_wrapper.write(key, current_data)
-    twitter_coroutine = twitter_wrapper.tweet(user, current_data)
-    await firebase_coroutine
-    await twitter_coroutine
+    firebase_wrapper.write_img_data(key, current_data)
+    twitter_wrapper.tweet(user, current_data)

@@ -1,9 +1,17 @@
 import time
 
+import firebase_wrapper
 import twitter_auth
 
-async def tweet(user: str, img_data: bytes):
+class Vars:
+    access_token = ""
+
+def update_access_token(encoded_auth: str, refresh_token: str):
+    Vars.access_token, new_refresh_token = twitter_auth.refresh_access_token(encoded_auth, refresh_token)
+    firebase_wrapper.write_refresh_token(new_refresh_token)
+
+def tweet(user: str, img_data: bytes):
     print(f"tweeting to {user} {len(img_data)}")
-    access_token = "aXFPc0VjLXBtYUtiTS0xdXBtcHV4M1FscW9RQWJlbXFzd1BlbjMzdGNCXzJiOjE2NTUyNjAxNDc3OTE6MTowOmF0OjE"
     message_obj = {"text": f"@{user} {len(img_data)} {time.time()}"}
-    twitter_auth.post_tweet(access_token, message_obj)
+    resp = twitter_auth.post_tweet(Vars.access_token, message_obj)
+    print(resp)
