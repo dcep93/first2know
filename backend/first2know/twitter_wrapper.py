@@ -13,7 +13,7 @@ def update_access_token():
     Vars.access_token, new_refresh_token = rval
     firebase_wrapper.write_refresh_token(new_refresh_token)
 
-def tweet(user: str, img_data: bytes):
+def tweet(user: str, img_data: str):
     print(f"tweeting to {user} {len(img_data)}")
     message_obj = {"text": f"@{user} {len(img_data)} {time.time()}"}
     resp = twitter_auth.post_tweet(Vars.access_token, message_obj)

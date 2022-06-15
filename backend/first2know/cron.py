@@ -44,11 +44,11 @@ async def run_cron():
 
 async def handle(
     url: str,
-    fetch_params: typing.Dict[str, str],
-    css_selector: typing.Optional[str],
-    img_data: bytes,
+    img_data: str,
     key: str,
     user: str,
+    fetch_params: typing.Dict[str, str]={},
+    css_selector: typing.Optional[str]=None,
 ):
     screenshot_coroutine = screenshot.screenshot(url, css_selector, fetch_params)
     current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
@@ -60,5 +60,3 @@ async def handle(
 
     firebase_wrapper.write_img_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
-
-# asyncio.run(run_cron())

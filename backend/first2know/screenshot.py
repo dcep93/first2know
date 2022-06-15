@@ -1,12 +1,12 @@
+import base64
 import typing
 
 async def screenshot(
     url: str,
     css_selector: typing.Optional[str],
     fetch_params: typing.Dict[str, str],
-) -> bytes:
+) -> str:
 # TODO dcep93
-    return str(len(url)).encode("utf-8")
     from playwright.async_api import async_playwright # type: ignore
 
     async with async_playwright() as p:
@@ -18,4 +18,4 @@ async def screenshot(
         await browser.close()
         data = open("screenshot.png", "rb").read()
         print("Screenshot of size %d bytes" % len(data))
-        return data
+        return base64.b64encode(data).decode('utf-8')
