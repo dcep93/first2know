@@ -1,12 +1,16 @@
+import os
 import typing
+
+import cron
 
 # TODO dcep93
 # pip install git+https://github.com/ozgur/python-firebase
 from firebase import firebase
 
 # for now, this is both the twitter client secret and the encryption key
-# TODO dcep93
-client_secret = "Z7EFPX2T6Fi8KEtvWsneFGdymDBWwjSOH_m4yNPGd1RQIjRTji"
+@cron.modal_app.function(secret=cron.modal.ref("first2know"))
+def get_client_secret() -> str:
+    return os.environ["client_secret"]
 
 class Vars:
     app: firebase.FirebaseApplication = None # type: ignore
@@ -36,7 +40,9 @@ def get_refresh_token() -> str:
     return decrypt(refresh_token)
 
 def encrypt(s: str) -> str:
+    # TODO dcep93
     return s
 
 def decrypt(s: str) -> str:
+    # TODO dcep93
     return s
