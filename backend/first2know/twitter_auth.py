@@ -3,6 +3,8 @@ import json
 import requests
 import typing
 
+import firebase_wrapper
+
 client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 
 def main():
@@ -38,8 +40,10 @@ def main():
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    r["encoded_auth"] = encoded_auth
+    encrypted_refresh_token = firebase_wrapper.encrypt(r["refresh_token"])
     print(r)
+    print("place encrypted_refresh_token in firebase")
+    print(encrypted_refresh_token)
 
 def get_encoded_auth(client_secret: str) -> str:
     raw_auth = f"{client_id}:{client_secret}"

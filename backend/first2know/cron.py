@@ -60,3 +60,6 @@ async def handle(
 
     firebase_wrapper.write_img_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
+
+if __name__ == "__main__":
+    asyncio.run(run_cron())
