@@ -7,8 +7,7 @@ client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 
 def main():
     client_secret = input("client_secret: ")
-    raw_auth = f"{client_id}:{client_secret}"
-    encoded_auth = base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
+    encoded_auth = get_encoded_auth(client_secret)
 
     params = [
         "response_type=code",
@@ -41,6 +40,10 @@ def main():
     r = json.loads(resp.text)
     r["encoded_auth"] = encoded_auth
     print(r)
+
+def get_encoded_auth(client_secret: str) -> str:
+    raw_auth = f"{client_id}:{client_secret}"
+    return base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
 
 def refresh_access_token(encoded_auth: str, refresh_token: str):
     resp = requests.post('https://api.twitter.com/2/oauth2/token',

@@ -1,4 +1,7 @@
 # TODO dcep93
+
+# for now, this is both the twitter client secret and the encryption key
+client_secret = "FETCH MODAL SECRET"
  
 def get_to_handle():
     return [
@@ -11,3 +14,6 @@ def write_img_data(key: str, img_data: bytes):
 
 def write_refresh_token(refresh_token: str):
     print("write_refresh_token", refresh_token)
+
+def get_refresh_token() -> str:
+    return ""
