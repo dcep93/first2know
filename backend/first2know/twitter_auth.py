@@ -1,11 +1,19 @@
 import base64
-import functools
 import json
 import requests
 import typing
 
+def memoize(f):
+    d = {}
+    def g(*args):
+        if args in d:
+            return d[args]
+        val = f(*args)
+        d[args] = val
+        return val
+    return g
 
-@functools.cache
+@memoize
 def get_raw_auth():
     username = input("username: ")
     password = input("password: ")
