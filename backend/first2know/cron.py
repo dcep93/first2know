@@ -25,9 +25,13 @@ image.run_commands([
 modal_app = modal.Stub(image=image)
 
 @modal_app.function(schedule=modal.Period(days=1))
+async def modal_cron():
+    await run_cron()
+
 async def run_cron():
     print(f"run_cron {recorded_sha.recorded_sha}")
 
+    firebase_wrapper.init()
     twitter_wrapper.update_access_token()
 
     to_handle = firebase_wrapper.get_to_handle()
@@ -56,3 +60,5 @@ async def handle(
 
     firebase_wrapper.write_img_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
+
+# asyncio.run(run_cron())

@@ -5,6 +5,8 @@ async def screenshot(
     css_selector: typing.Optional[str],
     fetch_params: typing.Dict[str, str],
 ) -> bytes:
+# TODO dcep93
+    return str(len(url)).encode("utf-8")
     from playwright.async_api import async_playwright # type: ignore
 
     async with async_playwright() as p:
