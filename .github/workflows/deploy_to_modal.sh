@@ -1,12 +1,15 @@
 #!/bin/bash
 
-set -euo pipefail
+set -xeuo pipefail
 
 MODAL_KEY="$1"
 # TODO dcep93 - save to modal
 # TWITTER_KEY="$2"
 
 TOKEN_ID="ak-38vXak6m5VJheg1cvrKQul"
+
+pip install --force-reinstall https://modal.com/api/client-library/us-JOXmaxhr5FVrM66sBK1J29/modal-py3-none-any.whl
+
 # TODO dcep93 - constant url
 MODAL_PIP_URL="https://modal.com/api/client-library/us-JOXmaxhr5FVrM66sBK1J29/modal-py3-none-any.whl"
 
