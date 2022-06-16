@@ -14,17 +14,18 @@ image.run_commands([
     "pip install playwright==1.20.0",
     "playwright install-deps chromium",
     "playwright install chromium",
+]).pip_install([
+    'git+https://github.com/ozgur/python-firebase',
+    'cryptography',
 ])
 modal_app = modal.Stub(image=image)
 
-@modal_app.function(schedule=modal.Period(days=1))
+@modal_app.function(schedule=modal.Period(days=1), secret=modal.ref("first2know"))
 async def modal_cron():
     init_client_secret()
     await cron.run_cron()
 
-# TODO dcep93 - utilize secret
 # for now, this is both the twitter client secret and the encryption key
-@modal_app.function(secret=modal.ref("first2know"))
 def init_client_secret():
     client_secret = os.environ["client_secret"]
     cron.Vars.client_secret = client_secret
