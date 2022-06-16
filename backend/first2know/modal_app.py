@@ -2,8 +2,9 @@ import os
 
 import modal
 
-import cron
-import server
+if not modal.is_local():
+    import cron
+    import server
 
 image =  modal.DebianSlim()
 image.run_commands([

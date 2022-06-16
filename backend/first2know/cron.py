@@ -53,9 +53,5 @@ async def handle(
     firebase_wrapper.write_img_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
 
-# TODO dcep93 is this best?
-def get_client_secret() -> str:
-    return os.environ["client_secret"]
-
 if __name__ == "__main__":
     asyncio.run(run_cron())
