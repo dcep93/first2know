@@ -8,7 +8,7 @@ import cron
 
 # TODO dcep93 - install in container
 # pip install git+https://github.com/ozgur/python-firebase
-from firebase import firebase
+# from firebase import firebase
 
 # TODO dcep93 - utilize secret
 # for now, this is both the twitter client secret and the encryption key
