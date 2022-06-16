@@ -6,8 +6,6 @@ async def screenshot(
     css_selector: typing.Optional[str],
     fetch_params: typing.Dict[str, str],
 ) -> str:
-# TODO dcep93 - install in container
-    # return url
     from playwright.async_api import async_playwright # type: ignore
 
     async with async_playwright() as p:

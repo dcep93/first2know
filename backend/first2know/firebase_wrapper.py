@@ -1,12 +1,10 @@
 import base64
 import typing
 
-# TODO dcep93 - install in container
 from cryptography.fernet import Fernet
 
 import cron
 
-# TODO dcep93 - install in container
 # pip install git+https://github.com/ozgur/python-firebase
 from firebase import firebase
 
