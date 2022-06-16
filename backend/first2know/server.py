@@ -23,8 +23,6 @@ async def get_(request: Request):
 async def get_encrypt(data: str):
     return HTMLResponse(firebase_wrapper.encrypt(data))
 
-
-# TODO dcep93 test
 @web_app.post("/screenshot")
 async def post_screenshot(
     url: str,
@@ -40,6 +38,7 @@ async def post_screenshot(
         traceback.print_exc()
         return None
 
+# TODO dcep93 test
 @web_app.post("/proxy")
 async def post_proxy(
     url: str,
