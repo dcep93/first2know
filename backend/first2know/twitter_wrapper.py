@@ -1,5 +1,6 @@
 import time
 
+import cron
 import firebase_wrapper
 import twitter_auth
 
@@ -7,7 +8,7 @@ class Vars:
     _access_token = ""
 
 def update_access_token():
-    client_secret = firebase_wrapper.get_client_secret()
+    client_secret = cron.get_client_secret()
     encoded_auth = twitter_auth.get_encoded_auth(client_secret)
     refresh_token = firebase_wrapper.get_refresh_token()
     rval = twitter_auth.refresh_access_token(encoded_auth, refresh_token)

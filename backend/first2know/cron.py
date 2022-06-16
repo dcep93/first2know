@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import typing
 
 import concurrent.futures
@@ -28,6 +29,12 @@ modal_app = modal.Stub(image=image)
 @modal_app.function(schedule=modal.Period(days=1))
 async def modal_cron():
     await run_cron()
+
+# TODO dcep93 - utilize secret
+# for now, this is both the twitter client secret and the encryption key
+@modal_app.function(secret=modal.ref("first2know"))
+def get_client_secret() -> str:
+    return os.environ["client_secret"]
 
 async def run_cron():
     print(f"run_cron {recorded_sha.recorded_sha}")

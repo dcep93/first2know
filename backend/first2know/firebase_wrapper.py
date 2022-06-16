@@ -1,5 +1,4 @@
 import base64
-import os
 import typing
 
 from cryptography.fernet import Fernet
@@ -8,13 +7,10 @@ import cron
 
 # TODO dcep93 - install in container
 # pip install git+https://github.com/ozgur/python-firebase
-# from firebase import firebase
-
-# TODO dcep93 - utilize secret
-# for now, this is both the twitter client secret and the encryption key
-@cron.modal_app.function(secret=cron.modal.ref("first2know"))
-def get_client_secret() -> str:
-    return os.environ["client_secret"]
+try:
+    from firebase import firebase
+except:
+    pass
 
 class Vars:
     _app: firebase.FirebaseApplication = None # type: ignore
@@ -60,6 +56,6 @@ def decrypt(e: str) -> str:
     return a
 
 def _get_cipher_suite():
-    client_secret = get_client_secret()
+    client_secret = cron.get_client_secret()
     key = base64.b64encode(client_secret.encode('utf-8')[:32])
     return Fernet(key)
