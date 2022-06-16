@@ -19,7 +19,6 @@ async def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-# TODO dcep93 test
 @web_app.get("/encrypt/{data:str}")
 async def get_encrypt(data: str):
     return HTMLResponse(firebase_wrapper.encrypt(data))
