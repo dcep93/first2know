@@ -13,7 +13,8 @@ except:
     pass
 
 class Vars:
-    _app: firebase.FirebaseApplication = None # type: ignore
+    # TODO dcep93 - revert
+    _app: typing.Any # firebase.FirebaseApplication = None # type: ignore
 
 
 def init():
