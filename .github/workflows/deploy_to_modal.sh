@@ -14,4 +14,4 @@ pip install "$MODAL_PIP_URL"
 modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 
 cd ../../backend/first2know
-modal app deploy --name=first2know modal_app.py:modal_app
+modal app deploy --name=first2know_x modal_app.py:modal_app
