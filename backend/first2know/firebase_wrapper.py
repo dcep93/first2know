@@ -8,14 +8,10 @@ import cron
 
 # TODO dcep93 - install in container
 # pip install git+https://github.com/ozgur/python-firebase
-try:
-    from firebase import firebase
-except:
-    pass
+from firebase import firebase
 
 class Vars:
-    # TODO dcep93 - revert
-    _app: typing.Any # firebase.FirebaseApplication = None # type: ignore
+    _app: firebase.FirebaseApplication = None # type: ignore
 
 
 def init():
