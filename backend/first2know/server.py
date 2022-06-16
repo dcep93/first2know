@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 
 import firebase_wrapper
+import proxy
 import recorded_sha
 import screenshot
 
@@ -40,4 +41,15 @@ async def post_screenshot(
         traceback.print_exc()
         return None
 
-# TODO dcep93 do we need a json thing?
+@web_app.post("/proxy")
+async def post_proxy(
+    url: str,
+    timeout: float=60.0,
+    fetch_params: typing.Dict[str, typing.Any]={},
+):
+    try:
+        resp = await asyncio.wait_for(proxy.proxy(url, fetch_params), timeout)
+        return HTMLResponse(resp)
+    except Exception:
+        traceback.print_exc()
+        return None
