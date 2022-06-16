@@ -32,6 +32,6 @@ def init_client_secret():
     client_secret = os.environ["client_secret"]
     cron.Vars.client_secret = client_secret
 
-@modal_app.asgi()
+@modal_app.asgi(image=image)
 def app():
     return server.web_app
