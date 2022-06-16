@@ -1,8 +1,8 @@
 import time
 
-import cron
-import firebase_wrapper
-import twitter_auth
+from . import cron
+from . import firebase_wrapper
+from . import twitter_auth
 
 class Vars:
     _access_token = ""

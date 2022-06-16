@@ -3,7 +3,7 @@ import typing
 
 from cryptography.fernet import Fernet
 
-import cron
+from . import cron
 
 # pip install git+https://github.com/ozgur/python-firebase
 from firebase import firebase

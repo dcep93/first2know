@@ -3,7 +3,7 @@ import json
 import requests
 import typing
 
-import firebase_wrapper
+from . import firebase_wrapper
 
 client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 

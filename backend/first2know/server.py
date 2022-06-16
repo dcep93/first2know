@@ -7,10 +7,10 @@ import typing
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 
-import firebase_wrapper
-import proxy
-import recorded_sha
-import screenshot
+from . import firebase_wrapper
+from . import proxy
+from . import recorded_sha
+from . import screenshot
 
 web_app = FastAPI()
 

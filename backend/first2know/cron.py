@@ -1,14 +1,13 @@
 import asyncio
 import json
-import os
 import typing
 
 import concurrent.futures
 
-import firebase_wrapper
-import recorded_sha
-import screenshot
-import twitter_wrapper
+from . import firebase_wrapper
+from . import recorded_sha
+from . import screenshot
+from . import twitter_wrapper
 
 CONCURRENT_THREADS = 8
 
