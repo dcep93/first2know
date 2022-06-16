@@ -18,6 +18,7 @@ image.run_commands([
 ]).pip_install([
     'git+https://github.com/ozgur/python-firebase',
     'cryptography',
+    'requests',
 ])
 modal_app = modal.Stub(image=image)
 
