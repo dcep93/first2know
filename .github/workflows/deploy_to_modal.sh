@@ -14,4 +14,5 @@ modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 cd ../../backend
 # TODO dcep93 set secret
 echo modal secret set "first2know" "client_secret" "$TWITTER_KEY"
-modal app deploy --name=first2know first2know.modal_app:modal_app
+alias d="modal app deploy --name=first2know first2know.modal_app:modal_app"
+d || d || d
