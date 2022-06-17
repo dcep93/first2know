@@ -1,12 +1,13 @@
 import base64
 import typing
 
+
 async def screenshot(
     url: str,
     css_selector: typing.Optional[str],
     fetch_params: typing.Dict[str, str],
 ) -> str:
-    from playwright.async_api import async_playwright # type: ignore
+    from playwright.async_api import async_playwright  # type: ignore
 
     async with async_playwright() as p:
         print("Fetching url", url)

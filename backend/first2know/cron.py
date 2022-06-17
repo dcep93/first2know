@@ -11,8 +11,10 @@ from . import twitter_wrapper
 
 CONCURRENT_THREADS = 8
 
+
 class Vars:
-    client_secret: str = None # type: ignore
+    client_secret: str = None  # type: ignore
+
 
 async def run_cron():
     print(f"run_cron {recorded_sha.recorded_sha}")
@@ -28,20 +30,22 @@ async def run_cron():
         await h
     print("done")
 
+
 async def handle(
     url: str,
     img_data: str,
     key: str,
     user: str,
-    e_fetch_params: typing.Optional[str]=None,
-    css_selector: typing.Optional[str]=None,
+    e_fetch_params: typing.Optional[str] = None,
+    css_selector: typing.Optional[str] = None,
 ):
     if e_fetch_params is None:
         fetch_params = {}
     else:
         decrypted = firebase_wrapper.decrypt(e_fetch_params)
         fetch_params = json.loads(decrypted)
-    screenshot_coroutine = screenshot.screenshot(url, css_selector, fetch_params)
+    screenshot_coroutine = screenshot.screenshot(url, css_selector,
+                                                 fetch_params)
     current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
 
     if current_data is None:
@@ -51,6 +55,7 @@ async def handle(
 
     firebase_wrapper.write_img_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
+
 
 if __name__ == "__main__":
     asyncio.run(run_cron())
