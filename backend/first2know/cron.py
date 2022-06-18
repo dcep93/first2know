@@ -33,7 +33,7 @@ async def run_cron():
 
 async def handle(
     url: str,
-    img_data: str,
+    img_data: typing.Optional[str],
     key: str,
     user: str,
     e_fetch_params: typing.Optional[str] = None,

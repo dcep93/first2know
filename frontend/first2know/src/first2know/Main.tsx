@@ -1,8 +1,17 @@
-import React from "react";
-import { recorded_sha } from "./recorded_sha";
+import { AllToHandleType, FirebaseWrapper } from "./firebase";
 
-function Main() {
-  return <div>{recorded_sha}</div>;
+class Main extends FirebaseWrapper<AllToHandleType> {
+  getTitle(): string {
+    return "first2know";
+  }
+
+  getFirebasePath(): string {
+    return "/to_handle";
+  }
+
+  render() {
+    return super.render();
+  }
 }
 
 export default Main;
