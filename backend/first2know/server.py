@@ -5,6 +5,7 @@ import traceback
 import typing
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
 from pydantic import BaseModel
@@ -29,6 +30,13 @@ class ProxyPayload(BaseModel):
 
 
 web_app = FastAPI()
+web_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @web_app.get("/")

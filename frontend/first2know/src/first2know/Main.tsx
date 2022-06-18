@@ -3,7 +3,9 @@ import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import ShowCurrent from "./ShowCurrent";
 
 const modalUrl = "https://dcep93-first2know-app.modal.run";
-fetch(modalUrl);
+fetch(modalUrl)
+  .then((resp) => resp.text())
+  .then((text) => console.log(text));
 
 class Main extends FirebaseWrapper<AllToHandleType> {
   getTitle(): string {
