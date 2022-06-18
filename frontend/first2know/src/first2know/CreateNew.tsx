@@ -1,4 +1,4 @@
-function CreateNew() {
+function CreateNew(props: { modalUrl: string }): JSX.Element {
   return <>CreateNew</>;
 }
 

@@ -2,6 +2,9 @@ import CreateNew from "./CreateNew";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import ShowCurrent from "./ShowCurrent";
 
+const modalUrl = "https://dcep93-first2know-app.modal.run/";
+fetch(modalUrl);
+
 class Main extends FirebaseWrapper<AllToHandleType> {
   getTitle(): string {
     return "first2know";
@@ -15,11 +18,10 @@ class Main extends FirebaseWrapper<AllToHandleType> {
     if (this.state === null) return <>Loading...</>;
     return (
       <>
-        <CreateNew />
+        <CreateNew modalUrl={modalUrl} />
         <ShowCurrent allToHandle={this.state} />
       </>
     );
-    return super.render();
   }
 }
 
