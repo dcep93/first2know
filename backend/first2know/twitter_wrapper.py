@@ -9,7 +9,7 @@ class Vars:
     _access_token = ""
 
 
-def update_access_token():
+def update_access_token() -> None:
     client_secret = cron.Vars.client_secret
     encoded_auth = twitter_auth.get_encoded_auth(client_secret)
     refresh_token = firebase_wrapper.get_refresh_token()
@@ -18,11 +18,11 @@ def update_access_token():
     firebase_wrapper.write_refresh_token(new_refresh_token)
 
 
-def tweet(user: str, img_data: str):
-    print(f"tweeting to {user} {len(img_data)}")
+def tweet(user: str, data: str) -> None:
+    print(f"tweeting to {user} {len(data)}")
     # TODO dcep93 - allow tweets after working
     if True:
         return
-    message_obj = {"text": f"@{user} {len(img_data)} {time.time()}"}
+    message_obj = {"text": f"@{user} {len(data)} {time.time()}"}
     resp = twitter_auth.post_tweet(Vars._access_token, message_obj)
     print(resp)

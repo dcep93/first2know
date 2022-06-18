@@ -1,12 +1,21 @@
 import requests
 import typing
 
+from pydantic import BaseModel
 
-async def proxy(url: str, fetch_params: typing.Dict[str, typing.Any]) -> str:
-    headers = fetch_params.get("headers")
-    data = fetch_params.get("data")
+
+class ProxyPayload(BaseModel):
+    url: str
+    timeout: float = 60.0
+    selector: typing.Optional[str] = None
+    params: typing.Dict[str, typing.Any] = {}
+
+
+async def proxy(payload: ProxyPayload) -> str:
+    headers = payload.params.get("headers")
+    data = payload.params.get("data")
     resp = requests.get(
-        url,
+        payload.url,
         headers=headers,
         data=data,
     )

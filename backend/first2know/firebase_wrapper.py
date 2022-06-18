@@ -20,18 +20,18 @@ def init():
         'https://first2know-default-rtdb.firebaseio.com/', None)
 
 
-def get_to_handle():
+def get_to_handle() -> typing.List[typing.Dict[str, str]]:
     raw = Vars._app.get("to_handle", None)
     to_handle: typing.Dict[str, typing.Any] = raw  # type: ignore
-    return to_handle.values()
+    return [{"key": i, **j} for i, j in to_handle.items()]
 
 
-def write_img_data(key: str, img_data: str):
-    print("write_img_data", key)
-    Vars._app.patch(f"to_handle/{key}", {"img_data": img_data})
+def write_data(key: str, data: str) -> None:
+    print("write_data", key)
+    Vars._app.patch(f"to_handle/{key}", {"data": data})
 
 
-def write_refresh_token(refresh_token: str):
+def write_refresh_token(refresh_token: str) -> None:
     print("write_refresh_token", refresh_token)
     encrypted = encrypt(refresh_token)
     Vars._app.patch("", {"refresh_token": encrypted})
@@ -61,7 +61,7 @@ def decrypt(e: str) -> str:
     return a
 
 
-def _get_cipher_suite():
+def _get_cipher_suite() -> typing.Any:
     client_secret = cron.Vars.client_secret
     key = base64.b64encode(client_secret.encode('utf-8')[:32])
     return Fernet(key)

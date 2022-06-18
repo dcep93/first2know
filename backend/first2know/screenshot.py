@@ -1,19 +1,24 @@
 import base64
 import typing
 
+from pydantic import BaseModel
 
-async def screenshot(
-    url: str,
-    css_selector: typing.Optional[str],
-    fetch_params: typing.Dict[str, str],
-) -> str:
+
+class ScreenshotPayload(BaseModel):
+    url: str
+    timeout: float = 60.0
+    selector: typing.Optional[str] = None
+    params: typing.Dict[str, str] = {}
+
+
+async def screenshot(payload: ScreenshotPayload) -> str:
     from playwright.async_api import async_playwright  # type: ignore
 
     async with async_playwright() as p:
-        print("Fetching url", url)
+        print("Fetching url", payload.url)
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        await page.goto(url)
+        await page.goto(payload.url)
         await page.screenshot(path="screenshot.png")
         await browser.close()
         data = open("screenshot.png", "rb").read()

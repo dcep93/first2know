@@ -16,7 +16,7 @@ class Vars:
     client_secret: str = None  # type: ignore
 
 
-async def run_cron():
+async def run_cron() -> None:
     print(f"run_cron {recorded_sha.recorded_sha}")
 
     firebase_wrapper.init()
@@ -33,30 +33,31 @@ async def run_cron():
 
 async def handle(
     url: str,
-    img_data: typing.Optional[str],
+    data: typing.Optional[str],
     key: str,
     user: str,
-    css_selector: typing.Optional[str] = None,
-    e_fetch_params: typing.Optional[str] = None,
-):
-    if e_fetch_params is None:
-        fetch_params = {}
+    selector: typing.Optional[str] = None,
+    e_params: typing.Optional[str] = None,
+) -> None:
+    if e_params is None:
+        params = {}
     else:
-        decrypted = firebase_wrapper.decrypt(e_fetch_params)
-        fetch_params = json.loads(decrypted)
-    screenshot_coroutine = screenshot.screenshot(
-        url,
-        css_selector,
-        fetch_params,
+        decrypted = firebase_wrapper.decrypt(e_params)
+        params = json.loads(decrypted)
+    payload = screenshot.ScreenshotPayload(
+        url=url,
+        selector=selector,
+        params=params,
     )
+    screenshot_coroutine = screenshot.screenshot(payload)
     current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
 
     if current_data is None:
         return
-    if img_data == current_data:
+    if data == current_data:
         return
 
-    firebase_wrapper.write_img_data(key, current_data)
+    firebase_wrapper.write_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
 
 

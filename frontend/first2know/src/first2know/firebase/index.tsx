@@ -6,17 +6,15 @@ export type AllToHandleType = {
 };
 
 export type ToHandleType = {
-  key: string;
-  img_data: string;
+  data: string;
   url: string;
   user: string;
-  css_selector?: string;
+  selector?: string;
   e_fetch_params?: string;
 };
 
-function setToHandle(toHandle: ToHandleType) {
-  const key = toHandle.key;
-  firebase._set(`/to_handle/${key}`, toHandle);
+function pushToHandle(toHandle: ToHandleType) {
+  firebase._push(`/to_handle/`, toHandle);
 }
 
 function deleteToHandle(key: string) {
@@ -55,7 +53,7 @@ export class FirebaseWrapper<T> extends React.Component<{}, T> {
 }
 
 const ex = {
-  setToHandle,
+  pushToHandle,
   deleteToHandle,
 };
 

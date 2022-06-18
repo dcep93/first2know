@@ -2,32 +2,15 @@ import asyncio
 import base64
 import io
 import traceback
-import typing
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
-from pydantic import BaseModel
-
 from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
 from . import screenshot
-
-
-class ScreenshotPayload(BaseModel):
-    url: str
-    timeout: float = 60.0
-    css_selector: typing.Optional[str] = None
-    fetch_params: typing.Dict[str, str] = {}
-
-
-class ProxyPayload(BaseModel):
-    url: str
-    timeout: float = 60.0
-    fetch_params: typing.Dict[str, typing.Any] = {}
-
 
 web_app = FastAPI()
 web_app.add_middleware(
@@ -50,29 +33,36 @@ async def get_encrypt(data: str):
 
 
 @web_app.post("/screenshot")
-async def post_screenshot(payload: ScreenshotPayload):
+async def post_screenshot(payload: screenshot.ScreenshotPayload):
     try:
-        img_data = await asyncio.wait_for(
-            screenshot.screenshot(
-                payload.url,
-                payload.css_selector,
-                payload.fetch_params,
-            ), payload.timeout)
-        img_bytes = base64.b64decode(img_data)
-        return StreamingResponse(io.BytesIO(img_bytes), media_type="image/png")
+        data = await asyncio.wait_for(
+            screenshot.screenshot(payload),
+            payload.timeout,
+        )
+        bytes = base64.b64decode(data)
+        return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
+    except Exception:
+        traceback.print_exc()
+        return None
+
+
+@web_app.post("/screenshot_b64")
+async def post_screenshot_b64(payload: screenshot.ScreenshotPayload):
+    try:
+        data = await asyncio.wait_for(
+            screenshot.screenshot(payload),
+            payload.timeout,
+        )
+        return HTMLResponse(data)
     except Exception:
         traceback.print_exc()
         return None
 
 
 @web_app.post("/proxy")
-async def post_proxy(payload: ProxyPayload):
+async def post_proxy(payload: proxy.ProxyPayload):
     try:
-        resp = await asyncio.wait_for(
-            proxy.proxy(
-                payload.url,
-                payload.fetch_params,
-            ), payload.timeout)
+        resp = await asyncio.wait_for(proxy.proxy(payload), payload.timeout)
         return HTMLResponse(resp)
     except Exception:
         traceback.print_exc()
