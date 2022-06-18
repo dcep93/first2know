@@ -2,7 +2,7 @@ import CreateNew from "./CreateNew";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import ShowCurrent from "./ShowCurrent";
 
-const modalUrl = "https://dcep93-first2know-app.modal.run/";
+const modalUrl = "https://dcep93-first2know-app.modal.run";
 fetch(modalUrl);
 
 class Main extends FirebaseWrapper<AllToHandleType> {
@@ -19,7 +19,7 @@ class Main extends FirebaseWrapper<AllToHandleType> {
     return (
       <>
         <CreateNew modalUrl={modalUrl} />
-        <ShowCurrent allToHandle={this.state} />
+        {false && <ShowCurrent allToHandle={this.state} />}
       </>
     );
   }

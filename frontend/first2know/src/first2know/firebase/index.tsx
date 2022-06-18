@@ -10,8 +10,8 @@ export type ToHandleType = {
   img_data: string;
   url: string;
   user: string;
-  e_fetch_params?: string;
   css_selector?: string;
+  e_fetch_params?: string;
 };
 
 function setToHandle(toHandle: ToHandleType) {

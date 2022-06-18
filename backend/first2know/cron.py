@@ -36,16 +36,19 @@ async def handle(
     img_data: typing.Optional[str],
     key: str,
     user: str,
-    e_fetch_params: typing.Optional[str] = None,
     css_selector: typing.Optional[str] = None,
+    e_fetch_params: typing.Optional[str] = None,
 ):
     if e_fetch_params is None:
         fetch_params = {}
     else:
         decrypted = firebase_wrapper.decrypt(e_fetch_params)
         fetch_params = json.loads(decrypted)
-    screenshot_coroutine = screenshot.screenshot(url, css_selector,
-                                                 fetch_params)
+    screenshot_coroutine = screenshot.screenshot(
+        url,
+        css_selector,
+        fetch_params,
+    )
     current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
 
     if current_data is None:
