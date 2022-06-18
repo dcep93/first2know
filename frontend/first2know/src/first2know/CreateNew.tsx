@@ -1,5 +1,7 @@
 import { createRef, FormEvent, useState } from "react";
 
+import loading from "./loading.gif";
+
 const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
@@ -7,7 +9,7 @@ const fetchParamsRef = createRef<HTMLInputElement>();
 
 // TODO dcep93 submit
 function CreateNew(props: { modalUrl: string }): JSX.Element {
-  const [imgData, update] = useState<string | undefined>(undefined);
+  const [data, update] = useState<string | undefined>(undefined);
   return (
     <div>
       <form onSubmit={(e) => checkScreenShot(e, props.modalUrl, update)}>
@@ -25,7 +27,7 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
-      <img src={imgData}></img>
+      <img src={data} alt=""></img>
     </div>
   );
 }
@@ -34,11 +36,12 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
 function checkScreenShot(
   e: FormEvent,
   modalUrl: string,
-  update: (imgData: string) => void
+  update: (data: string | undefined) => void
 ) {
   e.preventDefault();
-  const data = { url: "https://chess.com" };
+  const data = { url: urlRef.current!.value };
   const body = JSON.stringify(data);
+  update(loading);
   fetch(`${modalUrl}/screenshot_b64`, {
     method: "POST",
     headers: {
@@ -48,7 +51,11 @@ function checkScreenShot(
   })
     .then((resp) => resp.text())
     .then((bytes) => `data:image/png;base64,${bytes}`)
-    .then(update);
+    .then(update)
+    .catch((err) => {
+      update(undefined);
+      throw err;
+    });
 }
 
 export default CreateNew;
