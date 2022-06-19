@@ -3,8 +3,12 @@ FROM debian:11
 WORKDIR /var/www
 
 # TODO dcep93 modal app from image from dockerfile
+
+
 # RUN apt-add-repository non-free
 # RUN apt-add-repository contrib
+
+
 RUN apt-get update
 RUN apt-get install -y software-properties-common
 
@@ -12,6 +16,10 @@ RUN apt install -y python3.9
 RUN apt install -y python3-pip
 
 RUN pip3 install  --upgrade pip
+
+# for playwright
+# solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
+RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >> /etc/apt/sources.list.d/fonts.list
 
 RUN pip3 install playwright==1.20.0
 RUN playwright install-deps chromium
