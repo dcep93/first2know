@@ -5,7 +5,7 @@ import loading from "./loading.gif";
 const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
-const fetchParamsRef = createRef<HTMLInputElement>();
+const unencryptedParamsRef = createRef<HTMLInputElement>();
 
 // TODO dcep93 submit
 function CreateNew(props: { modalUrl: string }): JSX.Element {
@@ -23,7 +23,7 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
           selector: <input ref={cssSelectorRef} type="text" />
         </div>
         <div title={"will be encrypted"}>
-          fetch_params: <input ref={fetchParamsRef} type="text" />
+          unencrypted_params: <input ref={unencryptedParamsRef} type="text" />
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
@@ -38,15 +38,16 @@ function checkScreenShot(
   update: (data: string | undefined) => void
 ) {
   e.preventDefault();
-  var params;
+  var params = null;
   try {
-    params = JSON.parse(fetchParamsRef.current!.value);
+    params = JSON.parse(unencryptedParamsRef.current!.value);
   } catch (err) {
     alert(err);
     return;
   }
   const data = {
     url: urlRef.current!.value,
+    selector: cssSelectorRef.current!.value || null,
     params,
   };
   const body = JSON.stringify(data);

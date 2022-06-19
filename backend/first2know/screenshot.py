@@ -23,7 +23,9 @@ async def screenshot(payload: ScreenshotPayload) -> str:
         page = await browser.new_page()
         await page.set_extra_http_headers(payload.params)
         await page.goto(payload.url)
-        await page.screenshot(path="screenshot.png")
+        locator = page if payload.selector is None else page.locator(
+            payload.selector)
+        await locator.screenshot(path="screenshot.png")
         await browser.close()
         data = open("screenshot.png", "rb").read()
         print("Screenshot of size %d bytes" % len(data))
