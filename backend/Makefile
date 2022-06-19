@@ -12,7 +12,7 @@ dockerrun:
 		--name $(service_name) \
 		$(local_image_tag)
 
-dockerrunserver:
+dockerrunserver: dockerbuild
 	docker run \
 		--rm \
 		-p 8000:8000 \

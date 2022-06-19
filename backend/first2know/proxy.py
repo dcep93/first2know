@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 
 class ProxyPayload(BaseModel):
-    url: str
     timeout: float = 60.0
+    url: str
     selector: typing.Optional[str] = None
     params: typing.Dict[str, typing.Any] = {}
 

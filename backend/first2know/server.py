@@ -35,11 +35,11 @@ async def get_encrypt(data: str):
 @web_app.post("/screenshot")
 async def post_screenshot(payload: screenshot.ScreenshotPayload):
     try:
-        data = await asyncio.wait_for(
+        screenshot_response = await asyncio.wait_for(
             screenshot.screenshot(payload),
             payload.timeout,
         )
-        bytes = base64.b64decode(data)
+        bytes = base64.b64decode(screenshot_response.data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
         err = traceback.format_exc()
@@ -49,11 +49,11 @@ async def post_screenshot(payload: screenshot.ScreenshotPayload):
 @web_app.post("/screenshot_b64")
 async def post_screenshot_b64(payload: screenshot.ScreenshotPayload):
     try:
-        data = await asyncio.wait_for(
+        screenshot_response = await asyncio.wait_for(
             screenshot.screenshot(payload),
             payload.timeout,
         )
-        return HTMLResponse(data)
+        return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)

@@ -12,7 +12,7 @@ image = modal.DebianSlim().run_commands([
     "apt-add-repository contrib",
     "apt-get update",
 ]).run_commands([
-    "pip install playwright==1.20.0",
+    "pip install playwright==1.22",
     "playwright install-deps chromium",
     "playwright install chromium",
 ]).run_commands([

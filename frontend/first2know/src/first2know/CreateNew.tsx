@@ -4,8 +4,9 @@ import loading from "./loading.gif";
 
 const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
-const cssSelectorRef = createRef<HTMLInputElement>();
 const unencryptedParamsRef = createRef<HTMLInputElement>();
+const evaluateRef = createRef<HTMLInputElement>();
+const cssSelectorRef = createRef<HTMLInputElement>();
 
 // TODO dcep93 submit
 function CreateNew(props: { modalUrl: string }): JSX.Element {
@@ -20,7 +21,10 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
           user: <input ref={userRef} type="text" />
         </div>
         <div>
-          selector: <input ref={cssSelectorRef} type="text" />
+          css_selector: <input ref={cssSelectorRef} type="text" />
+        </div>
+        <div>
+          js_evaluate: <input ref={evaluateRef} type="text" />
         </div>
         <div title={"will be encrypted"}>
           unencrypted_params: <input ref={unencryptedParamsRef} type="text" />
@@ -39,16 +43,19 @@ function checkScreenShot(
 ) {
   e.preventDefault();
   var params = null;
-  try {
-    params = JSON.parse(unencryptedParamsRef.current!.value);
-  } catch (err) {
-    alert(err);
-    return;
+  if (unencryptedParamsRef.current!.value !== "") {
+    try {
+      params = JSON.parse(unencryptedParamsRef.current!.value);
+    } catch (err) {
+      alert(err);
+      return;
+    }
   }
   const data = {
     url: urlRef.current!.value,
-    selector: cssSelectorRef.current!.value || null,
     params,
+    evaluate: evaluateRef.current!.value || null,
+    selector: evaluateRef.current!.value || null,
   };
   const body = JSON.stringify(data);
   update(loading);
@@ -63,6 +70,11 @@ function checkScreenShot(
     .then(([resp, text]) => {
       if (!resp.ok) throw Error(text);
       return text;
+    })
+    .then((text) => JSON.parse(text))
+    .then((json) => {
+      console.log(json.evaluate);
+      return json.data;
     })
     .then((bytes) => `data:image/png;base64,${bytes}`)
     .then(update)

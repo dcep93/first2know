@@ -50,10 +50,12 @@ async def handle(
         params=params,
     )
     screenshot_coroutine = screenshot.screenshot(payload)
-    current_data = await asyncio.wait_for(screenshot_coroutine, 60.0)
+    screenshot_response = await asyncio.wait_for(screenshot_coroutine, 60.0)
 
-    if current_data is None:
+    if screenshot_response is None:
         return
+
+    current_data = screenshot_response.data
     if data == current_data:
         return
 
