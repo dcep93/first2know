@@ -43,8 +43,8 @@ async def post_screenshot(payload: screenshot.ScreenshotPayload):
         bytes = base64.b64decode(data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
-        traceback.print_exc()
-        return None
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)
 
 
 @web_app.post("/screenshot_b64")
@@ -56,8 +56,8 @@ async def post_screenshot_b64(payload: screenshot.ScreenshotPayload):
         )
         return HTMLResponse(data)
     except Exception:
-        traceback.print_exc()
-        return None
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)
 
 
 @web_app.post("/proxy")
