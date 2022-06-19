@@ -38,7 +38,17 @@ function checkScreenShot(
   update: (data: string | undefined) => void
 ) {
   e.preventDefault();
-  const data = { url: urlRef.current!.value };
+  var params;
+  try {
+    params = JSON.parse(fetchParamsRef.current!.value);
+  } catch (err) {
+    alert(err);
+    return;
+  }
+  const data = {
+    url: urlRef.current!.value,
+    params,
+  };
   const body = JSON.stringify(data);
   update(loading);
   fetch(`${modalUrl}/screenshot_b64`, {
@@ -48,17 +58,18 @@ function checkScreenShot(
     },
     body,
   })
-    .then((resp) => {
-      if (!resp.ok) {
-        resp.text().then(console.log);
-        update(undefined);
-        throw Error(resp.status.toString());
-      }
-      return resp;
+    .then((resp) => Promise.all([Promise.resolve(resp), resp.text()]))
+    .then(([resp, text]) => {
+      if (!resp.ok) throw Error(text);
+      return text;
     })
-    .then((resp) => resp.text())
     .then((bytes) => `data:image/png;base64,${bytes}`)
-    .then(update);
+    .then(update)
+    .catch((err) => {
+      update(undefined);
+      alert(err);
+      throw err;
+    });
 }
 
 export default CreateNew;

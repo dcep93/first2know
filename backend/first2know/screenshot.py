@@ -21,6 +21,7 @@ async def screenshot(payload: ScreenshotPayload) -> str:
         print("Fetching url", payload.url)
         browser = await p.chromium.launch()
         page = await browser.new_page()
+        await page.set_extra_http_headers(payload.params)
         await page.goto(payload.url)
         await page.screenshot(path="screenshot.png")
         await browser.close()
