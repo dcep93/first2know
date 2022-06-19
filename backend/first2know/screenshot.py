@@ -1,4 +1,7 @@
+import asyncio
 import base64
+import json
+import sys
 import typing
 
 from pydantic import BaseModel
@@ -24,3 +27,15 @@ async def screenshot(payload: ScreenshotPayload) -> str:
         data = open("screenshot.png", "rb").read()
         print("Screenshot of size %d bytes" % len(data))
         return base64.b64encode(data).decode('utf-8')
+
+
+if __name__ == "__main__":
+    args = {i: j for i, j in enumerate(sys.argv)}
+    payload = ScreenshotPayload(
+        url=args[1],
+        timeout=float(args.get(2, 60.0)),
+        selector=args.get(3),
+        params=json.loads(args.get(4, '{}')),
+    )
+    data = asyncio.run(screenshot(payload))
+    print(data)
