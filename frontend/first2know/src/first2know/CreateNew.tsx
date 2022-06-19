@@ -32,7 +32,6 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
   );
 }
 
-// TODO dcep93 loading
 function checkScreenShot(
   e: FormEvent,
   modalUrl: string,
@@ -49,13 +48,17 @@ function checkScreenShot(
     },
     body,
   })
+    .then((resp) => {
+      if (!resp.ok) {
+        resp.text().then(console.log);
+        update(undefined);
+        throw Error(resp.status.toString());
+      }
+      return resp;
+    })
     .then((resp) => resp.text())
     .then((bytes) => `data:image/png;base64,${bytes}`)
-    .then(update)
-    .catch((err) => {
-      update(undefined);
-      throw err;
-    });
+    .then(update);
 }
 
 export default CreateNew;
