@@ -2,7 +2,7 @@ import CreateNew from "./CreateNew";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import ShowCurrent from "./ShowCurrent";
 
-const modalUrl = "https://dcep93-first2know-app.modal.run";
+const modalUrl = "http://127.0.0.1:8000"; // "https://dcep93-first2know-app.modal.run";
 fetch(modalUrl)
   .then((resp) => resp.text())
   .then((text) => console.log(text));
