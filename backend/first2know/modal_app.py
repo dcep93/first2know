@@ -25,8 +25,10 @@ image = modal.DebianSlim().run_commands([
 modal_app = modal.Stub(image=image)
 
 
-@modal_app.function(schedule=modal.Period(days=1),
-                    secret=modal.ref("first2know_s"))
+@modal_app.function(
+    schedule=modal.Period(minutes=1),
+    secret=modal.ref("first2know_s"),
+)
 async def modal_cron():
     init_client_secret()
     await cron.run_cron()
