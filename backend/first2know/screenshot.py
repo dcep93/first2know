@@ -7,7 +7,7 @@ import typing
 from pydantic import BaseModel
 
 
-class ScreenshotPayload(BaseModel):
+class RequestPayload(BaseModel):
     timeout: float = 60.0
     url: str
     params: typing.Dict[str, str] = {}
@@ -15,12 +15,12 @@ class ScreenshotPayload(BaseModel):
     selector: typing.Optional[str] = None
 
 
-class ScreenshotResponsePayload(BaseModel):
+class ResponsePayload(BaseModel):
     data: str
     evaluate: typing.Optional[str]
 
 
-async def screenshot(payload: ScreenshotPayload) -> ScreenshotResponsePayload:
+async def screenshot(payload: RequestPayload) -> ResponsePayload:
     # https://playwright.dev/python/docs/intro
     from playwright.async_api import async_playwright  # type: ignore
 
@@ -30,9 +30,8 @@ async def screenshot(payload: ScreenshotPayload) -> ScreenshotResponsePayload:
         page = await browser.new_page()
         await page.set_extra_http_headers(payload.params)
         await page.goto(payload.url)
-        evaluate = None if payload.evaluate is None else await page.evaulate(
-            payload.evaluate)
-        print([evaluate])
+        evaluate = None if payload.evaluate is None else (await page.evaluate(
+            payload.evaluate))
         locator = page if payload.selector is None else page.locator(
             payload.selector)
         await locator.screenshot(path="screenshot.png")
@@ -40,12 +39,12 @@ async def screenshot(payload: ScreenshotPayload) -> ScreenshotResponsePayload:
         data = open("screenshot.png", "rb").read()
         print("Screenshot of size %d bytes" % len(data))
         data = base64.b64encode(data).decode('utf-8')
-        return ScreenshotResponsePayload(data=data, evaluate=evaluate)
+        return ResponsePayload(data=data, evaluate=evaluate)
 
 
 if __name__ == "__main__":
     args = {i: j for i, j in enumerate(sys.argv)}
-    payload = ScreenshotPayload(
+    payload = RequestPayload(
         url=args[1],
         timeout=float(args.get(2, 60.0)),
         selector=args.get(3),

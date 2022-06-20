@@ -36,5 +36,3 @@ RUN pip3 install fastapi
 EXPOSE 8000
 
 COPY . ./
-
-# CMD uvicorn first2know.server:web_app --host 127.0.0.1 --port 8000

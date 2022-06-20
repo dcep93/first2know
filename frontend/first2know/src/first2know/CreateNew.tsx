@@ -55,7 +55,7 @@ function checkScreenShot(
     url: urlRef.current!.value,
     params,
     evaluate: evaluateRef.current!.value || null,
-    selector: evaluateRef.current!.value || null,
+    selector: cssSelectorRef.current!.value || null,
   };
   const body = JSON.stringify(data);
   update(loading);

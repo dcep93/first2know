@@ -33,7 +33,7 @@ async def get_encrypt(data: str):
 
 
 @web_app.post("/screenshot")
-async def post_screenshot(payload: screenshot.ScreenshotPayload):
+async def post_screenshot(payload: screenshot.RequestPayload):
     try:
         screenshot_response = await asyncio.wait_for(
             screenshot.screenshot(payload),
@@ -47,7 +47,7 @@ async def post_screenshot(payload: screenshot.ScreenshotPayload):
 
 
 @web_app.post("/screenshot_b64")
-async def post_screenshot_b64(payload: screenshot.ScreenshotPayload):
+async def post_screenshot_b64(payload: screenshot.RequestPayload):
     try:
         screenshot_response = await asyncio.wait_for(
             screenshot.screenshot(payload),
