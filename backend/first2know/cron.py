@@ -44,7 +44,7 @@ async def handle(
     else:
         decrypted = firebase_wrapper.decrypt(e_params)
         params = json.loads(decrypted)
-    payload = screenshot.ScreenshotPayload(
+    payload = screenshot.RequestPayload(
         url=url,
         selector=selector,
         params=params,
