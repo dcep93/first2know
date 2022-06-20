@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
+from . import cron
 from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
@@ -65,5 +66,15 @@ async def post_proxy(payload: proxy.ProxyPayload):
         resp = await asyncio.wait_for(proxy.proxy(payload), payload.timeout)
         return HTMLResponse(resp)
     except Exception:
-        traceback.print_exc()
-        return None
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)
+
+
+@web_app.get("/cron")
+async def get_cron():
+    try:
+        await cron.run_cron()
+        return HTMLResponse(None, 200)
+    except Exception:
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)

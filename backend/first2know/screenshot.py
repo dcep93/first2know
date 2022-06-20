@@ -10,7 +10,8 @@ from pydantic import BaseModel
 class RequestPayload(BaseModel):
     timeout: float = 60.0
     url: str
-    params: typing.Dict[str, str] = {}
+    cookie: typing.Optional[str] = None
+    params: typing.Optional[typing.Dict[str, str]] = None
     evaluate: typing.Optional[str] = None
     selector: typing.Optional[str] = None
 
@@ -28,7 +29,10 @@ async def screenshot(payload: RequestPayload) -> ResponsePayload:
         print("Fetching url", payload.url)
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        await page.set_extra_http_headers(payload.params)
+        params = {} if payload.params is None else dict(payload.params)
+        if payload.cookie is not None:
+            params["cookie"] = payload.cookie
+        await page.set_extra_http_headers(params)
         await page.goto(payload.url)
         evaluate = None if payload.evaluate is None else (await page.evaluate(
             payload.evaluate))

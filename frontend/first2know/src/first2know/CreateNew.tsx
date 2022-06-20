@@ -4,7 +4,8 @@ import loading from "./loading.gif";
 
 const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
-const unencryptedParamsRef = createRef<HTMLInputElement>();
+const cookieRef = createRef<HTMLInputElement>();
+const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
@@ -20,14 +21,17 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
         <div>
           user: <input ref={userRef} type="text" />
         </div>
+        <div title={"will be encrypted"}>
+          cookie: <input ref={cookieRef} type="text" />
+        </div>
+        <div>
+          params: <input ref={paramsRef} type="text" />
+        </div>
         <div>
           css_selector: <input ref={cssSelectorRef} type="text" />
         </div>
         <div>
           js_evaluate: <input ref={evaluateRef} type="text" />
-        </div>
-        <div title={"will be encrypted"}>
-          unencrypted_params: <input ref={unencryptedParamsRef} type="text" />
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
@@ -43,9 +47,9 @@ function checkScreenShot(
 ) {
   e.preventDefault();
   var params = null;
-  if (unencryptedParamsRef.current!.value !== "") {
+  if (paramsRef.current!.value !== "") {
     try {
-      params = JSON.parse(unencryptedParamsRef.current!.value);
+      params = JSON.parse(paramsRef.current!.value);
     } catch (err) {
       alert(err);
       return;
@@ -53,6 +57,7 @@ function checkScreenShot(
   }
   const data = {
     url: urlRef.current!.value,
+    cookie: cookieRef.current!.value || null,
     params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
@@ -80,7 +85,8 @@ function checkScreenShot(
     .then(update)
     .catch((err) => {
       update(undefined);
-      alert(err);
+      const e: string = err.toString();
+      alert(e.substring(e.length - 1000));
       throw err;
     });
 }
