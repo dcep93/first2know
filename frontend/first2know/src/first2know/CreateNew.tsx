@@ -7,7 +7,7 @@ const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
-const evaluateRef = createRef<HTMLInputElement>();
+const evaluateRef = createRef<HTMLTextAreaElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
 function CreateNew(props: { modalUrl: string }): JSX.Element {
@@ -34,7 +34,10 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
             css_selector: <input ref={cssSelectorRef} type="text" />
           </div>
           <div>
-            js_evaluate: <input ref={evaluateRef} type="text" />
+            js_evaluate:
+            <div>
+              <textarea ref={evaluateRef} />
+            </div>
           </div>
           <input type="submit" value="Check Screenshot" />
         </form>

@@ -5,6 +5,7 @@ export type AllToHandleType = {
   [key: string]: ToHandleType;
 };
 
+// TODO dcep93 creatorID
 export type ToHandleType = {
   data?: string;
   user: string;
