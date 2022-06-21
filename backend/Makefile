@@ -12,12 +12,17 @@ dockerrun:
 		--name $(service_name) \
 		$(local_image_tag)
 
-dockerrunserver: dockerbuild
+dockerrunserver:
 	docker run \
+		-it \
 		--rm \
 		-p 8000:8000 \
+		--name $(service_name) \
 		$(local_image_tag) \
-		uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
+		make runserver
+
+runserver:
+	uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
 modaldeploy:
 	modal app deploy --name first2know first2know.modal_app:modal_app
