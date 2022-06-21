@@ -58,8 +58,8 @@ async def handle(
     if data == current_data:
         return
 
-    firebase_wrapper.write_data(key, current_data)
     twitter_wrapper.tweet(user, current_data)
+    firebase_wrapper.write_data(key, current_data)
 
 
 if __name__ == "__main__":
