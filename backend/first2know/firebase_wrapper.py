@@ -7,6 +7,8 @@ from pydantic import BaseModel
 
 from cryptography.fernet import Fernet
 
+# TODO dcep93 different SDK
+# /usr/local/Cellar/python@3.9/3.9.6/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown # noqa: E501
 # pip install git+https://github.com/ozgur/python-firebase
 from firebase import firebase
 

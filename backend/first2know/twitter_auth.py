@@ -62,10 +62,11 @@ def _get_refresh_token() -> None:
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    encrypted_refresh_token = firebase_wrapper.encrypt(r["refresh_token"])
     print(r)
-    print("place encrypted_refresh_token in firebase")
-    print(encrypted_refresh_token)
+    refresh_token = r["refresh_token"]
+    firebase_wrapper.init()
+    firebase_wrapper.write_refresh_token(refresh_token)
+    print("updated firebase")
 
 
 def _get_user_access_token() -> None:
