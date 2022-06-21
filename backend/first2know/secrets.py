@@ -15,9 +15,11 @@ class Secrets(BaseModel):
 
 class Vars:
     secrets: Secrets
+    is_remote: bool = True
 
 
 def load_local():
+    Vars.is_remote = False
     client_secret_path = os.path.join(
         os.path.dirname(__file__),
         "secrets.json",

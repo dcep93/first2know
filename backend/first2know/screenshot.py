@@ -6,6 +6,8 @@ import typing
 
 from pydantic import BaseModel
 
+from . import secrets
+
 
 class RequestPayload(BaseModel):
     timeout: float = 60.0
@@ -22,6 +24,9 @@ class ResponsePayload(BaseModel):
 
 
 async def screenshot(payload: RequestPayload) -> ResponsePayload:
+    if not secrets.Vars.is_remote:
+        return None  # type: ignore
+
     # https://playwright.dev/python/docs/intro
     from playwright.async_api import async_playwright  # type: ignore
 

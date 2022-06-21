@@ -2,12 +2,18 @@ import asyncio
 
 import concurrent.futures
 
+from . import secrets
 from . import firebase_wrapper
 from . import recorded_sha
 from . import screenshot
 from . import twitter_wrapper
 
 CONCURRENT_THREADS = 8
+
+
+def main():
+    secrets.load_local()
+    asyncio.run(run_cron())
 
 
 async def run_cron() -> None:
@@ -19,8 +25,12 @@ async def run_cron() -> None:
     firebase_wrapper.write_refresh_token(new_refresh_token)
 
     to_handle = firebase_wrapper.get_to_handle()
-    with concurrent.futures.ThreadPoolExecutor(CONCURRENT_THREADS) as executor:
-        handled = executor.map(handle, to_handle)
+    if secrets.Vars.is_remote:
+        with concurrent.futures.ThreadPoolExecutor(
+                CONCURRENT_THREADS, ) as executor:
+            handled = executor.map(handle, to_handle)
+    else:
+        handled = [handle(i) for i in to_handle]
 
     for h in handled:
         await h
@@ -52,4 +62,4 @@ async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(run_cron())
+    main()

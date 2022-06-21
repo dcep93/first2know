@@ -24,6 +24,9 @@ dockerrunserver:
 runserver:
 	uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
+runcron:
+	python3 -m first2know.cron
+
 modaldeploy:
 	modal app deploy --name first2know first2know.modal_app:modal_app
 
