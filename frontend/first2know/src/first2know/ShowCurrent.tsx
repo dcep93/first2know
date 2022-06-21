@@ -25,13 +25,18 @@ function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
       </div>
       <img
         hidden={hidden}
-        src={`data:image/png;base64,${props.toHandle.data}`}
+        src={
+          props.toHandle.data === undefined
+            ? ""
+            : `data:image/png;base64,${props.toHandle.data}`
+        }
         alt=""
       ></img>
       <div>
         <button
           onClick={() => {
             if (window.confirm(`Do you really want to delete ${props.k}?`))
+              // TODO dcep93 doesnt remove render obj
               firebase.deleteToHandle(props.k);
           }}
         >

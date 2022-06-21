@@ -20,9 +20,6 @@ def update_access_token() -> None:
 
 def tweet(user: str, data: str) -> None:
     print(f"tweeting to {user} {len(data)}")
-    # TODO dcep93 - allow tweets after working
-    if True:
-        return
     message_obj = {"text": f"@{user} {len(data)} {time.time()}"}
     resp = twitter_auth.post_tweet(Vars._access_token, message_obj)
     print(resp)
