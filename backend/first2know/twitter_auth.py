@@ -13,10 +13,11 @@ client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 def main() -> None:
     client_secret_path = os.path.join(
         os.path.dirname(__file__),
-        "client_secret.txt",
+        "secrets.json",
     )
     with open(client_secret_path) as fh:
-        cron.Vars.client_secret = fh.read().strip()
+        j = json.load(fh)
+        cron.Vars.client_secret = j["client_secret"]
     encoded_auth = get_encoded_auth(cron.Vars.client_secret)
 
     scopes = ['tweet.read', 'tweet.write', 'users.read', 'offline.access']
