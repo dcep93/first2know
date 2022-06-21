@@ -4,7 +4,7 @@ import os
 
 import modal
 
-PERIOD_SECONDS = 600
+PERIOD_SECONDS = 60 * 60
 SHUTDOWN_PERIOD_SECONDS = 10
 
 if not modal.is_local():
@@ -18,16 +18,19 @@ image = modal.DebianSlim().run_commands([
     "apt-add-repository contrib",
     "apt-get update",
 ]).run_commands([
-    "pip install playwright==1.22",
-    "playwright install-deps chromium",
-    "playwright install chromium",
-]).run_commands([
     'apt install -y git',
 ]).pip_install([
-    'git+https://github.com/ozgur/python-firebase',
+    'grpcio=1.43.0',
+]).pip_install([
     'cryptography',
     'requests',
     'requests_oauthlib',
+]).run_commands([
+    "pip install playwright==1.22",
+    "playwright install-deps chromium",
+    "playwright install chromium",
+]).pip_install([
+    'git+https://github.com/ozgur/python-firebase',
 ])
 modal_app = modal.Stub(image=image)
 
