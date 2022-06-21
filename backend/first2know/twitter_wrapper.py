@@ -1,6 +1,8 @@
 from . import secrets
 from . import twitter_auth
 
+# TODO dcep93 reorg
+
 
 class Vars:
     _access_token: str
@@ -24,7 +26,7 @@ def tweet(user: str, data: str) -> None:
     message_obj = {
         "text": f"@{user}",
         "media": {
-            "media_ids": [media_id]
+            "media_ids": [str(media_id)]
         },
     }
     resp = twitter_auth.post_tweet(Vars._access_token, message_obj)
