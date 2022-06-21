@@ -34,8 +34,8 @@ async def screenshot(payload: RequestPayload) -> ResponsePayload:
             params["cookie"] = payload.cookie
         await page.set_extra_http_headers(params)
         await page.goto(payload.url)
-        evaluate = None if payload.evaluate is None else (await page.evaluate(
-            payload.evaluate))
+        evaluate = None if payload.evaluate is None else str(
+            await page.evaluate(payload.evaluate))
         locator = page if payload.selector is None else page.locator(
             payload.selector)
         await locator.screenshot(path="screenshot.png")

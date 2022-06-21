@@ -1,4 +1,5 @@
-import { createRef, FormEvent, useState } from "react";
+import { createRef, useState } from "react";
+import firebase from "./firebase";
 
 import loading from "./loading.gif";
 
@@ -9,59 +10,78 @@ const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
-// TODO dcep93 submit
 function CreateNew(props: { modalUrl: string }): JSX.Element {
   const [data, update] = useState<string | undefined>(undefined);
   return (
     <div>
-      <form onSubmit={(e) => checkScreenShot(e, props.modalUrl, update)}>
-        <div>
-          url: <input ref={urlRef} type="text" />
-        </div>
-        <div>
-          user: <input ref={userRef} type="text" />
-        </div>
-        <div title={"will be encrypted"}>
-          cookie: <input ref={cookieRef} type="text" />
-        </div>
-        <div>
-          params: <input ref={paramsRef} type="text" />
-        </div>
-        <div>
-          css_selector: <input ref={cssSelectorRef} type="text" />
-        </div>
-        <div>
-          js_evaluate: <input ref={evaluateRef} type="text" />
-        </div>
-        <input type="submit" value="Check Screenshot" />
-      </form>
+      <div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            checkScreenShot(props.modalUrl, update);
+          }}
+        >
+          <div>
+            url: <input ref={urlRef} type="text" />
+          </div>
+          <div title={"will be encrypted"}>
+            cookie: <input ref={cookieRef} type="text" />
+          </div>
+          <div>
+            params: <input ref={paramsRef} type="text" />
+          </div>
+          <div>
+            css_selector: <input ref={cssSelectorRef} type="text" />
+          </div>
+          <div>
+            js_evaluate: <input ref={evaluateRef} type="text" />
+          </div>
+          <input type="submit" value="Check Screenshot" />
+        </form>
+      </div>
+      <div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitNew(props.modalUrl);
+          }}
+        >
+          <div>
+            user: <input ref={userRef} type="text" />
+          </div>
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
       <img src={data} alt=""></img>
     </div>
   );
 }
 
-function checkScreenShot(
-  e: FormEvent,
-  modalUrl: string,
-  update: (data: string | undefined) => void
-) {
-  e.preventDefault();
+function getData() {
   var params = null;
   if (paramsRef.current!.value !== "") {
-    try {
-      params = JSON.parse(paramsRef.current!.value);
-    } catch (err) {
-      alert(err);
-      return;
-    }
+    params = JSON.parse(paramsRef.current!.value);
   }
-  const data = {
+  return {
     url: urlRef.current!.value,
     cookie: cookieRef.current!.value || null,
     params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
   };
+}
+
+function checkScreenShot(
+  modalUrl: string,
+  update: (data: string | undefined) => void
+) {
+  var data;
+  try {
+    data = getData();
+  } catch (err) {
+    alert(err);
+    return;
+  }
   const body = JSON.stringify(data);
   update(loading);
   fetch(`${modalUrl}/screenshot_b64`, {
@@ -89,6 +109,28 @@ function checkScreenShot(
       alert(e.substring(e.length - 1000));
       throw err;
     });
+}
+
+function submitNew(modalUrl: string) {
+  var data: any;
+  try {
+    data = getData();
+  } catch (err) {
+    alert(err);
+    return;
+  }
+  var p;
+  if (data.cookie !== null) {
+    p = fetch(`${modalUrl}/encrypt/${data.cookie}`)
+      .then((resp) => resp.text())
+      .then((e_cookie) => Object.assign(data, { cookie: null, e_cookie }));
+  } else {
+    p = Promise.resolve(data);
+  }
+  p.then((data) => {
+    Object.assign(data, { user: userRef.current!.value });
+    firebase.pushToHandle(data);
+  });
 }
 
 export default CreateNew;

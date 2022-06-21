@@ -6,11 +6,13 @@ export type AllToHandleType = {
 };
 
 export type ToHandleType = {
-  data: string;
-  url: string;
+  // data?: string;
   user: string;
+  url: string;
+  e_cookie?: string;
+  params?: { [s: string]: any };
+  evaluate?: string;
   selector?: string;
-  e_fetch_params?: string;
 };
 
 function pushToHandle(toHandle: ToHandleType) {

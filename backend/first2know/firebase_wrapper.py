@@ -61,7 +61,7 @@ def decrypt(e: str) -> str:
     return a
 
 
-def _get_cipher_suite() -> typing.Any:
+def _get_cipher_suite() -> Fernet:
     client_secret = cron.Vars.client_secret
     key = base64.b64encode(client_secret.encode('utf-8')[:32])
     return Fernet(key)
