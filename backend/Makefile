@@ -22,8 +22,5 @@ dockerrunserver: dockerbuild
 modaldeploy:
 	modal app deploy --name first2know first2know.modal_app:modal_app
 
-localcron:
-	python3 -c 'from first2know import cron; cron.main()'
-
 list:  # Meta target to list other targets.
 	@$(MAKE) -pRrq -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs

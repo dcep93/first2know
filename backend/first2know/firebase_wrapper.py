@@ -7,15 +7,15 @@ from cryptography.fernet import Fernet
 
 from . import cron
 
-# pip install git+https://github.com/ozgur/python-firebase
-from firebase import firebase
-
 
 class Vars:
-    _app: firebase.FirebaseApplication = None  # type: ignore
+    _app: typing.Any = None  # firebase.FirebaseApplication
 
 
 def init():
+    # pip install git+https://github.com/ozgur/python-firebase
+    from firebase import firebase
+
     Vars._app = firebase.FirebaseApplication(
         'https://first2know-default-rtdb.firebaseio.com/', None)
 

@@ -10,7 +10,8 @@ client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 
 
 def main() -> None:
-    cron.Vars.client_secret = input("client_secret: ")
+    with open("client_secret.txt") as fh:
+        cron.Vars.client_secret = fh.read().strip()
     encoded_auth = get_encoded_auth(cron.Vars.client_secret)
 
     scopes = ['tweet.read', 'tweet.write', 'users.read', 'offline.access']
