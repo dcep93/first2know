@@ -17,6 +17,7 @@ class Vars:
 
 async def run_cron() -> None:
     print(f"run_cron {recorded_sha.recorded_sha}")
+    return
 
     firebase_wrapper.init()
     twitter_wrapper.update_access_token()
@@ -62,5 +63,9 @@ async def handle(
     firebase_wrapper.write_data(key, current_data)
 
 
-if __name__ == "__main__":
+def main():
     asyncio.run(run_cron())
+
+
+if __name__ == "__main__":
+    main()

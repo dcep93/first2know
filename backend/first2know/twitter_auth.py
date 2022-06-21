@@ -110,7 +110,7 @@ def post_tweet(
 
 
 def post_image(access_token: str, data: str) -> int:
-    message_obj = {"media_data": data, "media_category": "tweet_image"}
+    message_obj = {"media": data, "media_category": "tweet_image"}
     resp = requests.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
