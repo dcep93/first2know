@@ -26,7 +26,7 @@ modal_app = modal.Stub(image=image)
 
 
 @modal_app.function(
-    schedule=modal.Period(minutes=1),
+    schedule=modal.Period(days=1),
     secret=modal.ref("first2know_s"),
 )
 async def modal_cron():
