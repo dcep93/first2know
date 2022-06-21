@@ -18,7 +18,6 @@ def update_access_token() -> None:
 
 def tweet(user: str, data: str) -> None:
     print(f"tweeting to {user} {len(data)}")
-    return
     message_obj = {
         "text": f"@{user}",
         "media": data,

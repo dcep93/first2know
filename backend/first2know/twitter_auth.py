@@ -94,6 +94,10 @@ def post_tweet(
     access_token: str,
     message_obj: typing.Dict[str, str],
 ) -> typing.Any:
+    print({
+        'Content-Type': 'application/json',
+        'Authorization': f"Bearer {access_token}",
+    })
     resp = requests.post(
         'https://api.twitter.com/2/tweets',
         headers={
