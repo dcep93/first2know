@@ -9,7 +9,11 @@ class Vars:
 
 def update_access_token() -> None:
     client_secret = cron.Vars.client_secret
-    encoded_auth = twitter_auth.get_encoded_auth(client_secret)
+    # TODO dcep93 client_id
+    encoded_auth = twitter_auth.get_encoded_auth(
+        "Vnpfakg0U0NNZzI1SEV4aUdiZkU6MTpjaQ",
+        client_secret,
+    )
     refresh_token = firebase_wrapper.get_refresh_token()
     rval = twitter_auth.refresh_access_token(encoded_auth, refresh_token)
     Vars._access_token, new_refresh_token = rval

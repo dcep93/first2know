@@ -10,8 +10,6 @@ from requests_oauthlib import OAuth1Session
 from . import cron
 from . import firebase_wrapper
 
-client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
-
 
 def main() -> None:
     client_secret_path = os.path.join(
@@ -21,12 +19,12 @@ def main() -> None:
     with open(client_secret_path) as fh:
         j = json.load(fh)
         cron.Vars.client_secret = j["client_secret"]
-    _get_refresh_token()
+    _get_refresh_token(j)
     _get_user_access_token(j)
 
 
-def _get_refresh_token() -> None:
-    encoded_auth = get_encoded_auth(cron.Vars.client_secret)
+def _get_refresh_token(j: typing.Dict[str, str]) -> None:
+    encoded_auth = get_encoded_auth(j['client_id'], cron.Vars.client_secret)
 
     scopes = [
         'tweet.read',
@@ -36,7 +34,7 @@ def _get_refresh_token() -> None:
     ]
     params = [
         "response_type=code",
-        f"client_id={client_id}",
+        f"client_id={j['client_id']}",
         "redirect_uri=https://first2know.web.app",
         f"scope={'%20'.join(scopes)}",
         "state=state",
@@ -113,7 +111,7 @@ def _get_user_access_token(j: typing.Dict[str, str]) -> None:
     print(resp.text)
 
 
-def get_encoded_auth(client_secret: str) -> str:
+def get_encoded_auth(client_id: str, client_secret: str) -> str:
     raw_auth = f"{client_id}:{client_secret}"
     return base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
 

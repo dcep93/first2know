@@ -12,19 +12,26 @@ with open(client_secret_path) as fh:
 j["encoded"] = base64.b64decode(j["data"])
 
 oauth = OAuth1Session(
-    j["oauth_token"],
-    client_secret=j["oauth_token_secret"],
+    j["api_key"],
+    client_secret=j["api_key_secret"],
+    # j["oauth_token"],
+    # client_secret=j["oauth_token_secret"],
 )
-message_obj = {}
+message_obj = {
+    'oauth_token': j['oauth_token'],
+    'oauth_consumer_key': j['api_key'],
+}
 resp = oauth.post(
     'https://upload.twitter.com/1.1/media/upload.json',
     headers={
+        'oauth_token': j['oauth_token'],
+        'oauth_consumer_key': j['api_key'],
         'Content-Type': 'application/json',
     },
     data=message_obj,
-    files={
-        'file': ('test.jpeg', j["encoded"]),
-    },
+    # files={
+    #     'file': ('test.jpeg', j["encoded"]),
+    # },
 )
 if resp.status_code >= 300:
     print(resp)
