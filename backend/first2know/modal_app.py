@@ -1,7 +1,11 @@
 import json
+import time
 import os
 
 import modal
+
+PERIOD_SECONDS = 600
+SHUTDOWN_PERIOD_SECONDS = 10
 
 if not modal.is_local():
     from . import cron
@@ -28,14 +32,16 @@ image = modal.DebianSlim().run_commands([
 modal_app = modal.Stub(image=image)
 
 
-# TODO dcep93 busy loop
 @modal_app.function(
-    schedule=modal.Period(days=1),
+    schedule=modal.Period(seconds=PERIOD_SECONDS),
     secret=modal.ref("first2know_s"),
 )
+# TODO dcep93 no more async
 async def modal_cron():
     init_client_secret()
-    await cron.run_cron()
+    end = time.time() + (PERIOD_SECONDS) - SHUTDOWN_PERIOD_SECONDS
+    while time.time() < end:
+        await cron.run_cron()
 
 
 # for now, this is both the twitter client secret and the encryption key
