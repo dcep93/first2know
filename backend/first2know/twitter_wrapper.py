@@ -1,5 +1,3 @@
-import time
-
 from . import cron
 from . import firebase_wrapper
 from . import twitter_auth
@@ -20,6 +18,9 @@ def update_access_token() -> None:
 
 def tweet(user: str, data: str) -> None:
     print(f"tweeting to {user} {len(data)}")
-    message_obj = {"text": f"@{user} {len(data)} {time.time()}"}
+    message_obj = {
+        "text": f"@{user}",
+        "media": data,
+    }
     resp = twitter_auth.post_tweet(Vars._access_token, message_obj)
     print(resp)
