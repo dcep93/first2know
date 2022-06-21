@@ -12,23 +12,21 @@ with open(client_secret_path) as fh:
 j["encoded"] = base64.b64decode(j["data"])
 
 oauth = OAuth1Session(
-    j["api_key"],
-    client_secret=j["api_key_secret"],
-    # j["oauth_token"],
-    # client_secret=j["oauth_token_secret"],
+    j["oauth_token"],
+    client_secret=j["oauth_token_secret"],
 )
 message_obj = {
     'oauth_token': j['oauth_token'],
-    'oauth_consumer_key': j['api_key'],
+    'oauth_consumer_key': j['oauth_token_secret'],
 }
 resp = oauth.post(
     'https://upload.twitter.com/1.1/media/upload.json',
     headers={
         'oauth_token': j['oauth_token'],
         'oauth_consumer_key': j['api_key'],
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
     },
-    data=message_obj,
+    # data=message_obj,
     # files={
     #     'file': ('test.jpeg', j["encoded"]),
     # },
