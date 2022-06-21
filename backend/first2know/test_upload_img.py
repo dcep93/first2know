@@ -1,4 +1,4 @@
-import requests
+from requests_oauthlib import OAuth1Session
 import base64
 import os
 import json
@@ -9,18 +9,17 @@ client_secret_path = os.path.join(
 )
 with open(client_secret_path) as fh:
     j = json.load(fh)
-
 j["encoded"] = base64.b64decode(j["data"])
-message_obj = {
-    "media": j["encoded"],
-    # "media_data": j["data"],
-    "media_category": "tweet_image"
-}
-resp = requests.post(
+
+oauth = OAuth1Session(
+    j["oauth_token"],
+    client_secret=j["oauth_token_secret"],
+)
+message_obj = {}
+resp = oauth.post(
     'https://upload.twitter.com/1.1/media/upload.json',
     headers={
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': f"Bearer {j['access_token']}",
+        'Content-Type': 'application/json',
     },
     data=message_obj,
     files={
@@ -29,9 +28,7 @@ resp = requests.post(
 )
 if resp.status_code >= 300:
     print(resp)
-    print('x')
     print(resp.text)
-    print('x')
     raise Exception(resp.text)
 r = json.loads(resp.text)
 print(r)

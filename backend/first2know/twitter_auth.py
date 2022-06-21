@@ -4,6 +4,9 @@ import os
 import requests
 import typing
 
+import urllib.parse
+from requests_oauthlib import OAuth1Session
+
 from . import cron
 from . import firebase_wrapper
 
@@ -18,9 +21,19 @@ def main() -> None:
     with open(client_secret_path) as fh:
         j = json.load(fh)
         cron.Vars.client_secret = j["client_secret"]
+    _get_refresh_token()
+    _get_user_access_token(j)
+
+
+def _get_refresh_token() -> None:
     encoded_auth = get_encoded_auth(cron.Vars.client_secret)
 
-    scopes = ['tweet.read', 'tweet.write', 'users.read', 'offline.access']
+    scopes = [
+        'tweet.read',
+        'tweet.write',
+        'users.read',
+        'offline.access',
+    ]
     params = [
         "response_type=code",
         f"client_id={client_id}",
@@ -31,6 +44,10 @@ def main() -> None:
         "code_challenge_method=plain",
     ]
     url = f"https://twitter.com/i/oauth2/authorize?{'&'.join(params)}"
+    resp = requests.get(url)
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
     print(url)
     auth_code = input("paste code: ")
 
@@ -55,6 +72,45 @@ def main() -> None:
     print(r)
     print("place encrypted_refresh_token in firebase")
     print(encrypted_refresh_token)
+
+
+def _get_user_access_token(j: typing.Dict[str, str]) -> None:
+    params = {
+        "oauth_callback":
+        urllib.parse.quote(
+            'https://first2know.web.app',
+            safe='',
+        ),
+        "x_auth_access_type":
+        "write",
+    }
+    request_token_url = "https://api.twitter.com/oauth/request_token?" + \
+        "&".join([f"{i}={j}" for i, j in params.items()])
+    oauth = OAuth1Session(
+        j["api_key"],
+        client_secret=j["api_key_secret"],
+    )
+    fetch_response = oauth.fetch_request_token(request_token_url)
+    oauth_token = fetch_response["oauth_token"]
+    url = "https://api.twitter.com/oauth/authorize?" \
+        + f"oauth_token={oauth_token}"
+    resp = requests.get(url)
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
+    print(url)
+    oauth_verifier = input("paste oauth_verifier: ")
+    resp = requests.post(
+        'https://api.twitter.com/oauth/access_token',
+        data={
+            "oauth_verifier": oauth_verifier,
+            "oauth_token": oauth_token,
+        },
+    )
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
+    print(resp.text)
 
 
 def get_encoded_auth(client_secret: str) -> str:
