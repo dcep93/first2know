@@ -94,10 +94,6 @@ def post_tweet(
     access_token: str,
     message_obj: typing.Dict[str, str],
 ) -> typing.Any:
-    print({
-        'Content-Type': 'application/json',
-        'Authorization': f"Bearer {access_token}",
-    })
     resp = requests.post(
         'https://api.twitter.com/2/tweets',
         headers={
@@ -111,6 +107,23 @@ def post_tweet(
         raise Exception(resp.text)
     r = json.loads(resp.text)
     return r["data"]
+
+
+def post_image(access_token: str, data: str) -> int:
+    message_obj = {"media_data": data, "media_category": "tweet_image"}
+    resp = requests.post(
+        'https://api.twitter.com/2/tweets',
+        headers={
+            'Content-Type': 'application/json',
+            'Authorization': f"Bearer {access_token}",
+        },
+        data=json.dumps(message_obj),
+    )
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
+    r = json.loads(resp.text)
+    return r["media_id"]
 
 
 if __name__ == "__main__":
