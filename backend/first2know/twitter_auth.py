@@ -113,10 +113,11 @@ def get_encoded_auth(client_id: str, client_secret: str) -> str:
     return base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
 
 
-def refresh_access_token(
-    encoded_auth: str,
-    refresh_token: str,
-) -> typing.Tuple[str, str]:
+def refresh_access_token(refresh_token: str) -> typing.Tuple[str, str]:
+    encoded_auth = get_encoded_auth(
+        secrets.Vars.secrets.client_id,
+        secrets.Vars.secrets.client_secret,
+    )
     resp = requests.post(
         'https://api.twitter.com/2/oauth2/token',
         headers={
