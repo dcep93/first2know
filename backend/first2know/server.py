@@ -7,15 +7,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
-from . import secrets
 from . import cron
 from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
 from . import screenshot
-
-if __name__ == 'first2know.server':
-    secrets.load_local()
 
 web_app = FastAPI()
 web_app.add_middleware(
