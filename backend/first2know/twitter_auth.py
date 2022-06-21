@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 import requests
 import typing
 
@@ -10,7 +11,11 @@ client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 
 
 def main() -> None:
-    with open("client_secret.txt") as fh:
+    client_secret_path = os.path.join(
+        os.path.dirname(__file__),
+        "client_secret.txt",
+    )
+    with open(client_secret_path) as fh:
         cron.Vars.client_secret = fh.read().strip()
     encoded_auth = get_encoded_auth(cron.Vars.client_secret)
 
