@@ -112,7 +112,7 @@ def post_tweet(
 def post_image(access_token: str, data: str) -> int:
     message_obj = {"media_data": data, "media_category": "tweet_image"}
     resp = requests.post(
-        'https://api.twitter.com/2/tweets',
+        'https://upload.twitter.com/1.1/media/upload.json',
         headers={
             'Content-Type': 'application/json',
             'Authorization': f"Bearer {access_token}",
