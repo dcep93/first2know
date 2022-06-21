@@ -4,7 +4,7 @@ from . import twitter_auth
 
 
 class Vars:
-    _access_token = ""
+    _access_token: str = ""
 
 
 def update_access_token() -> None:

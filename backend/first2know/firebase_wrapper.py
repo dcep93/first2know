@@ -32,7 +32,6 @@ def write_data(key: str, data: str) -> None:
 
 
 def write_refresh_token(refresh_token: str) -> None:
-    print("write_refresh_token", refresh_token)
     encrypted = encrypt(refresh_token)
     Vars._app.patch("", {"refresh_token": encrypted})
 
