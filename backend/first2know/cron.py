@@ -1,5 +1,4 @@
 import asyncio
-import typing
 
 import concurrent.futures
 
@@ -11,42 +10,32 @@ from . import twitter_wrapper
 CONCURRENT_THREADS = 8
 
 
-class Vars:
-    client_secret: str = None  # type: ignore
-
-
 async def run_cron() -> None:
     print(f"run_cron {recorded_sha.recorded_sha}")
 
     firebase_wrapper.init()
-    twitter_wrapper.update_access_token()
+    refresh_token = firebase_wrapper.get_refresh_token()
+    new_refresh_token = twitter_wrapper.refresh_access_token(refresh_token)
+    firebase_wrapper.write_refresh_token(new_refresh_token)
 
     to_handle = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(CONCURRENT_THREADS) as executor:
-        handled = executor.map(lambda source: handle(**source), to_handle)
+        handled = executor.map(handle, to_handle)
 
     for h in handled:
         await h
     print("done")
 
 
-async def handle(
-    key: str,
-    user: str,
-    url: str,
-    e_cookie: typing.Optional[str] = None,
-    params: typing.Optional[typing.Dict[str, typing.Any]] = None,
-    evaluate: typing.Optional[str] = None,
-    selector: typing.Optional[str] = None,
-    data: typing.Optional[str] = None,
-) -> None:
-    cookie = None if e_cookie is None else firebase_wrapper.decrypt(e_cookie)
+async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+    cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
+        to_handle.e_cookie)
     payload = screenshot.RequestPayload(
-        url=url,
+        url=to_handle.url,
         cookie=cookie,
-        params=params,
-        evaluate=evaluate,
-        selector=selector,
+        params=to_handle.params,
+        evaluate=to_handle.evaluate,
+        selector=to_handle.selector,
     )
     screenshot_coroutine = screenshot.screenshot(payload)
     screenshot_response = await asyncio.wait_for(screenshot_coroutine, 60.0)
@@ -55,11 +44,11 @@ async def handle(
         return
 
     current_data = screenshot_response.data
-    if data == current_data:
+    if to_handle.data == current_data:
         return
 
-    twitter_wrapper.tweet(user, current_data)
-    firebase_wrapper.write_data(key, current_data)
+    twitter_wrapper.tweet(to_handle.user, current_data)
+    firebase_wrapper.write_data(to_handle.key, current_data)
 
 
 if __name__ == "__main__":

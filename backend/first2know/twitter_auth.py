@@ -1,30 +1,26 @@
 import base64
 import json
-import os
 import requests
 import typing
 
 import urllib.parse
 from requests_oauthlib import OAuth1Session
 
-from . import cron
 from . import firebase_wrapper
+from . import secrets
 
 
 def main() -> None:
-    client_secret_path = os.path.join(
-        os.path.dirname(__file__),
-        "secrets.json",
+    secrets.load_local()
+    _get_refresh_token()
+    _get_user_access_token()
+
+
+def _get_refresh_token() -> None:
+    encoded_auth = get_encoded_auth(
+        secrets.Vars.secrets.client_id,
+        secrets.Vars.secrets.client_secret,
     )
-    with open(client_secret_path) as fh:
-        j = json.load(fh)
-        cron.Vars.client_secret = j["client_secret"]
-    _get_refresh_token(j)
-    _get_user_access_token(j)
-
-
-def _get_refresh_token(j: typing.Dict[str, str]) -> None:
-    encoded_auth = get_encoded_auth(j['client_id'], cron.Vars.client_secret)
 
     scopes = [
         'tweet.read',
@@ -34,7 +30,7 @@ def _get_refresh_token(j: typing.Dict[str, str]) -> None:
     ]
     params = [
         "response_type=code",
-        f"client_id={j['client_id']}",
+        f"client_id={secrets.Vars.secrets.client_id}",
         "redirect_uri=https://first2know.web.app",
         f"scope={'%20'.join(scopes)}",
         "state=state",
@@ -72,7 +68,7 @@ def _get_refresh_token(j: typing.Dict[str, str]) -> None:
     print(encrypted_refresh_token)
 
 
-def _get_user_access_token(j: typing.Dict[str, str]) -> None:
+def _get_user_access_token() -> None:
     params = {
         "oauth_callback":
         urllib.parse.quote(
@@ -85,8 +81,8 @@ def _get_user_access_token(j: typing.Dict[str, str]) -> None:
     request_token_url = "https://api.twitter.com/oauth/request_token?" + \
         "&".join([f"{i}={j}" for i, j in params.items()])
     oauth = OAuth1Session(
-        j["api_key"],
-        client_secret=j["api_key_secret"],
+        secrets.Vars.secrets.api_key,
+        client_secret=secrets.Vars.secrets.api_key_secret,
     )
     fetch_response = oauth.fetch_request_token(request_token_url)
     oauth_token = fetch_response["oauth_token"]
@@ -171,18 +167,24 @@ def post_tweet(
     return r["data"]
 
 
-def post_image(access_token: str, data: str) -> int:
-    message_obj = {"media": data, "media_category": "tweet_image"}
-    resp = requests.post(
+def post_image(data: str) -> int:
+    oauth = OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    )
+    message_obj = {"media_data": data}
+    resp = oauth.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
-            'Content-Type': 'multipart/form-data',
-            'Authorization': f"Bearer {access_token}",
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        data=json.dumps(message_obj),
+        data=message_obj,
     )
     if resp.status_code >= 300:
         print(resp)
+        print(resp.text)
         raise Exception(resp.text)
     r = json.loads(resp.text)
     return r["media_id"]

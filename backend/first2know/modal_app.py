@@ -1,9 +1,11 @@
+import json
 import os
 
 import modal
 
 if not modal.is_local():
     from . import cron
+    from . import secrets
     from . import server
 
 image = modal.DebianSlim().run_commands([
@@ -21,6 +23,7 @@ image = modal.DebianSlim().run_commands([
     'git+https://github.com/ozgur/python-firebase',
     'cryptography',
     'requests',
+    'requests_oauthlib',
 ])
 modal_app = modal.Stub(image=image)
 
@@ -36,8 +39,8 @@ async def modal_cron():
 
 # for now, this is both the twitter client secret and the encryption key
 def init_client_secret():
-    client_secret = os.environ["client_secret"]
-    cron.Vars.client_secret = client_secret
+    raw_json = os.environ["secrets.json"]
+    secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
 
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))

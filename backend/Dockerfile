@@ -32,6 +32,7 @@ RUN pip3 install requests
 
 RUN pip3 install uvicorn
 RUN pip3 install fastapi
+RUN pip3 install requests_oauthlib
 
 EXPOSE 8000
 

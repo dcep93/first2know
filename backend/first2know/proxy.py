@@ -4,14 +4,14 @@ import typing
 from pydantic import BaseModel
 
 
-class ProxyPayload(BaseModel):
+class RequestPayload(BaseModel):
     timeout: float = 60.0
     url: str
     selector: typing.Optional[str] = None
     params: typing.Dict[str, typing.Any] = {}
 
 
-async def proxy(payload: ProxyPayload) -> str:
+async def proxy(payload: RequestPayload) -> str:
     headers = payload.params.get("headers")
     data = payload.params.get("data")
     resp = requests.get(

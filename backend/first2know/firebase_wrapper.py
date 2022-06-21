@@ -3,27 +3,43 @@
 import base64
 import typing
 
+from pydantic import BaseModel
+
 from cryptography.fernet import Fernet
 
-from . import cron
+# pip install git+https://github.com/ozgur/python-firebase
+from firebase import firebase
+
+from . import secrets
 
 
 class Vars:
-    _app: typing.Any = None  # firebase.FirebaseApplication
+    _app: firebase.FirebaseApplication
 
 
 def init():
-    # pip install git+https://github.com/ozgur/python-firebase
-    from firebase import firebase
-
     Vars._app = firebase.FirebaseApplication(
-        'https://first2know-default-rtdb.firebaseio.com/', None)
+        'https://first2know-default-rtdb.firebaseio.com/',
+        None,
+    )
 
 
-def get_to_handle() -> typing.List[typing.Dict[str, str]]:
+class ToHandle(BaseModel):
+    key: str
+    user: str
+    url: str
+    e_cookie: typing.Optional[str] = None
+    params: typing.Optional[typing.Dict[str, typing.Any]] = None
+    evaluate: typing.Optional[str] = None
+    selector: typing.Optional[str] = None
+    data: typing.Optional[str] = None
+
+
+def get_to_handle() -> typing.List[ToHandle]:
     raw = Vars._app.get("to_handle", None)
-    to_handle: typing.Dict[str, typing.Any] = raw  # type: ignore
-    return [{"key": i, **j} for i, j in to_handle.items()]
+    raw_all_to_handle: typing.Dict[str, typing.Any] = raw  # type: ignore
+    all_to_handle = [{"key": i, **j} for i, j in raw_all_to_handle.items()]
+    return [ToHandle(**i) for i in all_to_handle]
 
 
 def write_data(key: str, data: str) -> None:
@@ -60,7 +76,8 @@ def decrypt(e: str) -> str:
     return a
 
 
+# for now, the twitter client secret is also the encryption key
 def _get_cipher_suite() -> Fernet:
-    client_secret = cron.Vars.client_secret
+    client_secret = secrets.Vars.secrets.client_secret
     key = base64.b64encode(client_secret.encode('utf-8')[:32])
     return Fernet(key)

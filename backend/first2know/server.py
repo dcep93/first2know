@@ -7,11 +7,15 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
+from . import secrets
 from . import cron
 from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
 from . import screenshot
+
+if __name__ == 'first2know.server':
+    secrets.load_local()
 
 web_app = FastAPI()
 web_app.add_middleware(
@@ -61,7 +65,7 @@ async def post_screenshot_b64(payload: screenshot.RequestPayload):
 
 
 @web_app.post("/proxy")
-async def post_proxy(payload: proxy.ProxyPayload):
+async def post_proxy(payload: proxy.RequestPayload):
     try:
         resp = await asyncio.wait_for(proxy.proxy(payload), payload.timeout)
         return HTMLResponse(resp)
