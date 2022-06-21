@@ -114,7 +114,7 @@ def post_image(access_token: str, data: str) -> int:
     resp = requests.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             'Authorization': f"Bearer {access_token}",
         },
         data=json.dumps(message_obj),
