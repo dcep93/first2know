@@ -3,14 +3,15 @@ import json
 import requests
 import typing
 
+from . import cron
 from . import firebase_wrapper
 
 client_id = "eExSeGFVNHZxbmpzMEo1Wk5qNUc6MTpjaQ"
 
 
 def main() -> None:
-    client_secret = input("client_secret: ")
-    encoded_auth = get_encoded_auth(client_secret)
+    cron.Vars.client_secret = input("client_secret: ")
+    encoded_auth = get_encoded_auth(cron.Vars.client_secret)
 
     scopes = ['tweet.read', 'tweet.write', 'users.read', 'offline.access']
     params = [
