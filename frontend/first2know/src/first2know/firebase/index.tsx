@@ -6,7 +6,7 @@ export type AllToHandleType = {
 };
 
 export type ToHandleType = {
-  // data?: string;
+  data?: string;
   user: string;
   url: string;
   e_cookie?: string;

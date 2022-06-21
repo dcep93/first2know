@@ -19,5 +19,8 @@ dockerrunserver: dockerbuild
 		$(local_image_tag) \
 		uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
+modaldeploy:
+	modal app deploy --name first2know first2know.modal_app:modal_app
+
 list:  # Meta target to list other targets.
 	@$(MAKE) -pRrq -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs

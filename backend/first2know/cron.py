@@ -1,5 +1,4 @@
 import asyncio
-import json
 import typing
 
 import concurrent.futures
@@ -32,22 +31,22 @@ async def run_cron() -> None:
 
 
 async def handle(
-    url: str,
-    data: typing.Optional[str],
     key: str,
     user: str,
+    url: str,
+    e_cookie: typing.Optional[str] = None,
+    params: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    evaluate: typing.Optional[str] = None,
     selector: typing.Optional[str] = None,
-    e_params: typing.Optional[str] = None,
+    data: typing.Optional[str] = None,
 ) -> None:
-    if e_params is None:
-        params = {}
-    else:
-        decrypted = firebase_wrapper.decrypt(e_params)
-        params = json.loads(decrypted)
+    cookie = None if e_cookie is None else firebase_wrapper.decrypt(e_cookie)
     payload = screenshot.RequestPayload(
         url=url,
-        selector=selector,
+        cookie=cookie,
         params=params,
+        evaluate=evaluate,
+        selector=selector,
     )
     screenshot_coroutine = screenshot.screenshot(payload)
     screenshot_response = await asyncio.wait_for(screenshot_coroutine, 60.0)
