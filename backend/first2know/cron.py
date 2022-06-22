@@ -1,5 +1,3 @@
-import asyncio
-
 import concurrent.futures
 
 from . import secrets
@@ -13,7 +11,7 @@ CONCURRENT_THREADS = 8
 
 def main():
     secrets.load_local()
-    asyncio.run(run_cron())
+    run_cron()
 
 
 def run_cron() -> None:
@@ -28,9 +26,9 @@ def run_cron() -> None:
     if secrets.Vars.is_remote:
         with concurrent.futures.ThreadPoolExecutor(
                 CONCURRENT_THREADS, ) as executor:
-            _handled = executor.map(handle, to_handle)
+            handled = executor.map(handle, to_handle)
     else:
-        _handled = [handle(i) for i in to_handle]
+        handled = [handle(i) for i in to_handle]  # noqa: F841
 
     print("done")
 
