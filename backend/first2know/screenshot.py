@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 
 class RequestPayload(BaseModel):
-    key: typing.Optional[str]
+    key: typing.Optional[str] = None
     url: str
     cookie: typing.Optional[str] = None
     params: typing.Optional[typing.Dict[str, str]] = None

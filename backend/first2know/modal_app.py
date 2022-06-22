@@ -5,7 +5,7 @@ import os
 import modal
 
 PERIOD_SECONDS = 60 * 60
-SHUTDOWN_PERIOD_SECONDS = 10
+GRACE_PERIOD_SECONDS = 60
 
 if not modal.is_local():
     from . import cron
@@ -42,11 +42,16 @@ modal_app = modal.Stub(image=image)
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
+    print("starting modal_cron")
     init()
-    end = time.time() + (PERIOD_SECONDS) - SHUTDOWN_PERIOD_SECONDS
+    end = time.time() + (PERIOD_SECONDS) + GRACE_PERIOD_SECONDS
     while time.time() < end:
         # TODO dcep93 failure resilient
-        cron.run_cron()
+        should_continue = cron.run_cron()
+        if not should_continue:
+            print("exiting modal_cron")
+            return
+    raise Exception("no_exit modal_cron")
 
 
 # for now, this is both the twitter client secret and the encryption key

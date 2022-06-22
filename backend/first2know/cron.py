@@ -9,18 +9,31 @@ from . import twitter_wrapper
 CONCURRENT_THREADS = 8
 
 
+class Vars:
+    _refresh_token: str
+
+
 def main():
     secrets.load_local()
+    init()
     run_cron()
 
 
-def run_cron() -> None:
+def init():
+    firebase_wrapper.init()
+    old_refresh_token = firebase_wrapper.get_refresh_token()
+    Vars._refresh_token = twitter_wrapper.refresh_access_token(
+        old_refresh_token, )
+    firebase_wrapper.write_refresh_token(Vars._refresh_token)
+
+
+def run_cron() -> bool:
     print(f"run_cron {recorded_sha.recorded_sha}")
 
-    firebase_wrapper.init()
-    refresh_token = firebase_wrapper.get_refresh_token()
-    new_refresh_token = twitter_wrapper.refresh_access_token(refresh_token)
-    firebase_wrapper.write_refresh_token(new_refresh_token)
+    # if another process has spun up to take over, exit early
+    new_refresh_token = firebase_wrapper.get_refresh_token()
+    if new_refresh_token != Vars._refresh_token:
+        return False
 
     to_handle = firebase_wrapper.get_to_handle()
     if secrets.Vars.is_remote:
@@ -31,6 +44,7 @@ def run_cron() -> None:
         handled = [handle(i) for i in to_handle]  # noqa: F841
 
     print("done")
+    return True
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
@@ -38,6 +52,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
         to_handle.e_cookie)
     payload = screenshot.RequestPayload(
+        key=to_handle.key,
         url=to_handle.url,
         cookie=cookie,
         params=to_handle.params,
