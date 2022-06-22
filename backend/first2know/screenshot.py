@@ -4,8 +4,6 @@ import typing
 
 from pydantic import BaseModel
 
-from . import secrets
-
 
 class RequestPayload(BaseModel):
     url: str
