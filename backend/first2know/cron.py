@@ -1,3 +1,5 @@
+import os
+
 import concurrent.futures
 
 from . import secrets
@@ -25,6 +27,8 @@ def init():
     Vars._refresh_token = twitter_wrapper.refresh_access_token(
         old_refresh_token, )
     firebase_wrapper.write_refresh_token(Vars._refresh_token)
+    if os.environ.get("INIT_SCREENSHOT"):
+        screenshot.init()
 
 
 def run_cron() -> bool:

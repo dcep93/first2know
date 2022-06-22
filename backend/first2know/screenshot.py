@@ -39,10 +39,13 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
     if Vars.p_f is None:
         return None  # type: ignore
 
-    start = time.time()
-
     p = make_p() if payload.key is None else Vars.ps[payload.key]
+    with p as _p:
+        return _screenshot_helper(_p, payload)
 
+
+def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
+    start = time.time()
     params = {} if payload.params is None else dict(payload.params)
     if payload.cookie is not None:
         params["cookie"] = payload.cookie

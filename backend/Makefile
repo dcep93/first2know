@@ -12,6 +12,14 @@ dockerrun:
 		--name $(service_name) \
 		$(local_image_tag)
 
+dockerruncron:
+	docker run \
+		--rm \
+		--name $(service_name) \
+		--env INIT_SCREENSHOT=true \
+		$(local_image_tag) \
+		make runcron
+
 dockerrunserver:
 	docker run \
 		-it \
