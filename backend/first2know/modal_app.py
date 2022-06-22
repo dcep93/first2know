@@ -20,7 +20,7 @@ image = modal.DebianSlim().run_commands([
 ]).run_commands([
     'apt install -y git',
 ]).pip_install([
-    'grpcio=1.43.0',
+    'grpcio==1.43.0',
 ]).pip_install([
     'cryptography',
     'requests',
