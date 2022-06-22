@@ -44,6 +44,7 @@ modal_app = modal.Stub(image=image)
 def modal_cron():
     print("starting modal_cron")
     init()
+    cron.init()
     end = time.time() + (PERIOD_SECONDS) + GRACE_PERIOD_SECONDS
     while time.time() < end:
         # TODO dcep93 failure resilient
