@@ -21,8 +21,7 @@ class ResponsePayload(BaseModel):
 
 
 def make_p():
-    p = Vars.p_f()
-    return p.__enter__()
+    return Vars.p_f()
 
 
 class Vars:
@@ -41,7 +40,8 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
         return None  # type: ignore
 
     p = make_p() if payload.key is None else Vars.ps[payload.key]
-    return _screenshot_helper(p, payload)
+    with p:
+        return _screenshot_helper(p, payload)
 
 
 def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
@@ -93,7 +93,6 @@ def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
             "closing",
         )
         browser.close()
-        p.__exit__()
     print(
         time.time() - start,
         f"Screenshot of size {len(data)} bytes",
