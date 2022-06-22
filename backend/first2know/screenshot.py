@@ -40,8 +40,8 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
         return None  # type: ignore
 
     p = make_p() if payload.key is None else Vars.ps[payload.key]
-    with p:
-        return _screenshot_helper(p, payload)
+    with p as _p:
+        return _screenshot_helper(_p, payload)
 
 
 def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
