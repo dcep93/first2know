@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 from . import secrets
@@ -41,17 +40,14 @@ def run_cron() -> bool:
 
     to_handle = firebase_wrapper.get_to_handle()
 
-    async def helper(f):
-        await f
-
     print(f"running {len(to_handle)}")
-    asyncio.run(helper(asyncio.gather(*map(handle, to_handle))))
+    [i for i in map(handle, to_handle)]
 
     print("done")
     return True
 
 
-async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     print(to_handle.key)
     cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
         to_handle.e_cookie)
@@ -63,7 +59,7 @@ async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
     )
-    screenshot_response = await screenshot.screenshot(payload)
+    screenshot_response = screenshot.screenshot(payload)
 
     if screenshot_response is None:
         return
