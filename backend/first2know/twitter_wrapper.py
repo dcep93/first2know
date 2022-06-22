@@ -12,6 +12,7 @@ def refresh_access_token(refresh_token: str) -> str:
 
 
 def tweet(user: str, img_data: str) -> None:
+    # TODO dcep93 restore
     return
     if Vars._access_token is None:
         raise Exception("need to refresh_access_token")

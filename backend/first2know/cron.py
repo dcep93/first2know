@@ -41,6 +41,7 @@ def run_cron() -> bool:
         return False
 
     to_handle = firebase_wrapper.get_to_handle()
+    # TODO dcep93 async single thread
     if secrets.Vars.is_remote:
         with concurrent.futures.ThreadPoolExecutor(
                 CONCURRENT_THREADS, ) as executor:
