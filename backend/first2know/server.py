@@ -1,4 +1,3 @@
-import asyncio
 import base64
 import os
 import io
@@ -29,7 +28,7 @@ def main():
     if os.environ.get("LOCAL_DOCKER"):
         print("loading local server")
         secrets.load_local()
-        asyncio.run(screenshot.init())
+        screenshot.init()
 
 
 @web_app.get("/")
