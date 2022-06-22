@@ -20,8 +20,18 @@ class ResponsePayload(BaseModel):
     evaluate: typing.Optional[str]
 
 
+class Vars:
+    _p: typing.Any
+
+
+def init():
+    # https://playwright.dev/python/docs/intro
+    from playwright.sync_api import sync_playwright as p  # type: ignore
+    Vars._p = p()
+
+
 def screenshot(payload: RequestPayload) -> ResponsePayload:
-    if not secrets.Vars.is_remote:
+    if Vars._p is None:
         return None  # type: ignore
 
     start = time.time()
@@ -30,29 +40,29 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
     if payload.cookie is not None:
         params["cookie"] = payload.cookie
 
-    # https://playwright.dev/python/docs/intro
-    from playwright.sync_api import sync_playwright as __p__  # type: ignore
+    print(
+        time.time() - start,
+        "withing",
+    )
 
-    print(time.time() - start, "withing")
-
-    with __p__() as p:
+    with Vars._p as p:  # 1.2 seconds
         print(
             time.time() - start,
             "Fetching url",
             payload.url,
         )
-        browser = p.chromium.launch()
+        browser = p.chromium.launch()  # 3.9 seconds
         print(
             time.time() - start,
             "paging",
         )
-        page = browser.new_page()
+        page = browser.new_page()  # 0.8 seconds
         page.set_extra_http_headers(params)
         print(
             time.time() - start,
             "going to",
         )
-        page.goto(payload.url)
+        page.goto(payload.url)  # 0.3 seconds
         print(
             time.time() - start,
             "evaluating",
@@ -65,7 +75,7 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
             time.time() - start,
             "screenshotting",
         )
-        locator.screenshot(path="screenshot.png")
+        locator.screenshot(path="screenshot.png")  # 0.2 seconds
         print(
             time.time() - start,
             "closing",

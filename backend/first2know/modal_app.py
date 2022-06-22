@@ -9,6 +9,7 @@ SHUTDOWN_PERIOD_SECONDS = 10
 
 if not modal.is_local():
     from . import cron
+    from . import screenshot
     from . import secrets
     from . import server
 
@@ -41,7 +42,7 @@ modal_app = modal.Stub(image=image)
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
-    init_client_secret()
+    init()
     end = time.time() + (PERIOD_SECONDS) - SHUTDOWN_PERIOD_SECONDS
     while time.time() < end:
         # TODO dcep93 failure resilient
@@ -49,12 +50,13 @@ def modal_cron():
 
 
 # for now, this is both the twitter client secret and the encryption key
-def init_client_secret():
+def init():
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
+    screenshot.init()
 
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))
 def app():
-    init_client_secret()
+    init()
     return server.web_app
