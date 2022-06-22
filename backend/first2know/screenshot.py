@@ -46,6 +46,7 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
     return _screenshot_helper(context, payload)
 
 
+# TODO dcep93 make robust
 def _screenshot_helper(
     context,
     payload: RequestPayload,
