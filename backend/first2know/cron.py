@@ -34,6 +34,7 @@ def run_cron() -> None:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+    print(to_handle.key)
     cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
         to_handle.e_cookie)
     payload = screenshot.RequestPayload(
