@@ -40,7 +40,9 @@ async def run_cron() -> bool:
         return False
 
     to_handle = firebase_wrapper.get_to_handle()
-    handled = [await handle(i) for i in to_handle]  # noqa: F841
+    handled = [handle(i) for i in to_handle]  # noqa: F841
+    for i in handled:
+        await i
 
     print("done")
     return True

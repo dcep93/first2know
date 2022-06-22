@@ -39,8 +39,8 @@ async def screenshot(payload: RequestPayload) -> ResponsePayload:
     if Vars.p_f is None:
         return None  # type: ignore
 
-    p = make_p() if payload.key is None else Vars.ps[payload.key]
-    with p as _p:
+    p = await make_p() if payload.key is None else Vars.ps[payload.key]
+    async with p as _p:
         return await _screenshot_helper(_p, payload)
 
 
@@ -56,31 +56,31 @@ async def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
         "Fetching url",
         payload.url,
     )
-    browser = p.chromium.launch()  # 3.9 seconds
+    browser = await p.chromium.launch()  # 3.9 seconds
     print(
         time.time() - start,
         "paging",
     )
-    page = browser.new_page()  # 0.8 seconds
-    page.set_extra_http_headers(params)
+    page = await browser.new_page()  # 0.8 seconds
+    await page.set_extra_http_headers(params)
     print(
         time.time() - start,
         "going to",
     )
-    page.goto(payload.url)  # 0.3 seconds
+    await page.goto(payload.url)  # 0.3 seconds
     print(
         time.time() - start,
         "evaluating",
     )
-    evaluate = None if payload.evaluate is None else str(
-        page.evaluate(payload.evaluate))
+    evaluate = None if payload.evaluate is None else str(await page.evaluate(
+        payload.evaluate))
     locator = page if payload.selector is None else page.locator(
         payload.selector)
     print(
         time.time() - start,
         "screenshotting",
     )
-    locator.screenshot(path="screenshot.png")  # 0.2 seconds
+    await locator.screenshot(path="screenshot.png")  # 0.2 seconds
     data = open("screenshot.png", "rb").read()
     data = base64.b64encode(data).decode('utf-8')
     if payload.key is None:
@@ -88,7 +88,7 @@ async def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
             time.time() - start,
             "closing",
         )
-        browser.close()
+        await browser.close()
     print(
         time.time() - start,
         f"Screenshot of size {len(data)} bytes",
