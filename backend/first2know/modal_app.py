@@ -54,7 +54,6 @@ def modal_cron():
     raise Exception("no_exit modal_cron")
 
 
-# for now, this is both the twitter client secret and the encryption key
 def init():
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
@@ -63,5 +62,6 @@ def init():
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))
 def app():
+    print("starting server")
     init()
     return server.web_app

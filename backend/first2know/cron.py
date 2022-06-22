@@ -1,6 +1,5 @@
+import asyncio
 import os
-
-import concurrent.futures
 
 from . import secrets
 from . import firebase_wrapper
@@ -18,7 +17,7 @@ class Vars:
 def main():
     secrets.load_local()
     init()
-    run_cron()
+    asyncio.run(run_cron())
 
 
 def init():
@@ -32,7 +31,7 @@ def init():
         screenshot.init()
 
 
-def run_cron() -> bool:
+async def run_cron() -> bool:
     print(f"run_cron {recorded_sha.recorded_sha}")
 
     # if another process has spun up to take over, exit early
@@ -41,19 +40,15 @@ def run_cron() -> bool:
         return False
 
     to_handle = firebase_wrapper.get_to_handle()
-    # TODO dcep93 async single thread
-    if secrets.Vars.is_remote:
-        with concurrent.futures.ThreadPoolExecutor(
-                CONCURRENT_THREADS, ) as executor:
-            handled = [i for i in executor.map(handle, to_handle)]
-    else:
-        handled = [handle(i) for i in to_handle]  # noqa: F841
+    handled = [handle(i) for i in to_handle]  # noqa: F841
+    for i in handled:
+        await i
 
     print("done")
     return True
 
 
-def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     print(to_handle.key)
     cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
         to_handle.e_cookie)
@@ -65,7 +60,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
     )
-    screenshot_response = screenshot.screenshot(payload)
+    screenshot_response = await screenshot.screenshot(payload)
 
     if screenshot_response is None:
         return

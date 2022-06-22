@@ -35,16 +35,17 @@ def init():
     Vars.p_f = p
 
 
-def screenshot(payload: RequestPayload) -> ResponsePayload:
+async def screenshot(payload: RequestPayload) -> ResponsePayload:
     if Vars.p_f is None:
         return None  # type: ignore
 
     p = make_p() if payload.key is None else Vars.ps[payload.key]
     with p as _p:
-        return _screenshot_helper(_p, payload)
+        return await _screenshot_helper(_p, payload)
 
 
-def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
+# TODO dcep93 actually async
+async def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
     start = time.time()
     params = {} if payload.params is None else dict(payload.params)
     if payload.cookie is not None:

@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import io
 import traceback
@@ -33,9 +34,9 @@ def get_encrypt(data: str):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: screenshot.RequestPayload):
+async def post_screenshot(payload: screenshot.RequestPayload):
     try:
-        screenshot_response = screenshot.screenshot(payload)
+        screenshot_response = await screenshot.screenshot(payload)
         bytes = base64.b64decode(screenshot_response.data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
@@ -44,9 +45,9 @@ def post_screenshot(payload: screenshot.RequestPayload):
 
 
 @web_app.post("/screenshot_b64")
-def post_screenshot_b64(payload: screenshot.RequestPayload):
+async def post_screenshot_b64(payload: screenshot.RequestPayload):
     try:
-        screenshot_response = screenshot.screenshot(payload)
+        screenshot_response = await screenshot.screenshot(payload)
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()
@@ -66,7 +67,7 @@ def post_proxy(payload: proxy.RequestPayload):
 @web_app.get("/cron")
 def get_cron():
     try:
-        cron.run_cron()
+        asyncio.run(cron.run_cron())
         return HTMLResponse(None, 200)
     except Exception:
         err = traceback.format_exc()
