@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import os
 import io
@@ -23,10 +24,12 @@ web_app.add_middleware(
     allow_headers=["*"],
 )
 
-if os.environ.get("LOCAL_DOCKER"):
-    print("loading local server")
-    secrets.load_local()
-    screenshot.init()
+
+def main():
+    if os.environ.get("LOCAL_DOCKER"):
+        print("loading local server")
+        secrets.load_local()
+        asyncio.run(screenshot.init())
 
 
 @web_app.get("/")
@@ -78,3 +81,7 @@ def get_cron():
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)
+
+
+if __name__ == "first2know.server":
+    main()

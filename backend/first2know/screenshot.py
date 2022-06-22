@@ -29,12 +29,13 @@ class Vars:
     _contexts = collections.defaultdict(make_context)
 
 
-def init():
+async def init():
+    return
     # https://playwright.dev/python/docs/intro
-    from playwright.sync_api import sync_playwright as p  # type: ignore
+    from playwright.async_api import async_playwright as p  # type: ignore
 
-    entered = p().__enter__()
-    Vars._browser = entered.chromium.launch()
+    entered = p().__aenter__()
+    Vars._browser = await entered.chromium.launch()
 
 
 def screenshot(payload: RequestPayload) -> ResponsePayload:
