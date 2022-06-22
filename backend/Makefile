@@ -6,17 +6,11 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 dockerbuild:
 	docker build -t $(local_image_tag) .
 
-dockerrun:
-	docker run \
-		--rm \
-		--name $(service_name) \
-		$(local_image_tag)
-
 dockerruncron:
 	docker run \
 		--rm \
 		--name $(service_name) \
-		--env INIT_SCREENSHOT=true \
+		--env LOCAL_DOCKER=true \
 		$(local_image_tag) \
 		make runcron
 
@@ -26,6 +20,7 @@ dockerrunserver:
 		--rm \
 		-p 8000:8000 \
 		--name $(service_name) \
+		--env LOCAL_DOCKER=true \
 		$(local_image_tag) \
 		make runserver
 

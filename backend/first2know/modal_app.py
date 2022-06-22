@@ -57,11 +57,10 @@ def modal_cron():
 def init():
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
-    screenshot.init()
 
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))
 def app():
     print("starting server")
-    init()
+    screenshot.init()
     return server.web_app
