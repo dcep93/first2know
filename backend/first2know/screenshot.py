@@ -31,7 +31,7 @@ class Vars:
 
 def init():
     # https://playwright.dev/python/docs/intro
-    from playwright.sync_api import sync_playwright as p  # type: ignore
+    from playwright.async_api import async_playwright as p  # type: ignore
     Vars.p_f = p
 
 
