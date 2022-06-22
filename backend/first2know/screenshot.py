@@ -93,6 +93,7 @@ def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
             "closing",
         )
         browser.close()
+        p.__exit__()
     print(
         time.time() - start,
         f"Screenshot of size {len(data)} bytes",
