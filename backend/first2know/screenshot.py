@@ -82,16 +82,17 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
         "screenshotting",
     )
     locator.screenshot(path="screenshot.png")  # 0.2 seconds
-    print(
-        time.time() - start,
-        "closing",
-    )
-    browser.close()
     data = open("screenshot.png", "rb").read()
+    data = base64.b64encode(data).decode('utf-8')
+    if payload.key is None:
+        print(
+            time.time() - start,
+            "closing",
+        )
+        browser.close()
     print(
         time.time() - start,
         f"Screenshot of size {len(data)} bytes",
         f"from {payload.url}",
     )
-    data = base64.b64encode(data).decode('utf-8')
     return ResponsePayload(data=data, evaluate=evaluate)
