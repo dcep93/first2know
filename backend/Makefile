@@ -35,6 +35,9 @@ runserver:
 runcron:
 	python3 -m first2know.cron
 
+regenauth:
+	python3 -m first2know.twitter_auth
+
 modaldeploy:
 	modal app deploy --name first2know first2know.modal_app:modal_app
 
