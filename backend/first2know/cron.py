@@ -16,7 +16,7 @@ def main():
     asyncio.run(run_cron())
 
 
-async def run_cron() -> None:
+def run_cron() -> None:
     print(f"run_cron {recorded_sha.recorded_sha}")
 
     firebase_wrapper.init()
@@ -28,16 +28,14 @@ async def run_cron() -> None:
     if secrets.Vars.is_remote:
         with concurrent.futures.ThreadPoolExecutor(
                 CONCURRENT_THREADS, ) as executor:
-            handled = executor.map(handle, to_handle)
+            _handled = executor.map(handle, to_handle)
     else:
-        handled = [handle(i) for i in to_handle]
+        _handled = [handle(i) for i in to_handle]
 
-    for h in handled:
-        await h
     print("done")
 
 
-async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
         to_handle.e_cookie)
     payload = screenshot.RequestPayload(
@@ -47,8 +45,7 @@ async def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
     )
-    screenshot_coroutine = screenshot.screenshot(payload)
-    screenshot_response = await asyncio.wait_for(screenshot_coroutine, 60.0)
+    screenshot_response = screenshot.screenshot(payload)
 
     if screenshot_response is None:
         return

@@ -39,12 +39,14 @@ modal_app = modal.Stub(image=image)
     schedule=modal.Period(seconds=PERIOD_SECONDS),
     secret=modal.ref("first2know_s"),
 )
-# TODO dcep93 no more async
-async def modal_cron():
+def modal_cron():
+    print("skipping")
+    return
     init_client_secret()
     end = time.time() + (PERIOD_SECONDS) - SHUTDOWN_PERIOD_SECONDS
     while time.time() < end:
-        await cron.run_cron()
+        # TODO dcep93 failure resilient
+        cron.run_cron()
 
 
 # for now, this is both the twitter client secret and the encryption key

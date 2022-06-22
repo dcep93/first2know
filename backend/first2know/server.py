@@ -1,4 +1,3 @@
-import asyncio
 import base64
 import io
 import traceback
@@ -24,22 +23,19 @@ web_app.add_middleware(
 
 
 @web_app.get("/")
-async def get_(request: Request):
+def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
 @web_app.get("/encrypt/{data:str}")
-async def get_encrypt(data: str):
+def get_encrypt(data: str):
     return HTMLResponse(firebase_wrapper.encrypt(data))
 
 
 @web_app.post("/screenshot")
-async def post_screenshot(payload: screenshot.RequestPayload):
+def post_screenshot(payload: screenshot.RequestPayload):
     try:
-        screenshot_response = await asyncio.wait_for(
-            screenshot.screenshot(payload),
-            payload.timeout,
-        )
+        screenshot_response = screenshot.screenshot(payload)
         bytes = base64.b64decode(screenshot_response.data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
@@ -48,12 +44,9 @@ async def post_screenshot(payload: screenshot.RequestPayload):
 
 
 @web_app.post("/screenshot_b64")
-async def post_screenshot_b64(payload: screenshot.RequestPayload):
+def post_screenshot_b64(payload: screenshot.RequestPayload):
     try:
-        screenshot_response = await asyncio.wait_for(
-            screenshot.screenshot(payload),
-            payload.timeout,
-        )
+        screenshot_response = screenshot.screenshot(payload)
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()
@@ -61,9 +54,9 @@ async def post_screenshot_b64(payload: screenshot.RequestPayload):
 
 
 @web_app.post("/proxy")
-async def post_proxy(payload: proxy.RequestPayload):
+def post_proxy(payload: proxy.RequestPayload):
     try:
-        resp = await asyncio.wait_for(proxy.proxy(payload), payload.timeout)
+        resp = proxy.proxy(payload)
         return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
@@ -71,9 +64,9 @@ async def post_proxy(payload: proxy.RequestPayload):
 
 
 @web_app.get("/cron")
-async def get_cron():
+def get_cron():
     try:
-        await cron.run_cron()
+        cron.run_cron()
         return HTMLResponse(None, 200)
     except Exception:
         err = traceback.format_exc()
