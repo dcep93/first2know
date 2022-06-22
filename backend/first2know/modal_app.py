@@ -47,7 +47,6 @@ def modal_cron():
     cron.init()
     end = time.time() + (PERIOD_SECONDS) + GRACE_PERIOD_SECONDS
     while time.time() < end:
-        # TODO dcep93 failure resilient
         should_continue = cron.run_cron()
         if not should_continue:
             print("exiting modal_cron")
