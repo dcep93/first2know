@@ -17,7 +17,7 @@ class Vars:
 def main():
     secrets.load_local()
     init()
-    asyncio.run(run_cron())
+    run_cron()
 
 
 def init():
@@ -31,7 +31,7 @@ def init():
         screenshot.init()
 
 
-async def run_cron() -> bool:
+def run_cron() -> bool:
     print(f"run_cron {recorded_sha.recorded_sha}")
 
     # if another process has spun up to take over, exit early
@@ -40,7 +40,12 @@ async def run_cron() -> bool:
         return False
 
     to_handle = firebase_wrapper.get_to_handle()
-    await asyncio.gather(*map(handle, to_handle))
+
+    async def helper(f):
+        await f
+
+    print(f"running {len(to_handle)}")
+    asyncio.run(helper(asyncio.gather(*map(handle, to_handle))))
 
     print("done")
     return True
