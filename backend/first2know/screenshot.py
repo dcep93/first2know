@@ -21,7 +21,10 @@ class ResponsePayload(BaseModel):
 
 
 def make_p():
-    return Vars.p_f()
+    start = time.time()
+    p = Vars.p_f()
+    print(time.time() - start, "make_p")
+    return p
 
 
 class Vars:
@@ -39,48 +42,59 @@ async def screenshot(payload: RequestPayload) -> ResponsePayload:
     if Vars.p_f is None:
         return None  # type: ignore
 
-    p = await make_p() if payload.key is None else Vars.ps[payload.key]
+    p = make_p() if payload.key is None else Vars.ps[payload.key]
     async with p as _p:
         return await _screenshot_helper(_p, payload)
 
 
-# TODO dcep93 actually async
 async def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
-    start = time.time()
     params = {} if payload.params is None else dict(payload.params)
     if payload.cookie is not None:
         params["cookie"] = payload.cookie
 
     print(
-        time.time() - start,
         "Fetching url",
         payload.url,
     )
-    browser = await p.chromium.launch()  # 3.9 seconds
+    start = time.time()
+    browser = await p.chromium.launch()
     print(
         time.time() - start,
-        "paging",
+        "launched",
     )
-    page = await browser.new_page()  # 0.8 seconds
+    start = time.time()
+    page = await browser.new_page()
+    print(
+        time.time() - start,
+        "new_page",
+    )
+    start = time.time()
     await page.set_extra_http_headers(params)
     print(
         time.time() - start,
-        "going to",
+        "set_headers",
     )
-    await page.goto(payload.url)  # 0.3 seconds
+    start = time.time()
+    await page.goto(payload.url)
     print(
         time.time() - start,
-        "evaluating",
+        "goto",
     )
+    start = time.time()
     evaluate = None if payload.evaluate is None else str(await page.evaluate(
         payload.evaluate))
     locator = page if payload.selector is None else page.locator(
         payload.selector)
     print(
         time.time() - start,
-        "screenshotting",
+        "evaluate_locator",
     )
-    await locator.screenshot(path="screenshot.png")  # 0.2 seconds
+    start = time.time()
+    await locator.screenshot(path="screenshot.png")
+    print(
+        time.time() - start,
+        "screenshot",
+    )
     data = open("screenshot.png", "rb").read()
     data = base64.b64encode(data).decode('utf-8')
     if payload.key is None:
