@@ -52,11 +52,6 @@ def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
 
     print(
         time.time() - start,
-        "withing",
-    )
-
-    print(
-        time.time() - start,
         "Fetching url",
         payload.url,
     )

@@ -22,6 +22,7 @@ def main():
 
 
 def init():
+    print("refreshing access token")
     firebase_wrapper.init()
     old_refresh_token = firebase_wrapper.get_refresh_token()
     Vars._refresh_token = twitter_wrapper.refresh_access_token(
