@@ -21,7 +21,8 @@ class ResponsePayload(BaseModel):
 
 
 def make_p():
-    return Vars.p_f()
+    p = Vars.p_f()
+    return p.__enter__()
 
 
 class Vars:
@@ -40,8 +41,7 @@ def screenshot(payload: RequestPayload) -> ResponsePayload:
         return None  # type: ignore
 
     p = make_p() if payload.key is None else Vars.ps[payload.key]
-    with p as _p:
-        return _screenshot_helper(_p, payload)
+    return _screenshot_helper(p, payload)
 
 
 def _screenshot_helper(p, payload: RequestPayload) -> ResponsePayload:
