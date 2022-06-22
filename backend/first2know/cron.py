@@ -26,7 +26,7 @@ def run_cron() -> None:
     if secrets.Vars.is_remote:
         with concurrent.futures.ThreadPoolExecutor(
                 CONCURRENT_THREADS, ) as executor:
-            handled = executor.map(handle, to_handle)
+            handled = [i for i in executor.map(handle, to_handle)]
     else:
         handled = [handle(i) for i in to_handle]  # noqa: F841
 

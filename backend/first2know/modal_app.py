@@ -35,13 +35,12 @@ image = modal.DebianSlim().run_commands([
 modal_app = modal.Stub(image=image)
 
 
+# TODO dcep93 - would be nice if logs were bucketed
 @modal_app.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
-    print("skipping")
-    return
     init_client_secret()
     end = time.time() + (PERIOD_SECONDS) - SHUTDOWN_PERIOD_SECONDS
     while time.time() < end:
