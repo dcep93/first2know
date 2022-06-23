@@ -123,6 +123,7 @@ function submitNew(modalUrl: string) {
     return;
   }
   var p;
+  // TODO dcep93 hash with url
   if (data.cookie !== null) {
     p = fetch(`${modalUrl}/encrypt/${data.cookie}`)
       .then((resp) => resp.text())
