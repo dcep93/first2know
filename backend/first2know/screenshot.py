@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import collections
+import datetime
 import json
 import time
 import typing
@@ -78,6 +79,7 @@ class _Screenshot:
             f"{time.time() - s:.3f}s",
             payload.key,
             f"{len(binary_data)/1000}kb",
+            datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))
         return ResponsePayload(data=data, evaluate=evaluate)
 
