@@ -47,7 +47,10 @@ def modal_cron():
     init()
     cron.init()
     end = time.time() + (PERIOD_SECONDS) + GRACE_PERIOD_SECONDS
+    loops = 0
     while time.time() < end:
+        loops += 1
+        print(loops, "loops")
         try:
             should_continue = cron.run_cron()
         except Exception as e:
@@ -55,7 +58,7 @@ def modal_cron():
             time.sleep(1)
             continue
         if not should_continue:
-            print("exiting modal_cron")
+            print("exiting modal_cron", loops)
             return
     raise Exception("no_exit modal_cron")
 

@@ -74,12 +74,7 @@ class _Screenshot:
         evaluate = json.dumps(rval.get("evaluate"))
         binary_data = open("screenshot.png", "rb").read()
         data = base64.b64encode(binary_data).decode('utf-8')
-        print(
-            time.time() - s,
-            payload.key,
-            f"Screenshot of size {len(binary_data)} bytes",
-            f"from {payload.url}",
-        )
+        print(f"{time.time() - s:.3f} {payload.key} {len(binary_data)/1000}kb")
         return ResponsePayload(data=data, evaluate=evaluate)
 
 
