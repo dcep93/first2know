@@ -31,6 +31,7 @@ def refresh_access_token():
     rval = twitter_wrapper.refresh_access_token(old_refresh_token)
     _, Vars._refresh_token = rval
     firebase_wrapper.write_refresh_token(Vars._refresh_token)
+    print("access token refreshed")
 
 
 def run_cron() -> bool:
