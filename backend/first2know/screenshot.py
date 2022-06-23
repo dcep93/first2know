@@ -59,6 +59,7 @@ class _Screenshot(abc.ABC):
                                                                    selector)),
             ("screenshot",
              lambda rval: rval["locator"].screenshot(path="screenshot.png")),
+            # TODO dcep93 text to img
         ]
 
     def empty_apply(self, rval, to_apply):
