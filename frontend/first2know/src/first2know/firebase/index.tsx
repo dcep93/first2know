@@ -24,6 +24,10 @@ function deleteToHandle(key: string) {
   firebase._delete(`/to_handle/${key}`);
 }
 
+function updateToHandle(key: string, toHandle: ToHandleType) {
+  firebase._set(`/to_handle/${key}`, toHandle);
+}
+
 export class FirebaseWrapper<T> extends React.Component<{}, T> {
   static firebaseWrapperComponent: FirebaseWrapper<any>;
   componentDidMount() {
@@ -58,6 +62,7 @@ export class FirebaseWrapper<T> extends React.Component<{}, T> {
 const ex = {
   pushToHandle,
   deleteToHandle,
+  updateToHandle,
 };
 
 export default ex;
