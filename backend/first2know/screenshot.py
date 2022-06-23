@@ -114,7 +114,8 @@ class AsyncScreenshot(_Screenshot):
             rval = {}
             for i, c in chain:
                 j = c(rval)
-                rval[i] = j if j is None else await j
+                if j is not None:
+                    rval[i] = await j
             await self.close()
             return rval
 
@@ -149,5 +150,6 @@ class SyncScreenshot(_Screenshot):
         rval = {}
         for i, c in chain:
             j = c(rval)
-            rval[i] = j
+            if j is not None:
+                rval[i] = j
         return rval
