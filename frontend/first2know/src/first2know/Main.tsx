@@ -21,7 +21,7 @@ class Main extends FirebaseWrapper<AllToHandleType> {
     return (
       <>
         <CreateNew modalUrl={modalUrl} />
-        <ShowCurrent allToHandle={this.state} />
+        <ShowCurrent allToHandle={this.state.state} />
       </>
     );
   }

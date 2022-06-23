@@ -28,7 +28,7 @@ function updateToHandle(key: string, toHandle: ToHandleType) {
   firebase._set(`/to_handle/${key}`, toHandle);
 }
 
-export class FirebaseWrapper<T> extends React.Component<{}, T> {
+export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
   static firebaseWrapperComponent: FirebaseWrapper<any>;
   componentDidMount() {
     const oldComponent = FirebaseWrapper.firebaseWrapperComponent;
@@ -41,7 +41,7 @@ export class FirebaseWrapper<T> extends React.Component<{}, T> {
       firebase._connect(this.getFirebasePath(), (state) =>
         FirebaseWrapper.firebaseWrapperComponent.setState.bind(
           FirebaseWrapper.firebaseWrapperComponent
-        )(state)
+        )({ state })
       );
     }
   }
