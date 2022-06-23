@@ -36,7 +36,6 @@ function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
         <button
           onClick={() => {
             if (window.confirm(`Do you really want to delete ${props.k}?`))
-              // TODO akshat doesnt remove render obj
               firebase.deleteToHandle(props.k);
           }}
         >
