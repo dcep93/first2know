@@ -1,5 +1,4 @@
 import json
-import time
 import os
 
 import modal
@@ -36,6 +35,12 @@ image = modal.DebianSlim().run_commands([
 modal_app = modal.Stub(image=image)
 
 
+def init(s: str):
+    print("modal init", s, recorded_sha.recorded_sha)
+    raw_json = os.environ["secrets.json"]
+    secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
+
+
 # TODO akshat - would be nice if logs were bucketed
 # TODO akshat Task failed with exception:
 # task exited with failure, status = exit status: 101
@@ -45,30 +50,8 @@ modal_app = modal.Stub(image=image)
 )
 def modal_cron():
     init("cron")
-    cron.init()
-    start = time.time()
-    end = start + (PERIOD_SECONDS) + GRACE_PERIOD_SECONDS
-    loops = 0
-    while time.time() < end:
-        loops_per = loops / (time.time() - start)
-        loops += 1
-        print(loops, "loops", f"{loops_per:.2f}/s")
-        try:
-            should_continue = cron.run_cron()
-        except Exception as e:
-            print(e)
-            time.sleep(1)
-            continue
-        if not should_continue:
-            print("exiting modal_cron", loops)
-            return
+    cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
     raise Exception("no_exit modal_cron")
-
-
-def init(s: str):
-    print("modal init", s, recorded_sha.recorded_sha)
-    raw_json = os.environ["secrets.json"]
-    secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
 
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))

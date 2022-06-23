@@ -6,6 +6,8 @@ import json
 import time
 import typing
 
+import abc
+
 from pydantic import BaseModel
 
 
@@ -24,10 +26,12 @@ class ResponsePayload(BaseModel):
 
 
 # https://playwright.dev/python/docs/intro
-class _Screenshot:
+class _Screenshot(abc.ABC):
+    @abc.abstractmethod
     def get_context(self, key: typing.Optional[str]):
         raise Exception("should be overridden")
 
+    @abc.abstractmethod
     def execute_chain(
         self,
         params: typing.Dict[str, str],
@@ -77,7 +81,7 @@ class _Screenshot:
         data = base64.b64encode(binary_data).decode('utf-8')
         print(' '.join([
             f"{time.time() - s:.3f}s",
-            payload.key,
+            str(payload.key),
             f"{len(binary_data)/1000}kb",
             datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))

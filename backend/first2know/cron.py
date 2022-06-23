@@ -1,3 +1,4 @@
+import time
 import typing
 
 from . import firebase_wrapper
@@ -21,6 +22,26 @@ def init():
     refresh_access_token()
     Vars._screenshot = screenshot.SyncScreenshot()
     Vars._did_init = True
+
+
+def loop(period_seconds: int, grace_period_seconds: int):
+    init()
+    start = time.time()
+    end = start + period_seconds + grace_period_seconds
+    loops = 0
+    while time.time() < end:
+        loops_per = loops / (time.time() - start)
+        loops += 1
+        print(loops, "loops", f"{loops_per:.2f}/s")
+        try:
+            should_continue = run_cron()
+        except Exception as e:
+            print(e)
+            time.sleep(1)
+            continue
+        if not should_continue:
+            print("exiting cron", loops)
+            return
 
 
 # refresh token is not actually used to auth anymore
