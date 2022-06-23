@@ -67,6 +67,7 @@ def run_cron() -> bool:
 
     to_handle = firebase_wrapper.get_to_handle()
 
+    # TODO akshat async
     [i for i in map(handle, to_handle)]
 
     return True
