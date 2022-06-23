@@ -87,6 +87,7 @@ class _Screenshot:
         return ResponsePayload(data=data, evaluate=evaluate)
 
 
+# TODO dcep93 make faster
 class AsyncScreenshot(_Screenshot):
     async def get_context(self, key: typing.Optional[str]):
         from playwright.async_api import async_playwright as p  # type: ignore
