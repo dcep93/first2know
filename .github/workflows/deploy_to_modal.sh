@@ -12,7 +12,7 @@ pip install "$MODAL_PIP_URL"
 modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 
 cd ../../backend
-# TODO dcep93 set secret
+# TODO akshat set secret
 echo modal secret set "first2know" "client_secret" "$TWITTER_KEY"
 
 make modaldeploy || make modaldeploy || make modaldeploy

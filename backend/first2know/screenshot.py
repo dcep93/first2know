@@ -45,6 +45,7 @@ class _Screenshot:
             ("set_extra_http_headers",
              lambda rval: rval["page"].set_extra_http_headers(params)),
             ("goto", lambda rval: rval["page"].goto(payload.url)),
+            # TODO dcep93 evaluate based on previous evaluation
             ("evaluate", lambda rval: None if payload.evaluate is None else
              rval["page"].evaluate(payload.evaluate)),
             ("locator",
