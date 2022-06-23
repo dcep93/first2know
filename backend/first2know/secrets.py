@@ -18,6 +18,7 @@ class Vars:
     is_remote: bool = True
 
 
+# TODO dcep93 when to run
 def load_local():
     Vars.is_remote = False
     client_secret_path = os.path.join(

@@ -4,7 +4,7 @@ import requests
 import urllib.parse
 from requests_oauthlib import OAuth1Session
 
-from . import twitter_requester
+from . import twitter_wrapper
 from . import firebase_wrapper
 from . import secrets
 
@@ -15,7 +15,7 @@ def main() -> None:
 
 
 def _get_refresh_token() -> None:
-    encoded_auth = twitter_requester.get_encoded_auth(
+    encoded_auth = twitter_wrapper.get_encoded_auth(
         secrets.Vars.secrets.client_id,
         secrets.Vars.secrets.client_secret,
     )
