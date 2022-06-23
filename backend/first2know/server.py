@@ -1,5 +1,4 @@
 import base64
-import os
 import io
 import traceback
 
@@ -11,7 +10,6 @@ from . import cron
 from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
-from . import secrets
 from . import screenshot
 
 web_app = FastAPI()
@@ -22,12 +20,6 @@ web_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def main():
-    if os.environ.get("LOCAL_DOCKER"):
-        print("loading local server")
-        secrets.load_local()
 
 
 @web_app.get("/")
@@ -90,7 +82,3 @@ def get_cron():
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)
-
-
-if __name__ == "first2know.server":
-    main()

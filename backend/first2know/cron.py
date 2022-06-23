@@ -6,8 +6,6 @@ from . import recorded_sha
 from . import screenshot
 from . import twitter_wrapper
 
-CONCURRENT_THREADS = 8
-
 
 class Vars:
     _refresh_token: str

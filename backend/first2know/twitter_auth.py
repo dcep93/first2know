@@ -10,7 +10,6 @@ from . import secrets
 
 
 def main() -> None:
-    secrets.load_local()
     _get_refresh_token()
     _get_user_access_token()
 

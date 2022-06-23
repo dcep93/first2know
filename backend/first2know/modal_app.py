@@ -61,4 +61,5 @@ def init():
 @modal_app.asgi(secret=modal.ref("first2know_s"))
 def app():
     print("starting server")
+    init()
     return server.web_app
