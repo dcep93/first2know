@@ -89,8 +89,6 @@ def post_image(data: str) -> int:
     )
     if resp.status_code >= 300:
         print(resp)
-        print(resp.text)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    print(r)
     return r["media_id"]

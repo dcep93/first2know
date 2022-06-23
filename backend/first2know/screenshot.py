@@ -62,12 +62,6 @@ class _Screenshot:
 
     # TODO dcep93 make robust
     def screenshot(self, payload: RequestPayload) -> ResponsePayload:
-        print(
-            "Fetching url",
-            payload.url,
-            payload.key,
-        )
-
         s = time.time()
 
         params = {} if payload.params is None else dict(payload.params)
@@ -81,6 +75,7 @@ class _Screenshot:
         data = base64.b64encode(binary_data).decode('utf-8')
         print(
             time.time() - s,
+            payload.key,
             f"Screenshot of size {len(binary_data)} bytes",
             f"from {payload.url}",
         )

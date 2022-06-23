@@ -1,7 +1,6 @@
 import typing
 
 from . import firebase_wrapper
-from . import recorded_sha
 from . import screenshot
 from . import twitter_wrapper
 
@@ -38,8 +37,6 @@ def run_cron() -> bool:
     if not Vars._did_init:
         raise Exception("need to init")
 
-    print(f"run_cron {recorded_sha.recorded_sha}")
-
     # if another process has spun up to take over, exit early
     new_refresh_token = firebase_wrapper.get_refresh_token()
     if new_refresh_token != Vars._refresh_token:
@@ -47,15 +44,12 @@ def run_cron() -> bool:
 
     to_handle = firebase_wrapper.get_to_handle()
 
-    print(f"running {len(to_handle)}")
     [i for i in map(handle, to_handle)]
 
-    print("done")
     return True
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    print(to_handle.key)
     cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
         to_handle.e_cookie)
     payload = screenshot.RequestPayload(
@@ -80,7 +74,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
 
 
 def tweet(user: str, img_data: str) -> None:
-    print(f"tweeting to {user} {len(img_data)}")
     media_id = twitter_wrapper.post_image(img_data)
     message_obj = {
         "text": f"@{user}",

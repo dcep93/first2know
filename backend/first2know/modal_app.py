@@ -9,6 +9,7 @@ GRACE_PERIOD_SECONDS = 60
 
 if not modal.is_local():
     from . import cron
+    from . import recorded_sha
     from . import secrets
     from . import server
 
@@ -43,12 +44,16 @@ modal_app = modal.Stub(image=image)
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
-    print("starting modal_cron")
     init()
     cron.init()
     end = time.time() + (PERIOD_SECONDS) + GRACE_PERIOD_SECONDS
     while time.time() < end:
-        should_continue = cron.run_cron()
+        try:
+            should_continue = cron.run_cron()
+        except Exception as e:
+            print(e)
+            time.sleep(1)
+            continue
         if not should_continue:
             print("exiting modal_cron")
             return
@@ -56,12 +61,12 @@ def modal_cron():
 
 
 def init():
+    print("modal init", recorded_sha.recorded_sha)
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
 
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))
 def app():
-    print("starting server")
     init()
     return server.web_app
