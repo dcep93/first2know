@@ -46,20 +46,22 @@ class _Screenshot:
             lambda rval: {
                 "goto": rval["page"].goto(payload.url)
             },
-            lambda rval: {
-                "evaluate":
-                None if payload.evaluate is None else rval["page"].evaluate(
-                    payload.evaluate)
+            lambda rval: {} if payload.evaluate is None else {
+                "evaluate": rval["page"].evaluate(payload.evaluate)
             },
-            lambda rval: {
-                "locator":
-                rval["page"] if payload.selector is None else rval["page"].
-                locator(payload.selector)
+            lambda rval: self.empty_apply(rval, {"locator": rval["page"]})
+            if payload.selector is None else {
+                "locator": rval["page"].locator(payload.selector)
             },
             lambda rval: {
                 "screenshot": rval["locator"].screenshot(path="screenshot.png")
             },
         ]
+
+    def empty_apply(self, rval, to_apply):
+        for i, j in to_apply.items():
+            rval[i] = j
+        return {}
 
     def execute_chain(
         self, statements: typing.List[typing.Callable]
@@ -83,7 +85,7 @@ class _Screenshot:
 
         rval = self.execute_chain(self.get_chain(params, payload))
 
-        evaluate = json.dumps(rval["evaluate"])
+        evaluate = json.dumps(rval.get("evaluate"))
         binary_data = open("screenshot.png", "rb").read()
         data = base64.b64encode(binary_data).decode('utf-8')
         print(
@@ -110,7 +112,10 @@ class AsyncScreenshot(_Screenshot):
             for s in statements:
                 t = s(rval)
                 for i, j in t.items():
-                    rval[i] = j if j is None else await j
+                    s = time.time()
+                    print(i)
+                    rval[i] = await j
+                    print(time.time() - s, i)
             return rval
 
         return asyncio.run(helper())
@@ -122,7 +127,9 @@ class AsyncScreenshot(_Screenshot):
     ):
         super_chain = super().get_chain(params, payload)
         return super_chain + [
-            lambda rval: rval["context"].close(),
+            lambda rval: {
+                "context": rval["context"].close()
+            },
         ]
 
 
