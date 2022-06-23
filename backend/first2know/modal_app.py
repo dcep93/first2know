@@ -50,8 +50,9 @@ def init(s: str):
 )
 def modal_cron():
     init("cron")
-    cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
-    raise Exception("no_exit modal_cron")
+    was_successful = cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
+    if not was_successful:
+        raise Exception("no_exit modal_cron")
 
 
 @modal_app.asgi(secret=modal.ref("first2know_s"))

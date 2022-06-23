@@ -24,7 +24,7 @@ def init():
     Vars._did_init = True
 
 
-def loop(period_seconds: int, grace_period_seconds: int):
+def loop(period_seconds: int, grace_period_seconds: int) -> bool:
     init()
     start = time.time()
     end = start + period_seconds + grace_period_seconds
@@ -41,7 +41,8 @@ def loop(period_seconds: int, grace_period_seconds: int):
             continue
         if not should_continue:
             print("exiting cron", loops)
-            return
+            return True
+    return False
 
 
 # refresh token is not actually used to auth anymore
