@@ -9,7 +9,6 @@ GRACE_PERIOD_SECONDS = 60
 
 if not modal.is_local():
     from . import cron
-    from . import screenshot
     from . import secrets
     from . import server
 
@@ -62,5 +61,4 @@ def init():
 @modal_app.asgi(secret=modal.ref("first2know_s"))
 def app():
     print("starting server")
-    screenshot.init()
     return server.web_app

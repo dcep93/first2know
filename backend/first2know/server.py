@@ -28,7 +28,6 @@ def main():
     if os.environ.get("LOCAL_DOCKER"):
         print("loading local server")
         secrets.load_local()
-        screenshot.init()
 
 
 @web_app.get("/")
@@ -41,10 +40,10 @@ def get_encrypt(data: str):
     return HTMLResponse(firebase_wrapper.encrypt(data))
 
 
-@web_app.post("/screenshot")
-def post_screenshot(payload: screenshot.RequestPayload):
+@web_app.post("/screenshot_img")
+def post_screenshot_img(payload: screenshot.RequestPayload):
     try:
-        screenshot_response = screenshot.screenshot(payload)
+        screenshot_response = screenshot.AsyncScreenshot().screenshot(payload)
         bytes = base64.b64decode(screenshot_response.data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
@@ -52,10 +51,21 @@ def post_screenshot(payload: screenshot.RequestPayload):
         return HTMLResponse(err, 500)
 
 
-@web_app.post("/screenshot_b64")
-def post_screenshot_b64(payload: screenshot.RequestPayload):
+@web_app.post("/screenshot_len")
+def post_screenshot_len(payload: screenshot.RequestPayload):
     try:
-        screenshot_response = screenshot.screenshot(payload)
+        screenshot_response = screenshot.AsyncScreenshot().screenshot(payload)
+        screenshot_response.data = str(len(screenshot_response.data))
+        return HTMLResponse(screenshot_response.json())
+    except Exception:
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)
+
+
+@web_app.post("/screenshot")
+def post_screenshot(payload: screenshot.RequestPayload):
+    try:
+        screenshot_response = screenshot.AsyncScreenshot().screenshot(payload)
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()

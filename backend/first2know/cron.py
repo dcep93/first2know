@@ -1,3 +1,5 @@
+import typing
+
 from . import secrets
 from . import firebase_wrapper
 from . import recorded_sha
@@ -9,6 +11,7 @@ CONCURRENT_THREADS = 8
 
 class Vars:
     _refresh_token: str
+    _screenshot: typing.Any
 
 
 def main():
@@ -24,7 +27,7 @@ def init():
     Vars._refresh_token = twitter_wrapper.refresh_access_token(
         old_refresh_token, )
     firebase_wrapper.write_refresh_token(Vars._refresh_token)
-    screenshot.init()
+    Vars._screenshot = screenshot.SyncScreenshot()
 
 
 def run_cron() -> bool:
@@ -56,7 +59,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
     )
-    screenshot_response = screenshot.screenshot(payload)
+    screenshot_response = Vars._screenshot.screenshot(payload)
 
     if screenshot_response is None:
         return

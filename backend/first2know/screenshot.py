@@ -1,5 +1,7 @@
+import asyncio
 import base64
 import collections
+import json
 import time
 import typing
 
@@ -20,61 +22,135 @@ class ResponsePayload(BaseModel):
     evaluate: typing.Optional[str]
 
 
-def make_context():
-    return Vars._browser.new_context()
+# https://playwright.dev/python/docs/intro
+class _Screenshot:
+    def get_context(self, key: typing.Optional[str]):
+        pass
+
+    def get_chain(
+        self,
+        params: typing.Dict[str, str],
+        payload: RequestPayload,
+    ):
+        return [
+            lambda rval: {
+                "context": self.get_context(payload.key)
+            },
+            lambda rval: {
+                "page": rval["context"].new_page()
+            },
+            lambda rval: {
+                "set_extra_http_headers":
+                rval["page"].set_extra_http_headers(params)
+            },
+            lambda rval: {
+                "goto": rval["page"].goto(payload.url)
+            },
+            lambda rval: {
+                "evaluate":
+                None if payload.evaluate is None else rval["page"].evaluate(
+                    payload.evaluate)
+            },
+            lambda rval: {
+                "locator":
+                rval["page"] if payload.selector is None else rval["page"].
+                locator(payload.selector)
+            },
+            lambda rval: {
+                "screenshot": rval["locator"].screenshot(path="screenshot.png")
+            },
+        ]
+
+    def execute_chain(
+        self, statements: typing.List[typing.Callable]
+    ) -> typing.Dict[str, typing.Any]:
+        return {}
+
+    # TODO dcep93 allow for local
+    # TODO dcep93 make robust
+    def screenshot(self, payload: RequestPayload) -> ResponsePayload:
+        print(
+            "Fetching url",
+            payload.url,
+            payload.key,
+        )
+
+        s = time.time()
+
+        params = {} if payload.params is None else dict(payload.params)
+        if payload.cookie is not None:
+            params["cookie"] = payload.cookie
+
+        rval = self.execute_chain(self.get_chain(params, payload))
+
+        evaluate = json.dumps(rval["evaluate"])
+        binary_data = open("screenshot.png", "rb").read()
+        data = base64.b64encode(binary_data).decode('utf-8')
+        print(
+            time.time() - s,
+            f"Screenshot of size {len(binary_data)} bytes",
+            f"from {payload.url}",
+        )
+        return ResponsePayload(data=data, evaluate=evaluate)
 
 
-class Vars:
-    _browser: typing.Any = None
-    _contexts = collections.defaultdict(make_context)
+class AsyncScreenshot(_Screenshot):
+    async def get_context(self, key: typing.Optional[str]):
+        from playwright.async_api import async_playwright as p  # type: ignore
+
+        entered = await p().__aenter__()
+        browser = await entered.chromium.launch()
+        return await browser.new_context()
+
+    def execute_chain(
+        self, statements: typing.List[typing.Callable]
+    ) -> typing.Dict[str, typing.Any]:
+        async def helper():
+            rval = {}
+            for s in statements:
+                t = s(rval)
+                for i, j in t.items():
+                    rval[i] = j if j is None else await j
+            return rval
+
+        return asyncio.run(helper())
+
+    def get_chain(
+        self,
+        params: typing.Dict[str, str],
+        payload: RequestPayload,
+    ):
+        super_chain = super().get_chain(params, payload)
+        return super_chain + [
+            lambda rval: rval["context"].close(),
+        ]
 
 
-def init():
-    # https://playwright.dev/python/docs/intro
-    from playwright.sync_api import sync_playwright as p  # type: ignore
+class SyncScreenshot(_Screenshot):
+    browser: typing.Any
+    contexts: collections.defaultdict
 
-    entered = p().__enter__()
-    Vars._browser = entered.chromium.launch()
+    def __init__(self):
+        super().__init__()
+        from playwright.sync_api import sync_playwright as p  # type: ignore
 
+        entered = p().__enter__()
+        self.browser = entered.chromium.launch()
+        self.contexts = collections.defaultdict(self._make_context)
 
-def screenshot(payload: RequestPayload) -> ResponsePayload:
-    if Vars._browser is None:
-        return None  # type: ignore
+    def _make_context(self):
+        return self.browser.new_context()
 
-    context = make_context() if payload.key is None else Vars._contexts[
-        payload.key]
-    return _screenshot_helper(context, payload)
+    def get_context(self, key: str):
+        return self.contexts[key]
 
+    def execute_chain(
+        self, statements: typing.List[typing.Callable]
+    ) -> typing.Dict[str, typing.Any]:
 
-# TODO dcep93 make robust
-def _screenshot_helper(
-    context,
-    payload: RequestPayload,
-) -> ResponsePayload:
-    s = time.time()
-    params = {} if payload.params is None else dict(payload.params)
-    if payload.cookie is not None:
-        params["cookie"] = payload.cookie
-
-    print(
-        "Fetching url",
-        payload.url,
-    )
-    page = context.new_page()
-    page.set_extra_http_headers(params)
-    page.goto(payload.url)
-    evaluate = None if payload.evaluate is None else str(
-        page.evaluate(payload.evaluate))
-    locator = page if payload.selector is None else page.locator(
-        payload.selector)
-    locator.screenshot(path="screenshot.png")
-    data = open("screenshot.png", "rb").read()
-    data = base64.b64encode(data).decode('utf-8')
-    if payload.key is None:
-        context.close()
-    print(
-        time.time() - s,
-        f"Screenshot of size {len(data)} bytes",
-        f"from {payload.url}",
-    )
-    return ResponsePayload(data=data, evaluate=evaluate)
+        rval = {}
+        for s in statements:
+            t = s(rval)
+            for i, j in t.items():
+                rval[i] = j
+        return rval

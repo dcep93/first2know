@@ -87,7 +87,7 @@ function checkScreenShot(
   }
   const body = JSON.stringify(data);
   update(loading);
-  fetch(`${modalUrl}/screenshot_b64`, {
+  fetch(`${modalUrl}/screenshot`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
