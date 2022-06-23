@@ -8,7 +8,6 @@ from . import twitter_wrapper
 
 class Vars:
     _did_init: bool = False
-    _access_token: str
     _refresh_token: str
     _screenshot: typing.Any
 
@@ -19,14 +18,20 @@ def main():
 
 
 def init():
-    print("refreshing access token")
     firebase_wrapper.init()
-    old_refresh_token = firebase_wrapper.get_refresh_token()
-    rval = twitter_wrapper.refresh_access_token(old_refresh_token)
-    Vars._access_token, Vars._refresh_token = rval
-    firebase_wrapper.write_refresh_token(Vars._refresh_token)
+    refresh_access_token()
     Vars._screenshot = screenshot.SyncScreenshot()
     Vars._did_init = True
+
+
+# refresh token is not actually used to auth anymore
+# it's still used to detect if a new cron has been spun up and taken over
+def refresh_access_token():
+    print("refreshing access token")
+    old_refresh_token = firebase_wrapper.get_refresh_token()
+    rval = twitter_wrapper.refresh_access_token(old_refresh_token)
+    _, Vars._refresh_token = rval
+    firebase_wrapper.write_refresh_token(Vars._refresh_token)
 
 
 def run_cron() -> bool:
@@ -83,7 +88,7 @@ def tweet(user: str, img_data: str) -> None:
             "media_ids": [str(media_id)]
         },
     }
-    resp = twitter_wrapper.post_tweet(Vars._access_token, message_obj)
+    resp = twitter_wrapper.post_tweet(message_obj)
     print(resp)
 
 

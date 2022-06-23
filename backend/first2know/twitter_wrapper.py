@@ -51,15 +51,17 @@ def read_tweets(access_token: str, tweet_ids: typing.List[int]) -> typing.Any:
     return r["data"]
 
 
-def post_tweet(
-    access_token: str,
-    message_obj: typing.Dict[str, str],
-) -> typing.Any:
-    resp = requests.post(
+def post_tweet(message_obj: typing.Dict[str, str], ) -> typing.Any:
+    oauth = OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    )
+    resp = oauth.post(
         'https://api.twitter.com/2/tweets',
         headers={
             'Content-Type': 'application/json',
-            'Authorization': f"Bearer {access_token}",
         },
         data=json.dumps(message_obj),
     )
