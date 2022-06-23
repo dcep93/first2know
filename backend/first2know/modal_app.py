@@ -35,8 +35,8 @@ image = modal.DebianSlim().run_commands([
 modal_app = modal.Stub(image=image)
 
 
-# TODO dcep93 - would be nice if logs were bucketed
-# TODO dcep93 Task failed with exception:
+# TODO akshat - would be nice if logs were bucketed
+# TODO akshat Task failed with exception:
 # task exited with failure, status = exit status: 101
 @modal_app.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
