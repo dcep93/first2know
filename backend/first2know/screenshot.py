@@ -25,7 +25,14 @@ class ResponsePayload(BaseModel):
 # https://playwright.dev/python/docs/intro
 class _Screenshot:
     def get_context(self, key: typing.Optional[str]):
-        pass
+        raise Exception("should be overridden")
+
+    def execute_chain(
+        self,
+        params: typing.Dict[str, str],
+        payload: RequestPayload,
+    ):
+        raise Exception("should be overridden")
 
     def get_chain(
         self,
@@ -33,42 +40,26 @@ class _Screenshot:
         payload: RequestPayload,
     ):
         return [
-            lambda rval: {
-                "context": self.get_context(payload.key)
-            },
-            lambda rval: {
-                "page": rval["context"].new_page()
-            },
-            lambda rval: {
-                "set_extra_http_headers":
-                rval["page"].set_extra_http_headers(params)
-            },
-            lambda rval: {
-                "goto": rval["page"].goto(payload.url)
-            },
-            lambda rval: {} if payload.evaluate is None else {
-                "evaluate": rval["page"].evaluate(payload.evaluate)
-            },
-            lambda rval: self.empty_apply(rval, {"locator": rval["page"]})
-            if payload.selector is None else {
-                "locator": rval["page"].locator(payload.selector)
-            },
-            lambda rval: {
-                "screenshot": rval["locator"].screenshot(path="screenshot.png")
-            },
+            ("context", lambda rval: self.get_context(payload.key)),
+            ("page", lambda rval: rval["context"].new_page()),
+            ("set_extra_http_headers",
+             lambda rval: rval["page"].set_extra_http_headers(params)),
+            ("goto", lambda rval: rval["page"].goto(payload.url)),
+            ("evaluate", lambda rval: None if payload.evaluate is None else
+             rval["page"].evaluate(payload.evaluate)),
+            ("locator",
+             lambda rval: self.empty_apply(rval, {"locator": rval["page"]})
+             if payload.selector is None else rval["page"].locator(payload.
+                                                                   selector)),
+            ("screenshot",
+             lambda rval: rval["locator"].screenshot(path="screenshot.png")),
         ]
 
     def empty_apply(self, rval, to_apply):
         for i, j in to_apply.items():
             rval[i] = j
-        return {}
+        return None
 
-    def execute_chain(
-        self, statements: typing.List[typing.Callable]
-    ) -> typing.Dict[str, typing.Any]:
-        return {}
-
-    # TODO dcep93 allow for local
     # TODO dcep93 make robust
     def screenshot(self, payload: RequestPayload) -> ResponsePayload:
         print(
@@ -83,7 +74,7 @@ class _Screenshot:
         if payload.cookie is not None:
             params["cookie"] = payload.cookie
 
-        rval = self.execute_chain(self.get_chain(params, payload))
+        rval = self.execute_chain(params, payload)
 
         evaluate = json.dumps(rval.get("evaluate"))
         binary_data = open("screenshot.png", "rb").read()
@@ -100,37 +91,34 @@ class AsyncScreenshot(_Screenshot):
     async def get_context(self, key: typing.Optional[str]):
         from playwright.async_api import async_playwright as p  # type: ignore
 
-        entered = await p().__aenter__()
-        browser = await entered.chromium.launch()
-        return await browser.new_context()
+        self.p = p()
+
+        entered = await self.p.__aenter__()
+        self.browser = await entered.chromium.launch()
+        self.context = await self.browser.new_context()
+        return self.context
+
+    async def close(self):
+        await self.context.close()
+        await self.browser.close()
+        await self.p.__aexit__()
 
     def execute_chain(
-        self, statements: typing.List[typing.Callable]
-    ) -> typing.Dict[str, typing.Any]:
-        async def helper():
-            rval = {}
-            for s in statements:
-                t = s(rval)
-                for i, j in t.items():
-                    s = time.time()
-                    print(i)
-                    rval[i] = await j
-                    print(time.time() - s, i)
-            return rval
-
-        return asyncio.run(helper())
-
-    def get_chain(
         self,
         params: typing.Dict[str, str],
         payload: RequestPayload,
-    ):
-        super_chain = super().get_chain(params, payload)
-        return super_chain + [
-            lambda rval: {
-                "context": rval["context"].close()
-            },
-        ]
+    ) -> typing.Dict[str, typing.Any]:
+        chain = self.get_chain(params, payload)
+
+        async def helper():
+            rval = {}
+            for i, c in chain:
+                j = c(rval)
+                rval[i] = j if j is None else await j
+            await self.close()
+            return rval
+
+        return asyncio.run(helper())
 
 
 class SyncScreenshot(_Screenshot):
@@ -152,12 +140,14 @@ class SyncScreenshot(_Screenshot):
         return self.contexts[key]
 
     def execute_chain(
-        self, statements: typing.List[typing.Callable]
+        self,
+        params: typing.Dict[str, str],
+        payload: RequestPayload,
     ) -> typing.Dict[str, typing.Any]:
 
+        chain = self.get_chain(params, payload)
         rval = {}
-        for s in statements:
-            t = s(rval)
-            for i, j in t.items():
-                rval[i] = j
+        for i, c in chain:
+            j = c(rval)
+            rval[i] = j
         return rval
