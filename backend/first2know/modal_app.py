@@ -4,7 +4,7 @@ import os
 
 import modal
 
-PERIOD_SECONDS = 60 * 60
+PERIOD_SECONDS = 60 * 15
 GRACE_PERIOD_SECONDS = 60
 
 if not modal.is_local():
@@ -36,7 +36,8 @@ modal_app = modal.Stub(image=image)
 
 
 # TODO dcep93 - would be nice if logs were bucketed
-# TODO dcep93 - Task failed with exception: task exited with failure, status = exit status: 101
+# TODO dcep93 Task failed with exception:
+# task exited with failure, status = exit status: 101
 @modal_app.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
     secret=modal.ref("first2know_s"),
