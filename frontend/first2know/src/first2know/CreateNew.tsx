@@ -2,6 +2,7 @@ import { createRef, useState } from "react";
 import firebase, { ToHandleType } from "./firebase";
 
 import loading from "./loading.gif";
+import { modalUrl } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
@@ -10,7 +11,7 @@ const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
-function CreateNew(props: { modalUrl: string }): JSX.Element {
+function CreateNew(): JSX.Element {
   const [data, update] = useState<string | undefined>(undefined);
   return (
     <div>
@@ -18,7 +19,7 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            checkScreenShot(props.modalUrl, update);
+            checkScreenShot(update);
           }}
         >
           <div>
@@ -46,7 +47,7 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            submitNew(props.modalUrl);
+            submitNew();
           }}
         >
           <div>
@@ -69,10 +70,7 @@ function getData(): ToHandleType {
   };
 }
 
-function checkScreenShot(
-  modalUrl: string,
-  update: (data: string | undefined) => void
-) {
+function checkScreenShot(update: (data: string | undefined) => void) {
   var data;
   try {
     data = getData();
@@ -113,7 +111,7 @@ function checkScreenShot(
     });
 }
 
-function submitNew(modalUrl: string) {
+function submitNew() {
   var data: any;
   try {
     data = getData();

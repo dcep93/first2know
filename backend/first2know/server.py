@@ -11,6 +11,7 @@ from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
 from . import screenshot
+from . import twitter_auth
 
 
 class EncryptPayload(screenshot.RequestPayload):
@@ -79,6 +80,18 @@ def post_proxy(payload: proxy.RequestPayload):
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)
+
+
+@web_app.post("/twitter/request_token")
+def post_twitter_request_token():
+    resp_text = twitter_auth.login_request_token()
+    return HTMLResponse(resp_text)
+
+
+@web_app.post("/twitter/access_token")
+def post_twitter_access_token():
+    resp_text = twitter_auth.login_access_token()
+    return HTMLResponse(resp_text)
 
 
 @web_app.get("/cron")

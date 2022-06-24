@@ -106,5 +106,13 @@ def _get_user_access_token() -> None:
     print(resp.text)
 
 
+def login_request_token():
+    pass
+
+
+def login_access_token():
+    pass
+
+
 if __name__ == "__main__":
     main()
