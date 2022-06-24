@@ -35,7 +35,8 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
     while time.time() < end:
         loops_per = loops / (time.time() - start)
         loops += 1
-        print(loops, "loops", f"{loops_per:.2f}/s")
+        if loops % 10 == 0:
+            print(loops, "loops", f"{loops_per:.2f}/s")
         try:
             should_continue = run_cron()
         except Exception as e:  # noqa: F841

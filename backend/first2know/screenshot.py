@@ -68,19 +68,19 @@ class _Screenshot(abc.ABC):
 
     # TODO dcep93 make robust
     def screenshot(self, payload: RequestPayload) -> ResponsePayload:
-        s = time.time()
+        # s = time.time()
 
         rval = self.execute_chain(dict(payload.params), payload)
 
         evaluate = json.dumps(rval.get("evaluate"))
         binary_data = open("screenshot.png", "rb").read()
         data = base64.b64encode(binary_data).decode('utf-8')
-        print(' '.join([
-            f"{time.time() - s:.3f}s",
-            str(payload.key),
-            f"{len(binary_data)/1000}kb",
-            datetime.datetime.now().strftime("%H:%M:%S.%f"),
-        ]))
+        # print(' '.join([
+        #     f"{time.time() - s:.3f}s",
+        #     str(payload.key),
+        #     f"{len(binary_data)/1000}kb",
+        #     datetime.datetime.now().strftime("%H:%M:%S.%f"),
+        # ]))
         return ResponsePayload(data=data, evaluate=evaluate)
 
 

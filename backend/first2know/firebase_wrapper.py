@@ -45,7 +45,7 @@ def get_to_handle() -> typing.List[ToHandle]:
 
 
 def write_data(key: str, data: str) -> None:
-    print("write_data", key)
+    # print("write_data", key)
     Vars._app.patch(f"to_handle/{key}", {"data": data})
 
 
