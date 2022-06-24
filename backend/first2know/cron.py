@@ -89,7 +89,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         "evaluate": to_handle.evaluate,
         "selector": to_handle.selector,
     }
-    params = json.loads(fields["params"])
+    params = {} if to_handle.params is None else json.loads(to_handle.params)
     if to_handle.e_cookie is not None:
         decrypted = firebase_wrapper.decrypt(to_handle.e_cookie)
         p = server.EncryptPayload.parse_raw(decrypted)
