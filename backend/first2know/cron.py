@@ -1,5 +1,6 @@
 import json
 import time
+import traceback
 import typing
 
 from . import server
@@ -41,6 +42,7 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
             should_continue = run_cron()
         except Exception as e:  # noqa: F841
             print(e)
+            traceback.print_exc()
             time.sleep(1)
             continue
         if not should_continue:
