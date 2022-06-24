@@ -10,7 +10,6 @@ dockerruncron:
 	docker run \
 		--rm \
 		--name $(service_name) \
-		--env LOCAL_DOCKER=true \
 		$(local_image_tag) \
 		make runcron
 
@@ -20,18 +19,17 @@ dockerrunserver:
 		--rm \
 		-p 8000:8000 \
 		--name $(service_name) \
-		--env LOCAL_DOCKER=true \
 		$(local_image_tag) \
 		make runserver
 
 runserver:
-	uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
+	LOCAL=true uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
 runcron:
-	python3 -m first2know.cron
+	LOCAL=true python3 -m first2know.cron
 
 regenauth:
-	python3 -m first2know.twitter_auth
+	LOCAL=true python3 -m first2know.twitter_auth
 
 modaldeploy:
 	modal app deploy --name first2know first2know.modal_app:modal_app

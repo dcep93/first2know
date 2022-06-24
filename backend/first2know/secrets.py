@@ -15,15 +15,13 @@ class Secrets(BaseModel):
 
 class Vars:
     secrets: Secrets
-    is_remote: bool = True
 
 
-# TODO dcep93 when to run
-def load_local():
-    Vars.is_remote = False
-    client_secret_path = os.path.join(
-        os.path.dirname(__file__),
-        "secrets.json",
-    )
-    with open(client_secret_path) as fh:
-        Vars.secrets = Secrets(**json.load(fh))
+if Vars.secrets is None:
+    if os.environ.get("LOCAL"):
+        client_secret_path = os.path.join(
+            os.path.dirname(__file__),
+            "secrets.json",
+        )
+        with open(client_secret_path) as fh:
+            Vars.secrets = Secrets(**json.load(fh))
