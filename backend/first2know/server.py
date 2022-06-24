@@ -1,4 +1,5 @@
 import base64
+import json
 import io
 import traceback
 
@@ -6,17 +7,14 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
+from pydantic import BaseModel
+
 from . import cron
 from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
 from . import screenshot
 from . import twitter_auth
-
-
-class EncryptPayload(screenshot.RequestPayload):
-    cookie: str
-
 
 web_app = FastAPI()
 web_app.add_middleware(
@@ -31,6 +29,10 @@ web_app.add_middleware(
 @web_app.get("/")
 def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
+
+
+class EncryptPayload(screenshot.RequestPayload):
+    cookie: str
 
 
 @web_app.post("/encrypt")
@@ -85,12 +87,22 @@ def post_proxy(payload: proxy.RequestPayload):
 @web_app.post("/twitter/request_token")
 def post_twitter_request_token():
     resp_text = twitter_auth.login_request_token()
-    return HTMLResponse(resp_text)
+    resp_json = {i: j for i, j in [k.split('=') for k in resp_text.split('&')]}
+    resp_str = json.dumps(resp_json)
+    return HTMLResponse(resp_str)
+
+
+class AccessTokenPayload(BaseModel):
+    oauth_token: str
+    oauth_verifier: str
 
 
 @web_app.post("/twitter/access_token")
-def post_twitter_access_token():
-    resp_text = twitter_auth.login_access_token()
+def post_twitter_access_token(payload: AccessTokenPayload):
+    resp_text = twitter_auth.login_access_token(
+        payload.oauth_token,
+        payload.oauth_verifier,
+    )
     return HTMLResponse(resp_text)
 
 

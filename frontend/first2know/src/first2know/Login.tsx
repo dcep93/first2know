@@ -24,14 +24,12 @@ class Login extends React.Component<{}, { user: UserType | null }> {
         </div>
       </div>
     ) : (
-      <React.Fragment>
-        <TwitterLogin
-          loginUrl={`${modalUrl}/twitter/access_token`}
-          onFailure={this.onFailed}
-          onSuccess={this.onSuccess}
-          requestTokenUrl={`${modalUrl}/twitter/request_token`}
-        />
-      </React.Fragment>
+      <TwitterLogin
+        loginUrl={`${modalUrl}/twitter/access_token`}
+        onFailure={this.onFailed}
+        onSuccess={this.onSuccess}
+        requestTokenUrl={`${modalUrl}/twitter/request_token`}
+      />
     );
   }
 
