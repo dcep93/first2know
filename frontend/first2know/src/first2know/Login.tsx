@@ -6,8 +6,8 @@ import { modalUrl } from "./Server";
 type UserType = { email: string; token: string };
 
 class Login extends React.Component<{}, { user: UserType | null }> {
-  constructor() {
-    super({});
+  constructor(props: {}) {
+    super(props);
 
     this.state = { user: null };
   }
@@ -24,12 +24,14 @@ class Login extends React.Component<{}, { user: UserType | null }> {
         </div>
       </div>
     ) : (
-      <TwitterLogin
-        loginUrl={`${modalUrl}/twitter/access_token`}
-        onFailure={this.onFailed}
-        onSuccess={this.onSuccess}
-        requestTokenUrl={`${modalUrl}/twitter/request_token`}
-      />
+      <React.Fragment>
+        <TwitterLogin
+          loginUrl={`${modalUrl}/twitter/access_token`}
+          onFailure={this.onFailed}
+          onSuccess={this.onSuccess}
+          requestTokenUrl={`${modalUrl}/twitter/request_token`}
+        />
+      </React.Fragment>
     );
   }
 
