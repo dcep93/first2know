@@ -14,7 +14,7 @@ class Secrets(BaseModel):
 
 
 class Vars:
-    secrets: Secrets
+    secrets: Secrets = None  # type: ignore
 
 
 if Vars.secrets is None:

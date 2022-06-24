@@ -40,7 +40,8 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
             print(loops, "loops", f"{loops_per:.2f}/s")
         try:
             should_continue = run_cron()
-        except Exception as e:  # noqa: F841
+        except Exception as _e:  # noqa: F841
+            e = _e
             print(e)
             traceback.print_exc()
             time.sleep(1)
