@@ -1,7 +1,8 @@
 import TwitterLogin from "react-twitter-auth";
+// import TwitterLogin from "./TwitterLogin";
 
 import React from "react";
-import { modalUrl } from "./Server";
+import { url } from "./Server";
 
 type UserType = { email: string; token: string };
 
@@ -25,10 +26,11 @@ class Login extends React.Component<{}, { user: UserType | null }> {
       </div>
     ) : (
       <TwitterLogin
-        loginUrl={`${modalUrl}/twitter/access_token`}
+        // @ts-ignore
+        loginUrl={`${url}/twitter/access_token`}
         onFailure={this.onFailed}
         onSuccess={this.onSuccess}
-        requestTokenUrl={`${modalUrl}/twitter/request_token`}
+        requestTokenUrl={`${url}/twitter/request_token`}
       />
     );
   }

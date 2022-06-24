@@ -31,3 +31,4 @@
 - api_key_secret
 - oauth_token
 - oauth_token_secret
+- redirect_uri

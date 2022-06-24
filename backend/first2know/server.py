@@ -84,6 +84,7 @@ def post_proxy(payload: proxy.RequestPayload):
         return HTMLResponse(err, 500)
 
 
+# TwitterLogin.requestTokenUrl auth/twitter/reverse
 @web_app.post("/twitter/request_token")
 def post_twitter_request_token():
     resp_text = twitter_auth.login_request_token()
@@ -97,6 +98,7 @@ class AccessTokenPayload(BaseModel):
     oauth_verifier: str
 
 
+# TwitterLogin.loginUrl auth/twitter
 @web_app.post("/twitter/access_token")
 def post_twitter_access_token(payload: AccessTokenPayload):
     resp_text = twitter_auth.login_access_token(

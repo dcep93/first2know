@@ -2,7 +2,7 @@ import { createRef, useState } from "react";
 import firebase, { ToHandleType } from "./firebase";
 
 import loading from "./loading.gif";
-import { modalUrl } from "./Server";
+import { url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const userRef = createRef<HTMLInputElement>();
@@ -84,7 +84,7 @@ function checkScreenShot(update: (data: string | undefined) => void) {
   Object.assign(data, { params });
   const body = JSON.stringify(data);
   update(loading);
-  fetch(`${modalUrl}/screenshot`, {
+  fetch(`${url}/screenshot`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function submitNew() {
   var p;
   if (data.cookie !== null) {
     const body = JSON.stringify(data);
-    p = fetch(`${modalUrl}/encrypt`, {
+    p = fetch(`${url}/encrypt`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

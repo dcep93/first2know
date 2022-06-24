@@ -9,7 +9,17 @@ from . import firebase_wrapper
 from . import secrets
 
 
-def get_authorize_url() -> str:
+def main() -> None:
+    _get_refresh_token()
+    _get_user_access_token()
+
+
+def _get_refresh_token() -> None:
+    encoded_auth = twitter_wrapper.get_encoded_auth(
+        secrets.Vars.secrets.client_id,
+        secrets.Vars.secrets.client_secret,
+    )
+
     scopes = [
         'tweet.read',
         'tweet.write',
@@ -19,18 +29,13 @@ def get_authorize_url() -> str:
     params = [
         "response_type=code",
         f"client_id={secrets.Vars.secrets.client_id}",
-        f"redirect_uri={secrets.Vars.secrets.redirect_uri}",
+        "redirect_uri=https://first2know.web.app",
         f"scope={'%20'.join(scopes)}",
         "state=state",
         "code_challenge=challenge",
         "code_challenge_method=plain",
     ]
     url = f"https://twitter.com/i/oauth2/authorize?{'&'.join(params)}"
-    return url
-
-
-def _get_refresh_token() -> None:
-    url = get_authorize_url()
     resp = requests.get(url)
     if resp.status_code >= 300:
         print(resp)
@@ -38,10 +43,6 @@ def _get_refresh_token() -> None:
     print(url)
     auth_code = input("paste code: ")
 
-    encoded_auth = twitter_wrapper.get_encoded_auth(
-        secrets.Vars.secrets.client_id,
-        secrets.Vars.secrets.client_secret,
-    )
     resp = requests.post(
         'https://api.twitter.com/2/oauth2/token',
         headers={
@@ -50,7 +51,7 @@ def _get_refresh_token() -> None:
         },
         data={
             'grant_type': 'authorization_code',
-            'redirect_uri': secrets.Vars.secrets.redirect_uri,
+            'redirect_uri': 'https://first2know.web.app',
             'code_verifier': 'challenge',
             'code': auth_code,
         },
@@ -70,7 +71,7 @@ def _get_user_access_token() -> None:
     params = {
         "oauth_callback":
         urllib.parse.quote(
-            secrets.Vars.secrets.redirect_uri,
+            'https://first2know.web.app',
             safe='',
         ),
         "x_auth_access_type":
@@ -105,31 +106,5 @@ def _get_user_access_token() -> None:
     print(resp.text)
 
 
-def login_request_token():
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        client_secret=secrets.Vars.secrets.api_key_secret,
-    )
-    resp = oauth.post('https://api.twitter.com/oauth/request_token')
-    if resp.status_code >= 300:
-        print(resp)
-        raise Exception(resp.text)
-    return resp.text
-
-
-def login_access_token(oauth_token: str, oauth_verifier: str):
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        client_secret=secrets.Vars.secrets.api_key_secret,
-    )
-    resp = oauth.post(
-        'https://api.twitter.com/oauth/access_token',
-        data={
-            "oauth_verifier": oauth_verifier,
-            "oauth_token": oauth_token,
-        },
-    )
-    if resp.status_code >= 300:
-        print(resp)
-        raise Exception(resp.text)
-    return resp.text
+if __name__ == "__main__":
+    main()

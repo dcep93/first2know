@@ -1,8 +1,8 @@
-const IS_LOCAL = true;
+const IS_LOCAL = false;
 
-export const modalUrl = IS_LOCAL
+export const url = IS_LOCAL
   ? "http://localhost:8000"
   : "https://dcep93-first2know-app.modal.run";
-fetch(modalUrl)
+fetch(url)
   .then((resp) => resp.text())
   .then((text) => console.log(text));
