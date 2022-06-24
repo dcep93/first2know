@@ -8,12 +8,12 @@ export type AllToHandleType = {
 // TODO dcep93 creatorID
 export type ToHandleType = {
   data?: string;
-  user: string;
+  user: string | null;
   url: string;
   e_cookie?: string;
-  params?: { [s: string]: any };
-  evaluate?: string;
-  selector?: string;
+  params?: string;
+  evaluate: string | null;
+  selector: string | null;
 };
 
 function pushToHandle(toHandle: ToHandleType) {

@@ -1,5 +1,5 @@
 import { createRef, useState } from "react";
-import firebase from "./firebase";
+import firebase, { ToHandleType } from "./firebase";
 
 import loading from "./loading.gif";
 
@@ -60,15 +60,10 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
   );
 }
 
-function getData() {
-  var params = {};
-  if (paramsRef.current!.value !== "") {
-    params = JSON.parse(paramsRef.current!.value);
-  }
-  Object.assign(params, { cookie: cookieRef.current!.value || null });
+function getData(): ToHandleType {
   return {
+    user: null,
     url: urlRef.current!.value,
-    params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
   };
@@ -85,6 +80,10 @@ function checkScreenShot(
     alert(err);
     return;
   }
+  var params =
+    paramsRef.current!.value === "" ? {} : JSON.parse(paramsRef.current!.value);
+  Object.assign(params, { cookie: cookieRef.current!.value || null });
+  Object.assign(data, { params });
   const body = JSON.stringify(data);
   update(loading);
   fetch(`${modalUrl}/screenshot`, {
@@ -122,19 +121,26 @@ function submitNew(modalUrl: string) {
     alert(err);
     return;
   }
+  Object.assign(data, {
+    user: userRef.current!.value,
+    params: paramsRef.current!.value,
+  });
   var p;
-  // TODO dcep93 hash with url
   if (data.cookie !== null) {
-    p = fetch(`${modalUrl}/encrypt/${data.cookie}`)
+    const body = JSON.stringify(data);
+    p = fetch(`${modalUrl}/encrypt`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    })
       .then((resp) => resp.text())
       .then((e_cookie) => Object.assign(data, { cookie: null, e_cookie }));
   } else {
     p = Promise.resolve(data);
   }
-  p.then((data) => {
-    Object.assign(data, { user: userRef.current!.value });
-    firebase.pushToHandle(data);
-  });
+  p.then((data) => firebase.pushToHandle(data));
 }
 
 export default CreateNew;

@@ -1,6 +1,8 @@
+import json
 import time
 import typing
 
+from . import server
 from . import firebase_wrapper
 from . import screenshot
 from . import twitter_wrapper
@@ -29,18 +31,21 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
     start = time.time()
     end = start + period_seconds + grace_period_seconds
     loops = 0
+    e = None
     while time.time() < end:
         loops_per = loops / (time.time() - start)
         loops += 1
         print(loops, "loops", f"{loops_per:.2f}/s")
         try:
             should_continue = run_cron()
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             print(e)
             time.sleep(1)
             continue
         if not should_continue:
-            print("exiting cron", loops)
+            print("exiting cron", loops, e is None)
+            if e is not None:
+                raise e
             return True
     return False
 
@@ -74,17 +79,29 @@ def run_cron() -> bool:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    params = dict(to_handle.params)
+    fields = {
+        "key": to_handle.key,
+        "url": to_handle.url,
+        "params": to_handle.params,
+        "evaluate": to_handle.evaluate,
+        "selector": to_handle.selector,
+    }
+    params = json.loads(fields["params"])
     if to_handle.e_cookie is not None:
         decrypted = firebase_wrapper.decrypt(to_handle.e_cookie)
-        payload = firebase_wrapper.EncryptPayload.parse_raw(decrypted)
-        params["cookie"] = payload.cookie
+        p = server.EncryptPayload.parse_raw(decrypted)
+        j = p.dict()
+        for field, val in fields.items():
+            if j.get(field) != val:
+                print(f"invalid encryption {to_handle.key} {field}")
+                raise Exception("invalid encryption")
+        params["cookie"] = p.cookie
     payload = screenshot.RequestPayload(
-        key=to_handle.key,
-        url=to_handle.url,
+        key=fields["key"],
+        url=fields["url"],
         params=params,
-        evaluate=to_handle.evaluate,
-        selector=to_handle.selector,
+        evaluate=fields["evaluate"],
+        selector=fields["selector"],
     )
     screenshot_response = Vars._screenshot.screenshot(payload)
 

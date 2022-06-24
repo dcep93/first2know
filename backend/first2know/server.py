@@ -12,6 +12,11 @@ from . import proxy
 from . import recorded_sha
 from . import screenshot
 
+
+class EncryptPayload(screenshot.RequestPayload):
+    cookie: str
+
+
 web_app = FastAPI()
 web_app.add_middleware(
     CORSMiddleware,
@@ -28,7 +33,7 @@ def get_(request: Request):
 
 
 @web_app.post("/encrypt")
-def post_encrypt(payload: firebase_wrapper.EncryptPayload):
+def post_encrypt(payload: EncryptPayload):
     to_encrypt = payload.json()
     encrypted = firebase_wrapper.encrypt(to_encrypt)
     return HTMLResponse(encrypted)
