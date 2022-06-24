@@ -18,6 +18,7 @@ class Vars:
 def main():
     init()
     run_cron()
+    print("success")
 
 
 def init():
