@@ -61,13 +61,13 @@ function CreateNew(props: { modalUrl: string }): JSX.Element {
 }
 
 function getData() {
-  var params = null;
+  var params = {};
   if (paramsRef.current!.value !== "") {
     params = JSON.parse(paramsRef.current!.value);
   }
+  Object.assign(params, { cookie: cookieRef.current!.value || null });
   return {
     url: urlRef.current!.value,
-    cookie: cookieRef.current!.value || null,
     params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,

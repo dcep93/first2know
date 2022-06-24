@@ -74,13 +74,15 @@ def run_cron() -> bool:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    cookie = None if to_handle.e_cookie is None else firebase_wrapper.decrypt(
-        to_handle.e_cookie)
+    params = dict(to_handle.params)
+    if to_handle.e_cookie is not None:
+        decrypted = firebase_wrapper.decrypt(to_handle.e_cookie)
+        payload = firebase_wrapper.EncryptPayload.parse_raw(decrypted)
+        params["cookie"] = payload.cookie
     payload = screenshot.RequestPayload(
         key=to_handle.key,
         url=to_handle.url,
-        cookie=cookie,
-        params=to_handle.params,
+        params=params,
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
     )

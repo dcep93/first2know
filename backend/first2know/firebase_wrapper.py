@@ -15,6 +15,10 @@ from firebase import firebase
 from . import secrets
 
 
+class EncryptPayload(BaseModel):
+    cookie: str
+
+
 class Vars:
     _app: firebase.FirebaseApplication
 
@@ -30,8 +34,8 @@ class ToHandle(BaseModel):
     key: str
     user: str
     url: str
+    params: typing.Dict[str, typing.Any] = {}
     e_cookie: typing.Optional[str] = None
-    params: typing.Optional[typing.Dict[str, typing.Any]] = None
     evaluate: typing.Optional[str] = None
     selector: typing.Optional[str] = None
     data: typing.Optional[str] = None

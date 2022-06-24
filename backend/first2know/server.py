@@ -27,9 +27,11 @@ def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-@web_app.get("/encrypt/{data:str}")
-def get_encrypt(data: str):
-    return HTMLResponse(firebase_wrapper.encrypt(data))
+@web_app.post("/encrypt")
+def post_encrypt(payload: firebase_wrapper.EncryptPayload):
+    to_encrypt = payload.json()
+    encrypted = firebase_wrapper.encrypt(to_encrypt)
+    return HTMLResponse(encrypted)
 
 
 @web_app.post("/screenshot_img")

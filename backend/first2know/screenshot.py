@@ -14,8 +14,7 @@ from pydantic import BaseModel
 class RequestPayload(BaseModel):
     key: typing.Optional[str] = None
     url: str
-    cookie: typing.Optional[str] = None
-    params: typing.Optional[typing.Dict[str, str]] = None
+    params: typing.Dict[str, str] = {}
     evaluate: typing.Optional[str] = None
     selector: typing.Optional[str] = None
 
@@ -71,11 +70,7 @@ class _Screenshot(abc.ABC):
     def screenshot(self, payload: RequestPayload) -> ResponsePayload:
         s = time.time()
 
-        params = {} if payload.params is None else dict(payload.params)
-        if payload.cookie is not None:
-            params["cookie"] = payload.cookie
-
-        rval = self.execute_chain(params, payload)
+        rval = self.execute_chain(dict(payload.params), payload)
 
         evaluate = json.dumps(rval.get("evaluate"))
         binary_data = open("screenshot.png", "rb").read()
