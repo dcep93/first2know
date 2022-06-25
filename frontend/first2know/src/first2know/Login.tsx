@@ -54,7 +54,7 @@ class Login extends React.Component<{}, { user: UserType | null }> {
         // @ts-ignore
         loginUrl={`${url}/twitter/access_token`}
         onFailure={this.onFailed}
-        onSuccess={this.onSuccess}
+        onSuccess={this.onSuccess.bind(this)}
         requestTokenUrl={`${url}/twitter/request_token`}
       />
     );
