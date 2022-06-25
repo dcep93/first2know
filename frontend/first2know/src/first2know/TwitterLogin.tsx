@@ -1,9 +1,10 @@
 // @ts-nocheck
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import TwitterIcon from "react-icons/lib/fa/twitter";
 import "url-search-params-polyfill";
 import "whatwg-fetch";
+// import TwitterIcon from "react-icons/lib/fa/twitter";
+import { FaTwitter as TwitterIcon } from "react-icons/fa";
 
 class TwitterLogin extends Component {
   constructor(props) {
