@@ -89,7 +89,7 @@ class TwitterLogin extends Component {
       try {
         if (
           !popup.location.hostname.includes("api.twitter.com") &&
-          // eslint eqeqeq: 1
+          // eslint-disable-next-line
           !popup.location.hostname == ""
         ) {
           if (popup.location.search) {
