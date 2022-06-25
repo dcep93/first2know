@@ -3,7 +3,7 @@ import _TwitterLogin from "./TwitterLogin";
 import React from "react";
 import { url } from "./Server";
 
-type UserType = { email: string; token: string };
+type UserType = { screen_name: string; user_id: string };
 
 class TwitterLogin extends _TwitterLogin {
   openPopup() {
@@ -42,7 +42,7 @@ class Login extends React.Component<{}, { user: UserType | null }> {
     return this.state.user ? (
       <div>
         <p>Authenticated</p>
-        <div>{this.state.user.email}</div>
+        <div>{this.state.user.screen_name}</div>
         <div>
           <button onClick={this.logout} className="button">
             Log out
@@ -60,19 +60,16 @@ class Login extends React.Component<{}, { user: UserType | null }> {
     );
   }
 
+  login(user: UserType) {
+    this.setState({ user });
+  }
+
   logout() {
     this.setState({ user: null });
   }
 
   onSuccess(response: any) {
-    const token: string = response.headers.get("x-auth-token");
-    response.json().then((user: UserType) => {
-      console.log(user, token);
-      if (token) {
-        user.token = token;
-        this.setState({ user });
-      }
-    });
+    response.json().then((user: UserType) => this.login(user));
   }
 
   onFailed(error: string) {

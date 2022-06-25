@@ -89,7 +89,9 @@ def post_proxy(payload: proxy.RequestPayload):
 def post_twitter_request_token():
     resp_text = twitter_auth.login_request_token()
     resp_json = parse_qs(resp_text)
-    resp_str = json.dumps(resp_json)
+    resp_str = json.dumps({
+        "oauth_token": resp_json["oauth_token"][0],
+    })
     return HTMLResponse(resp_str)
 
 
@@ -101,7 +103,10 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
         oauth_verifier,
     )
     resp_json = parse_qs(resp_text)
-    resp_str = json.dumps(resp_json)
+    resp_str = json.dumps({
+        "screen_name": resp_json["screen_name"][0],
+        "user_id": resp_json["user_id"][0],
+    })
     return HTMLResponse(resp_str)
 
 
