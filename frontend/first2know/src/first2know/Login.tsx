@@ -30,6 +30,7 @@ class Login extends React.Component<{}, { user: UserType | null }> {
         onFailure={this.onFailed}
         onSuccess={this.onSuccess.bind(this)}
         requestTokenUrl={`${url}/twitter/request_token`}
+        forceLogin={true}
       />
     );
   }
