@@ -7,8 +7,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 
-from pydantic import BaseModel
-
 from . import cron
 from . import firebase_wrapper
 from . import proxy
@@ -93,17 +91,12 @@ def post_twitter_request_token():
     return HTMLResponse(resp_str)
 
 
-class AccessTokenPayload(BaseModel):
-    oauth_token: str
-    oauth_verifier: str
-
-
 # TwitterLogin.loginUrl auth/twitter
 @web_app.post("/twitter/access_token")
-def post_twitter_access_token(payload: AccessTokenPayload):
+def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
     resp_text = twitter_auth.login_access_token(
-        payload.oauth_token,
-        payload.oauth_verifier,
+        oauth_token,
+        oauth_verifier,
     )
     return HTMLResponse(resp_text)
 
