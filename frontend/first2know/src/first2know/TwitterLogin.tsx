@@ -1,6 +1,7 @@
 // @ts-nocheck
 import PropTypes from "prop-types";
 import React, { Component } from "react";
+import TwitterIcon from "react-icons/lib/fa/twitter";
 import "url-search-params-polyfill";
 import "whatwg-fetch";
 
@@ -53,10 +54,10 @@ class TwitterLogin extends Component {
   openPopup() {
     const w = this.props.dialogWidth;
     const h = this.props.dialogHeight;
-    // const left = screen.width / 2 - w / 2;
-    // const top = screen.height / 2 - h / 2;
-    const left = 0;
-    const top = 0;
+    // eslint-disable-next-line no-restricted-globals
+    const left = screen.width / 2 - w / 2;
+    // eslint-disable-next-line no-restricted-globals
+    const top = screen.height / 2 - h / 2;
 
     return window.open(
       "",
@@ -134,10 +135,9 @@ class TwitterLogin extends Component {
   }
 
   getDefaultButtonContent() {
-    // const defaultIcon = this.props.showIcon ? (
-    //   <TwitterIcon color="#00aced" size={25} />
-    // ) : null;
-    const defaultIcon = null;
+    const defaultIcon = this.props.showIcon ? (
+      <TwitterIcon color="#00aced" size={25} />
+    ) : null;
 
     return (
       <span>

@@ -12,10 +12,12 @@
     "@types/react-dom": "^18.0.4",
     "firebase": "^9.8.3",
     "react": "^18.1.0",
+    "react-custom-share": "^0.4.8",
     "react-dom": "^18.1.0",
+    "react-icons": "^4.4.0",
     "react-scripts": "5.0.1",
-    "react-twitter-auth": "^0.0.13",
     "typescript": "^4.6.4",
+    "url-search-params-polyfill": "^8.1.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
