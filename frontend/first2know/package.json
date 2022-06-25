@@ -12,7 +12,6 @@
     "@types/react-dom": "^18.0.4",
     "firebase": "^9.8.3",
     "react": "^18.1.0",
-    "react-custom-share": "^0.4.8",
     "react-dom": "^18.1.0",
     "react-icons": "^4.4.0",
     "react-scripts": "5.0.1",
