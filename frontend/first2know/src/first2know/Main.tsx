@@ -1,6 +1,7 @@
 import CreateNew from "./CreateNew";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import Login from "./Login";
+import { recorded_sha } from "./recorded_sha";
 import ShowCurrent from "./ShowCurrent";
 
 class Main extends FirebaseWrapper<AllToHandleType> {
@@ -14,6 +15,7 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 
   render() {
     if (this.state === null) return <>Loading...</>;
+    console.log(recorded_sha);
     return (
       <>
         <Login />
