@@ -44,7 +44,7 @@ class Login extends React.Component<{}, { user: UserType | null }> {
         <p>Authenticated</p>
         <div>{this.state.user.screen_name}</div>
         <div>
-          <button onClick={this.logout} className="button">
+          <button onClick={this.logout.bind(this)} className="button">
             Log out
           </button>
         </div>
