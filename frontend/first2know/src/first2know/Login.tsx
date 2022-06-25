@@ -65,9 +65,9 @@ class Login extends React.Component<{}, { user: UserType | null }> {
   }
 
   onSuccess(response: any) {
-    console.log(response);
     const token: string = response.headers.get("x-auth-token");
     response.json().then((user: UserType) => {
+      console.log(user, token);
       if (token) {
         user.token = token;
         this.setState({ user });
