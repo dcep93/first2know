@@ -3,7 +3,7 @@ import json
 import io
 import traceback
 
-from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -88,7 +88,7 @@ def post_proxy(payload: proxy.RequestPayload):
 @web_app.post("/twitter/request_token")
 def post_twitter_request_token():
     resp_text = twitter_auth.login_request_token()
-    resp_json = urlparse.parse_qs(resp_text)
+    resp_json = parse_qs(resp_text)
     resp_str = json.dumps(resp_json)
     return HTMLResponse(resp_str)
 
@@ -100,7 +100,7 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
         oauth_token,
         oauth_verifier,
     )
-    resp_json = urlparse.parse_qs(resp_text)
+    resp_json = parse_qs(resp_text)
     resp_str = json.dumps(resp_json)
     return HTMLResponse(resp_str)
 
