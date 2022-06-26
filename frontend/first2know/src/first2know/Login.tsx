@@ -11,7 +11,7 @@ class Login extends React.Component<{}, { user: UserType | null }> {
 
     const local = localStorage.getItem("login");
 
-    this.state = local ? JSON.parse(local) : { user: null };
+    this.state = local ? { user: JSON.parse(local) } : { user: null };
   }
 
   render() {
@@ -37,11 +37,12 @@ class Login extends React.Component<{}, { user: UserType | null }> {
   }
 
   login(user: UserType) {
-    console.log(user);
+    localStorage.setItem("login", JSON.stringify(user));
     this.setState({ user });
   }
 
   logout() {
+    localStorage.removeItem("login");
     this.setState({ user: null });
   }
 
