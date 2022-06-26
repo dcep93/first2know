@@ -3,8 +3,6 @@ import json
 import io
 import traceback
 
-from urllib.parse import parse_qs
-
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -87,26 +85,22 @@ def post_proxy(payload: proxy.RequestPayload):
 # TwitterLogin.requestTokenUrl auth/twitter/reverse
 @web_app.post("/twitter/request_token")
 def post_twitter_request_token():
-    resp_text = twitter_auth.login_request_token()
-    resp_json = parse_qs(resp_text)
-    resp_str = json.dumps({
-        "oauth_token": resp_json["oauth_token"][0],
-    })
+    resp_json = twitter_auth.login_request_token()
+    resp_str = json.dumps(resp_json)
     return HTMLResponse(resp_str)
 
 
 # TwitterLogin.loginUrl auth/twitter
 @web_app.post("/twitter/access_token")
 def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
-    resp_text = twitter_auth.login_access_token(
+    resp_json = twitter_auth.login_access_token(
         oauth_token,
         oauth_verifier,
     )
-    resp_json = parse_qs(resp_text)
-    resp_str = json.dumps({
-        "screen_name": resp_json["screen_name"][0],
-        "user_id": resp_json["user_id"][0],
-    })
+    raw_resp_str = json.dumps(resp_json)
+    encryption = firebase_wrapper.encrypt(raw_resp_str)
+    resp_json["encryption"] = encryption
+    resp_str = json.dumps(resp_json)
     return HTMLResponse(resp_str)
 
 
