@@ -1,17 +1,17 @@
 import { createRef, useState } from "react";
-import firebase, { ToHandleType } from "./firebase";
+import firebase, { ScreenshotType } from "./firebase";
 
 import loading from "./loading.gif";
+import { UserType } from "./Login";
 import { url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
-const userRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
-function CreateNew(): JSX.Element {
+function CreateNew(props: { user: UserType }): JSX.Element {
   const [data, update] = useState<string | undefined>(undefined);
   return (
     <div>
@@ -44,15 +44,7 @@ function CreateNew(): JSX.Element {
         </form>
       </div>
       <div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            submitNew();
-          }}
-        >
-          <div>
-            user: <input ref={userRef} type="text" />
-          </div>
+        <form onSubmit={(e) => [e.preventDefault(), submitNew(props.user)]}>
           <input type="submit" value="Submit" />
         </form>
       </div>
@@ -61,27 +53,30 @@ function CreateNew(): JSX.Element {
   );
 }
 
-function getData(): ToHandleType {
+function getData(): ScreenshotType {
+  const paramsJson = paramsRef.current!.value || null;
+  var params;
+  if (paramsJson) {
+    try {
+      params = JSON.parse(paramsJson);
+    } catch (err) {
+      alert(err);
+      throw err;
+    }
+  } else {
+    params = {};
+  }
+  Object.assign(params, { cookie: cookieRef.current!.value || null });
   return {
-    user: null,
     url: urlRef.current!.value,
+    params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
   };
 }
 
 function checkScreenShot(update: (data: string | undefined) => void) {
-  var data;
-  try {
-    data = getData();
-  } catch (err) {
-    alert(err);
-    return;
-  }
-  var params =
-    paramsRef.current!.value === "" ? {} : JSON.parse(paramsRef.current!.value);
-  Object.assign(params, { cookie: cookieRef.current!.value || null });
-  Object.assign(data, { params });
+  const data = getData();
   const body = JSON.stringify(data);
   update(loading);
   fetch(`${url}/screenshot`, {
@@ -97,11 +92,8 @@ function checkScreenShot(update: (data: string | undefined) => void) {
       return text;
     })
     .then((text) => JSON.parse(text))
-    .then((json) => {
-      console.log(json.evaluate);
-      return json.data;
-    })
-    .then((bytes) => `data:image/png;base64,${bytes}`)
+    .then((json) => [console.log(json.evaluate), json.data])
+    .then(([_, bytes]) => `data:image/png;base64,${bytes}`)
     .then(update)
     .catch((err) => {
       update(undefined);
@@ -111,34 +103,22 @@ function checkScreenShot(update: (data: string | undefined) => void) {
     });
 }
 
-function submitNew() {
-  var data: any;
-  try {
-    data = getData();
-  } catch (err) {
-    alert(err);
-    return;
-  }
-  Object.assign(data, {
-    user: userRef.current!.value,
-    params: paramsRef.current!.value,
-  });
-  var p;
-  if (data.cookie !== null) {
-    const body = JSON.stringify(data);
-    p = fetch(`${url}/encrypt`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    })
-      .then((resp) => resp.text())
-      .then((e_cookie) => Object.assign(data, { cookie: null, e_cookie }));
-  } else {
-    p = Promise.resolve(data);
-  }
-  p.then((data) => firebase.pushToHandle(data));
+function submitNew(user: UserType) {
+  const data = getData();
+  const toEncrypt = { ...data, user };
+  const body = JSON.stringify(toEncrypt);
+  delete data.params!["cookie"];
+  fetch(`${url}/encrypt`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body,
+  })
+    .then((resp) => resp.text())
+    .then((encrypted) =>
+      firebase.pushToHandle({ ...data, encrypted, user_name: user.screen_name })
+    );
 }
 
 export default CreateNew;

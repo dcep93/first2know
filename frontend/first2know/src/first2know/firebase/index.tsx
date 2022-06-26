@@ -5,13 +5,15 @@ export type AllToHandleType = {
   [key: string]: ToHandleType;
 };
 
-// TODO dcep93 creatorID
-export type ToHandleType = {
+export type ToHandleType = ScreenshotType & {
   data?: string;
-  user: string | null;
+  user_name: string;
+  encrypted: string;
+};
+
+export type ScreenshotType = {
   url: string;
-  e_cookie?: string;
-  params?: string;
+  params: { [s: string]: any } | null;
   evaluate: string | null;
   selector: string | null;
 };

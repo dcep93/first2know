@@ -12,7 +12,7 @@ from pydantic import BaseModel
 class RequestPayload(BaseModel):
     key: typing.Optional[str] = None
     url: str
-    params: typing.Dict[str, str] = {}
+    params: typing.Dict[str, str]
     evaluate: typing.Optional[str] = None
     selector: typing.Optional[str] = None
 

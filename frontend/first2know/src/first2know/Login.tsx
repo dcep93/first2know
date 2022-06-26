@@ -3,15 +3,20 @@ import TwitterLogin from "./TwitterLogin";
 import React from "react";
 import { url } from "./Server";
 
-type UserType = { screen_name: string; user_id: string; encryption: string };
+export type UserType = {
+  screen_name: string;
+  user_id: string;
+  encryption: string;
+};
 
 class Login extends React.Component<{}, { user: UserType | null }> {
   constructor(props: {}) {
     super(props);
 
-    const local = localStorage.getItem("login");
+    this.state = { user: null };
 
-    this.state = local ? { user: JSON.parse(local) } : { user: null };
+    const local = localStorage.getItem("login");
+    if (local) this.login(JSON.parse(local));
   }
 
   render() {
