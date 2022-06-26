@@ -1,6 +1,7 @@
 import base64
 import json
 import io
+import uuid
 import traceback
 
 from fastapi import FastAPI, Request
@@ -42,8 +43,12 @@ def post_encrypt(payload: EncryptPayload):
 
 @web_app.post("/screenshot_img")
 def post_screenshot_img(payload: screenshot.RequestPayload):
+    key = str(uuid.uuid1())
     try:
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(payload)
+        screenshot_response = screenshot.AsyncScreenshot().screenshot(
+            key,
+            payload,
+        )
         bytes = base64.b64decode(screenshot_response.data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
@@ -53,8 +58,12 @@ def post_screenshot_img(payload: screenshot.RequestPayload):
 
 @web_app.post("/screenshot_len")
 def post_screenshot_len(payload: screenshot.RequestPayload):
+    key = str(uuid.uuid1())
     try:
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(payload)
+        screenshot_response = screenshot.AsyncScreenshot().screenshot(
+            key,
+            payload,
+        )
         screenshot_response.data = str(len(screenshot_response.data))
         return HTMLResponse(screenshot_response.json())
     except Exception:
@@ -64,8 +73,12 @@ def post_screenshot_len(payload: screenshot.RequestPayload):
 
 @web_app.post("/screenshot")
 def post_screenshot(payload: screenshot.RequestPayload):
+    key = str(uuid.uuid1())
     try:
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(payload)
+        screenshot_response = screenshot.AsyncScreenshot().screenshot(
+            key,
+            payload,
+        )
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()
@@ -98,8 +111,7 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
         oauth_verifier,
     )
     raw_resp_str = json.dumps(resp_json)
-    encryption = firebase_wrapper.encrypt(raw_resp_str)
-    resp_json["encryption"] = encryption
+    resp_json["encrypted"] = firebase_wrapper.encrypt(raw_resp_str)
     resp_str = json.dumps(resp_json)
     return HTMLResponse(resp_str)
 

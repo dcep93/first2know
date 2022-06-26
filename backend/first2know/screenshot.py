@@ -2,6 +2,7 @@ import asyncio
 import base64
 import collections
 import json
+import os
 import typing
 
 import abc
@@ -10,9 +11,8 @@ from pydantic import BaseModel
 
 
 class RequestPayload(BaseModel):
-    key: typing.Optional[str] = None
     url: str
-    params: typing.Dict[str, str]
+    params: typing.Optional[typing.Dict[str, str]] = None
     evaluate: typing.Optional[str] = None
     selector: typing.Optional[str] = None
 
@@ -31,31 +31,50 @@ class _Screenshot(abc.ABC):
     @abc.abstractmethod
     def execute_chain(
         self,
-        params: typing.Dict[str, str],
-        payload: RequestPayload,
+        chain: typing.List[typing.Tuple[str, typing.Any]],
     ):
         raise Exception("should be overridden")
 
     def get_chain(
         self,
-        params: typing.Dict[str, str],
+        key: str,
         payload: RequestPayload,
+        screenshot_dest: str,
     ):
+        params = None if payload.params is None else dict(payload.params)
         return [
-            ("context", lambda rval: self.get_context(payload.key)),
-            ("page", lambda rval: rval["context"].new_page()),
-            ("set_extra_http_headers",
-             lambda rval: rval["page"].set_extra_http_headers(params)),
-            ("goto", lambda rval: rval["page"].goto(payload.url)),
+            (
+                "context",
+                lambda rval: self.get_context(key),
+            ),
+            (
+                "page",
+                lambda rval: rval["context"].new_page(),
+            ),
+            (
+                "set_extra_http_headers",
+                lambda rval: rval["page"].set_extra_http_headers(params),
+            ),
+            (
+                "goto",
+                lambda rval: rval["page"].goto(payload.url),
+            ),
             # TODO dcep93 evaluate based on previous evaluation
-            ("evaluate", lambda rval: None if payload.evaluate is None else
-             rval["page"].evaluate(payload.evaluate)),
-            ("locator",
-             lambda rval: self.empty_apply(rval, {"locator": rval["page"]})
-             if payload.selector is None else rval["page"].locator(payload.
-                                                                   selector)),
-            ("screenshot",
-             lambda rval: rval["locator"].screenshot(path="screenshot.png")),
+            (
+                "evaluate",
+                lambda rval: None if payload.evaluate is None else rval["page"]
+                .evaluate(payload.evaluate),
+            ),
+            (
+                "locator",
+                lambda rval: self.empty_apply(rval, {"locator": rval["page"]})
+                if payload.selector is None else rval["page"].locator(
+                    payload.selector),
+            ),
+            (
+                "screenshot",
+                lambda rval: rval["locator"].screenshot(path=screenshot_dest),
+            ),
             # TODO dcep93 text to img
         ]
 
@@ -65,13 +84,15 @@ class _Screenshot(abc.ABC):
         return None
 
     # TODO dcep93 make robust
-    def screenshot(self, payload: RequestPayload) -> ResponsePayload:
+    def screenshot(self, key: str, payload: RequestPayload) -> ResponsePayload:
         # s = time.time()
+        dest = f"screenshot_{key}.png"
 
-        rval = self.execute_chain(dict(payload.params), payload)
-
+        chain = self.get_chain(key, payload, dest)
+        rval = self.execute_chain(chain)
         evaluate = json.dumps(rval.get("evaluate"))
-        binary_data = open("screenshot.png", "rb").read()
+        binary_data = open(dest, "rb").read()
+        os.remove(dest)
         data = base64.b64encode(binary_data).decode('utf-8')
         # print(' '.join([
         #     f"{time.time() - s:.3f}s",
@@ -101,11 +122,8 @@ class AsyncScreenshot(_Screenshot):
 
     def execute_chain(
         self,
-        params: typing.Dict[str, str],
-        payload: RequestPayload,
+        chain: typing.List[typing.Tuple[str, typing.Any]],
     ) -> typing.Dict[str, typing.Any]:
-        chain = self.get_chain(params, payload)
-
         async def helper():
             rval = {}
             for i, c in chain:
@@ -138,11 +156,8 @@ class SyncScreenshot(_Screenshot):
 
     def execute_chain(
         self,
-        params: typing.Dict[str, str],
-        payload: RequestPayload,
+        chain: typing.List[typing.Tuple[str, typing.Any]],
     ) -> typing.Dict[str, typing.Any]:
-
-        chain = self.get_chain(params, payload)
         rval = {}
         for i, c in chain:
             j = c(rval)

@@ -1,9 +1,6 @@
-import json
 import time
 import traceback
-import typing
 
-from . import server
 from . import firebase_wrapper
 from . import screenshot
 from . import twitter_wrapper
@@ -12,7 +9,7 @@ from . import twitter_wrapper
 class Vars:
     _did_init: bool = False
     _refresh_token: str
-    _screenshot: typing.Any
+    _screenshot: screenshot._Screenshot
 
 
 def main():
@@ -84,31 +81,13 @@ def run_cron() -> bool:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    fields = {
-        "key": to_handle.key,
-        "url": to_handle.url,
-        "params": to_handle.params,
-        "evaluate": to_handle.evaluate,
-        "selector": to_handle.selector,
-    }
-    params = {} if to_handle.params is None else json.loads(to_handle.params)
-    if to_handle.e_cookie is not None:
-        decrypted = firebase_wrapper.decrypt(to_handle.e_cookie)
-        p = server.EncryptPayload.parse_raw(decrypted)
-        j = p.dict()
-        for field, val in fields.items():
-            if j.get(field) != val:
-                print(f"invalid encryption {to_handle.key} {field}")
-                raise Exception("invalid encryption")
-        params["cookie"] = p.cookie
     payload = screenshot.RequestPayload(
-        key=fields["key"],
-        url=fields["url"],
-        params=params,
-        evaluate=fields["evaluate"],
-        selector=fields["selector"],
+        url=to_handle.url,
+        params=to_handle.params,
+        evaluate=to_handle.evaluate,
+        selector=to_handle.selector,
     )
-    screenshot_response = Vars._screenshot.screenshot(payload)
+    screenshot_response = Vars._screenshot.screenshot(to_handle.key, payload)
 
     if screenshot_response is None:
         return
@@ -117,7 +96,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if to_handle.data == current_data:
         return
 
-    tweet(to_handle.user, current_data)
+    tweet(to_handle.user_name, current_data)
     firebase_wrapper.write_data(to_handle.key, current_data)
 
 

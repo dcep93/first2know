@@ -43,11 +43,13 @@ function CreateNew(props: { user: UserType }): JSX.Element {
           <input type="submit" value="Check Screenshot" />
         </form>
       </div>
-      <div>
-        <form onSubmit={(e) => [e.preventDefault(), submitNew(props.user)]}>
-          <input type="submit" value="Submit" />
-        </form>
-      </div>
+      {props.user && (
+        <div>
+          <form onSubmit={(e) => [e.preventDefault(), submitNew(props.user!)]}>
+            <input type="submit" value="Submit" />
+          </form>
+        </div>
+      )}
       <img src={data} alt=""></img>
     </div>
   );
@@ -117,7 +119,11 @@ function submitNew(user: UserType) {
   })
     .then((resp) => resp.text())
     .then((encrypted) =>
-      firebase.pushToHandle({ ...data, encrypted, user_name: user.screen_name })
+      firebase.pushToHandle({
+        ...data,
+        encrypted,
+        user_name: user!.screen_name,
+      })
     );
 }
 

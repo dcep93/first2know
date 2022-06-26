@@ -1,13 +1,21 @@
 import { useState } from "react";
 import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 import styles from "./index.module.css";
+import { UserType } from "./Login";
 
-function ShowCurrent(props: { allToHandle: AllToHandleType }): JSX.Element {
+function ShowCurrent(props: {
+  user: UserType;
+  allToHandle: AllToHandleType;
+}): JSX.Element {
   return (
     <div>
-      {Object.entries(props.allToHandle).map(([k, toHandle]) => (
-        <RenderToHandle key={k} k={k} toHandle={toHandle} />
-      ))}
+      {Object.entries(props.allToHandle)
+        .filter(
+          ([_, toHandle]) => toHandle.user_name === props.user?.screen_name
+        )
+        .map(([k, toHandle]) => (
+          <RenderToHandle key={k} k={k} toHandle={toHandle} />
+        ))}
     </div>
   );
 }

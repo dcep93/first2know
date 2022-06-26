@@ -1,6 +1,7 @@
 # https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
 import base64
+import json
 import typing
 
 from pydantic import BaseModel
@@ -15,6 +16,16 @@ from firebase import firebase
 from . import secrets
 
 
+class ToHandle(BaseModel):
+    url: str
+    params: typing.Optional[typing.Dict[str, typing.Any]]
+    evaluate: typing.Optional[str]
+    selector: typing.Optional[str]
+    user_name: str
+    data: typing.Optional[str]
+    key: str
+
+
 class Vars:
     _app: firebase.FirebaseApplication
 
@@ -26,22 +37,23 @@ def init():
     )
 
 
-class ToHandle(BaseModel):
-    key: str
-    user: str
-    url: str
-    params: typing.Optional[str] = None
-    e_cookie: typing.Optional[str] = None
-    evaluate: typing.Optional[str] = None
-    selector: typing.Optional[str] = None
-    data: typing.Optional[str] = None
-
-
 def get_to_handle() -> typing.List[ToHandle]:
     raw = Vars._app.get("to_handle", None)
-    raw_all_to_handle: typing.Dict[str, typing.Any] = raw  # type: ignore
-    all_to_handle = [{"key": i, **j} for i, j in raw_all_to_handle.items()]
-    return [ToHandle(**i) for i in all_to_handle]
+    raw_all_to_handle: typing.Dict = raw  # type: ignore
+    return [
+        i for i in [
+            _decrypt_to_handle(k, v["encrypted"])
+            for k, v in raw_all_to_handle.items()
+        ] if i is not None
+    ]
+
+
+def _decrypt_to_handle(key: str, encrypted: str) -> typing.Optional[ToHandle]:
+    loaded = json.loads(decrypt(encrypted))
+    encrypted_user = loaded.pop("user")["encrypted"]
+    user = json.loads(decrypt(encrypted_user))
+    loaded["user_name"] = user["screen_name"]
+    return ToHandle(key=key, **loaded)
 
 
 def write_data(key: str, data: str) -> None:

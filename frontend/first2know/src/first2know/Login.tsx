@@ -6,24 +6,27 @@ import { url } from "./Server";
 export type UserType = {
   screen_name: string;
   user_id: string;
-  encryption: string;
-};
+  encrypted: string;
+} | null;
 
-class Login extends React.Component<{}, { user: UserType | null }> {
-  constructor(props: {}) {
+type PropsType = { user: UserType; update: (user: UserType) => void };
+
+class Login extends React.Component<PropsType> {
+  constructor(props: PropsType) {
     super(props);
 
-    this.state = { user: null };
-
     const local = localStorage.getItem("login");
-    if (local) this.login(JSON.parse(local));
+    if (local) {
+      const user = JSON.parse(local);
+      this.props.update(user);
+    }
   }
 
   render() {
-    return this.state.user ? (
+    return this.props.user ? (
       <div>
         <p>Authenticated</p>
-        <div>{this.state.user.screen_name}</div>
+        <div>{this.props.user.screen_name}</div>
         <div>
           <button onClick={this.logout.bind(this)} className="button">
             Log out
@@ -43,12 +46,12 @@ class Login extends React.Component<{}, { user: UserType | null }> {
 
   login(user: UserType) {
     localStorage.setItem("login", JSON.stringify(user));
-    this.setState({ user });
+    this.props.update(user);
   }
 
   logout() {
     localStorage.removeItem("login");
-    this.setState({ user: null });
+    this.props.update(null);
   }
 
   onSuccess(response: any) {
