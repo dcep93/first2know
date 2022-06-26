@@ -66,14 +66,14 @@ class _Screenshot(abc.ABC):
                 .evaluate(payload.evaluate),
             ),
             (
-                "locator",
-                lambda rval: self.empty_apply(rval, {"locator": rval["page"]})
+                "selector",
+                lambda rval: self.empty_apply(rval, {"selector": rval["page"]})
                 if payload.selector is None else rval["page"].locator(
                     payload.selector),
             ),
             (
                 "screenshot",
-                lambda rval: rval["locator"].screenshot(path=screenshot_dest),
+                lambda rval: rval["selector"].screenshot(path=screenshot_dest),
             ),
             # TODO dcep93 text to img
         ]

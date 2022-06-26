@@ -6,7 +6,6 @@ from pydantic import BaseModel
 
 class RequestPayload(BaseModel):
     url: str
-    selector: typing.Optional[str] = None
     params: typing.Dict[str, typing.Any] = {}
 
 

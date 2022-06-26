@@ -107,8 +107,8 @@ function checkScreenShot(update: (data: string | undefined) => void) {
 
 function submitNew(user: UserType) {
   const data = getData();
-  const toEncrypt = { ...data, user };
-  const body = JSON.stringify(toEncrypt);
+  const payload = { ...data, user };
+  const body = JSON.stringify({ payload });
   delete data.params!["cookie"];
   fetch(`${url}/encrypt`, {
     method: "POST",

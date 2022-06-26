@@ -7,7 +7,6 @@ from . import twitter_wrapper
 
 
 class Vars:
-    _did_init: bool = False
     _refresh_token: str
     _screenshot: screenshot._Screenshot
 
@@ -20,9 +19,8 @@ def main():
 
 def init():
     firebase_wrapper.init()
-    refresh_access_token()
+    Vars._refresh_token = refresh_access_token()
     Vars._screenshot = screenshot.SyncScreenshot()
-    Vars._did_init = True
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
@@ -58,15 +56,13 @@ def refresh_access_token():
     print("refreshing access token")
     old_refresh_token = firebase_wrapper.get_refresh_token()
     rval = twitter_wrapper.refresh_access_token(old_refresh_token)
-    _, Vars._refresh_token = rval
-    firebase_wrapper.write_refresh_token(Vars._refresh_token)
+    _, refresh_token = rval
+    firebase_wrapper.write_refresh_token(refresh_token)
     print("access token refreshed")
+    return refresh_token
 
 
 def run_cron() -> bool:
-    if not Vars._did_init:
-        raise Exception("need to init")
-
     # if another process has spun up to take over, exit early
     new_refresh_token = firebase_wrapper.get_refresh_token()
     if new_refresh_token != Vars._refresh_token:

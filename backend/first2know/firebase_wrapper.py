@@ -8,7 +8,6 @@ from pydantic import BaseModel
 
 from cryptography.fernet import Fernet
 
-# TODO dcep93 different SDK
 # /usr/local/Cellar/python@3.9/3.9.6/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown # noqa: E501
 # pip install git+https://github.com/ozgur/python-firebase
 from firebase import firebase
@@ -21,7 +20,9 @@ class ToHandle(BaseModel):
     params: typing.Optional[typing.Dict[str, typing.Any]]
     evaluate: typing.Optional[str]
     selector: typing.Optional[str]
+
     user_name: str
+
     data: typing.Optional[str]
     key: str
 
@@ -41,14 +42,12 @@ def get_to_handle() -> typing.List[ToHandle]:
     raw = Vars._app.get("to_handle", None)
     raw_all_to_handle: typing.Dict = raw  # type: ignore
     return [
-        i for i in [
-            _decrypt_to_handle(k, v["encrypted"])
-            for k, v in raw_all_to_handle.items()
-        ] if i is not None
+        _decrypt_to_handle(k, v["encrypted"])
+        for k, v in raw_all_to_handle.items()
     ]
 
 
-def _decrypt_to_handle(key: str, encrypted: str) -> typing.Optional[ToHandle]:
+def _decrypt_to_handle(key: str, encrypted: str) -> ToHandle:
     loaded = json.loads(decrypt(encrypted))
     encrypted_user = loaded.pop("user")["encrypted"]
     user = json.loads(decrypt(encrypted_user))

@@ -31,13 +31,12 @@ def get_(request: Request):
 
 
 class EncryptPayload(screenshot.RequestPayload):
-    cookie: str
+    payload: str
 
 
 @web_app.post("/encrypt")
 def post_encrypt(payload: EncryptPayload):
-    to_encrypt = payload.json()
-    encrypted = firebase_wrapper.encrypt(to_encrypt)
+    encrypted = firebase_wrapper.encrypt(payload.payload)
     return HTMLResponse(encrypted)
 
 
