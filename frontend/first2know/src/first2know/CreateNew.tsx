@@ -9,6 +9,7 @@ const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
+const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
 function CreateNew(props: { user: UserType }): JSX.Element {
@@ -35,7 +36,16 @@ function CreateNew(props: { user: UserType }): JSX.Element {
             css_selector: <input ref={cssSelectorRef} type="text" />
           </div>
           <div>
-            js_evaluate:
+            js_evaluate: {"("}transform evaluation to img
+            <input
+              onChange={() =>
+                (cssSelectorRef.current!.disabled =
+                  evaluationToImgRef.current!.checked)
+              }
+              ref={evaluationToImgRef}
+              type="checkbox"
+            />
+            {")"}
             <div>
               <textarea ref={evaluateRef} />
             </div>
@@ -69,14 +79,19 @@ function getData(): ScreenshotType {
     params = {};
   }
   Object.assign(params, { cookie: cookieRef.current!.value || null });
-  return {
+  const rval = {
     url: urlRef.current!.value,
     params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
-    // TODO dcep93 evaluation_to_img
-    evaluation_to_img: false,
+    evaluation_to_img: evaluationToImgRef.current!.checked,
   };
+  if (rval.url === "") {
+    const err = "need to have a url";
+    alert(err);
+    throw err;
+  }
+  return rval;
 }
 
 function checkScreenShot(update: (data: string | undefined) => void) {
