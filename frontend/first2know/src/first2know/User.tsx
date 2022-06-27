@@ -11,7 +11,7 @@ export type UserType = {
 
 type PropsType = { user: UserType; update: (user: UserType) => void };
 
-class Login extends React.Component<PropsType> {
+class User extends React.Component<PropsType> {
   constructor(props: PropsType) {
     super(props);
 
@@ -63,4 +63,4 @@ class Login extends React.Component<PropsType> {
   }
 }
 
-export default Login;
+export default User;

@@ -2,8 +2,8 @@ import { createRef, useState } from "react";
 import firebase, { ScreenshotType } from "./firebase";
 
 import loading from "./loading.gif";
-import { UserType } from "./Login";
 import { url } from "./Server";
+import { UserType } from "./User";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
@@ -12,7 +12,7 @@ const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
-function CreateNew(props: { user: UserType }): JSX.Element {
+function Create(props: { user: UserType }): JSX.Element {
   const [data, update] = useState<string | undefined>(undefined);
   return (
     <div>
@@ -144,4 +144,4 @@ function submitNew(user: UserType) {
     );
 }
 
-export default CreateNew;
+export default Create;

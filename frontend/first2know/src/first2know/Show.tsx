@@ -1,9 +1,9 @@
 import { useState } from "react";
 import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 import styles from "./index.module.css";
-import { UserType } from "./Login";
+import { UserType } from "./User";
 
-function ShowCurrent(props: {
+function Show(props: {
   user: UserType;
   allToHandle: AllToHandleType;
 }): JSX.Element {
@@ -47,11 +47,11 @@ function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
               firebase.deleteToHandle(props.k);
           }}
         >
-          Delete {props.k}
+          Edit {props.k}
         </button>
       </div>
     </div>
   );
 }
 
-export default ShowCurrent;
+export default Show;
