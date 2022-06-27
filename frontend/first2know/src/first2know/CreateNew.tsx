@@ -74,6 +74,8 @@ function getData(): ScreenshotType {
     params,
     evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
+    // TODO dcep93 evaluation_to_img
+    evaluation_to_img: false,
   };
 }
 
@@ -88,14 +90,14 @@ function checkScreenShot(update: (data: string | undefined) => void) {
     },
     body,
   })
-    .then((resp) => Promise.all([Promise.resolve(resp), resp.text()]))
-    .then(([resp, text]) => {
-      if (!resp.ok) throw Error(text);
+    .then((resp) => Promise.all([Promise.resolve(resp.ok), resp.text()]))
+    .then(([ok, text]) => {
+      if (!ok) throw Error(text);
       return text;
     })
     .then((text) => JSON.parse(text))
-    .then((json) => [console.log(json.evaluate), json.data])
-    .then(([_, bytes]) => `data:image/png;base64,${bytes}`)
+    .then((json) => [json.img_data, console.log(json.evaluate)][0])
+    .then((bytes) => `data:image/png;base64,${bytes}`)
     .then(update)
     .catch((err) => {
       update(undefined);

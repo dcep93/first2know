@@ -18,6 +18,7 @@ export type ScreenshotType = {
   params: { [s: string]: any } | null;
   evaluate: string | null;
   selector: string | null;
+  evaluation_to_img: boolean;
 };
 
 function pushToHandle(toHandle: ToHandleType) {

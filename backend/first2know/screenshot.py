@@ -2,6 +2,7 @@ import asyncio
 import base64
 import collections
 import json
+import io
 import os
 import typing
 
@@ -14,7 +15,7 @@ from PIL import Image, ImageDraw
 
 class RequestPayload(BaseModel):
     url: str
-    params: typing.Optional[typing.Dict[str, str]]
+    params: typing.Optional[typing.Dict[str, typing.Any]]
     evaluate: typing.Optional[str]
     evaluation_to_img: bool
     selector: typing.Optional[str]
@@ -97,8 +98,7 @@ class _Screenshot(abc.ABC):
         chain = self.get_chain(key, payload)
         d = self.execute_chain(chain)
         if payload.evaluation_to_img:
-            text = json.dumps(d["evaluation"], indent=1)
-            binary_data = self.text_to_img_bytes(text)
+            binary_data = self.evaluation_to_img_bytes(d["evaluation"])
         else:
             dest = d["dest"]
             binary_data = open(dest, "rb").read()
@@ -115,13 +115,19 @@ class _Screenshot(abc.ABC):
             evaluation=d["evaluation"],
         )
 
-    def text_to_img_bytes(self, text: str) -> bytes:
+    def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:
+        text = evaluation if type(evaluation) is str else json.dumps(
+            evaluation,
+            indent=1,
+        )
         width = 100
         height = 100
         img = Image.new('1', (width, height))
         draw = ImageDraw.Draw(img)
-        draw.text((0, 0), text, fill=(255, 255, 255))
-        return img.tobytes()
+        draw.text((0, 0), text, fill=255)
+        img_byte_arr = io.BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        return img_byte_arr.getvalue()
 
 
 # TODO akshat make faster
