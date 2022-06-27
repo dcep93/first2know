@@ -43,20 +43,19 @@ function _connect(path: string, callback: (value: BlobType) => void): void {
 }
 
 function _get(path: string): BlobType {
-  get(ref(database, `${path}`));
+  return get(ref(database, `${path}`));
 }
 
-function _set(path: string, obj: BlobType): void {
-  set(ref(database, `${path}`), obj);
+function _set(path: string, obj: BlobType): Promise<void> {
+  return set(ref(database, `${path}`), obj);
 }
 
-function _push(path: string, obj: BlobType): string {
-  const pushed = push(ref(database, `${path}`), obj);
-  return pushed.key!;
+function _push(path: string, obj: BlobType): Promise<string> {
+  return push(ref(database, `${path}`), obj).then((pushed) => pushed.key!);
 }
 
-function _delete(path: string): void {
-  remove(ref(database, `${path}`));
+function _delete(path: string): Promise<void> {
+  return remove(ref(database, `${path}`));
 }
 
 const ex = {

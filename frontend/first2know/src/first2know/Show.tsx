@@ -20,7 +20,6 @@ function Show(props: {
   );
 }
 
-// TODO dcep93 edit
 function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
   const [hidden, update] = useState(true);
   return (

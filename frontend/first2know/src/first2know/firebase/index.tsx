@@ -21,16 +21,16 @@ export type ScreenshotType = {
   evaluation_to_img: boolean;
 };
 
-function pushToHandle(toHandle: ToHandleType): string {
+function pushToHandle(toHandle: ToHandleType): Promise<string> {
   return firebase._push(`/to_handle/`, toHandle);
 }
 
-function deleteToHandle(key: string) {
-  firebase._delete(`/to_handle/${key}`);
+function deleteToHandle(key: string): Promise<void> {
+  return firebase._delete(`/to_handle/${key}`);
 }
 
-function updateToHandle(key: string, toHandle: ToHandleType) {
-  firebase._set(`/to_handle/${key}`, toHandle);
+function updateToHandle(key: string, toHandle: ToHandleType): Promise<void> {
+  return firebase._set(`/to_handle/${key}`, toHandle);
 }
 
 export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
