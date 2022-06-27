@@ -13,6 +13,7 @@ from . import firebase_wrapper
 from . import proxy
 from . import recorded_sha
 from . import screenshot
+from . import secrets
 from . import twitter_auth
 
 web_app = FastAPI()
@@ -48,7 +49,7 @@ def post_screenshot_img(payload: screenshot.RequestPayload):
             key,
             payload,
         )
-        bytes = base64.b64decode(screenshot_response.data)
+        bytes = base64.b64decode(screenshot_response.img_data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
         err = traceback.format_exc()
@@ -63,7 +64,7 @@ def post_screenshot_len(payload: screenshot.RequestPayload):
             key,
             payload,
         )
-        screenshot_response.data = str(len(screenshot_response.data))
+        screenshot_response.data = str(len(screenshot_response.img_data))
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()
@@ -109,7 +110,10 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
         oauth_token,
         oauth_verifier,
     )
-    raw_resp_str = json.dumps(resp_json)
+    raw_resp_str = json.dumps({
+        "client_secret": secrets.Vars.secrets.client_secret,
+        **resp_json
+    })
     resp_json["encrypted"] = firebase_wrapper.encrypt(raw_resp_str)
     resp_str = json.dumps(resp_json)
     return HTMLResponse(resp_str)

@@ -5,8 +5,10 @@ export type AllToHandleType = {
   [key: string]: ToHandleType;
 };
 
+export type DataType = { data: string; times: number[] };
+
 export type ToHandleType = ScreenshotType & {
-  data?: string;
+  data?: DataType;
   user_name: string;
   encrypted: string;
 };

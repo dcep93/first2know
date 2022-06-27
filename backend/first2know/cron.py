@@ -82,18 +82,21 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         params=to_handle.params,
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
+        previous_evaluation=to_handle.data.evaluated,
     )
     screenshot_response = Vars._screenshot.screenshot(to_handle.key, payload)
 
-    if screenshot_response is None:
+    to_write = firebase_wrapper.DataType(
+        img_data=screenshot_response.img_data,
+        evaluated=screenshot_response.evaluated,
+        times=to_handle.data.times + [time.time()],
+    )
+
+    if to_handle.data.img_data == to_write.img_data:
         return
 
-    current_data = screenshot_response.data
-    if to_handle.data == current_data:
-        return
-
-    tweet(to_handle.user_name, current_data)
-    firebase_wrapper.write_data(to_handle.key, current_data)
+    tweet(to_handle.user_name, to_write.img_data)
+    firebase_wrapper.write_data(to_handle.key, to_write)
 
 
 def tweet(user: str, img_data: str) -> None:

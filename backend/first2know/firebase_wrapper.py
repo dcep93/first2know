@@ -15,6 +15,12 @@ from firebase import firebase
 from . import secrets
 
 
+class DataType(BaseModel):
+    img_data: str
+    evaluated: typing.Optional[str]
+    times: typing.List[float]
+
+
 class ToHandle(BaseModel):
     url: str
     params: typing.Optional[typing.Dict[str, typing.Any]]
@@ -23,7 +29,7 @@ class ToHandle(BaseModel):
 
     user_name: str
 
-    data: typing.Optional[str]
+    data: DataType
     key: str
 
 
@@ -42,22 +48,38 @@ def get_to_handle() -> typing.List[ToHandle]:
     raw = Vars._app.get("to_handle", None)
     raw_all_to_handle: typing.Dict = raw  # type: ignore
     return [
-        _decrypt_to_handle(k, v["encrypted"])
-        for k, v in raw_all_to_handle.items()
+        i for i in [
+            _decrypt_to_handle(k, v["encrypted"], v.get("data"))
+            for k, v in raw_all_to_handle.items()
+        ] if i
     ]
 
 
-def _decrypt_to_handle(key: str, encrypted: str) -> ToHandle:
+def _decrypt_to_handle(
+        key: str, encrypted: str,
+        data: typing.Optional[DataType]) -> typing.Optional[ToHandle]:
     loaded = json.loads(decrypt(encrypted))
     encrypted_user = loaded.pop("user")["encrypted"]
     user = json.loads(decrypt(encrypted_user))
-    loaded["user_name"] = user["screen_name"]
-    return ToHandle(key=key, **loaded)
+    if user["client_secret"] != secrets.Vars.secrets.client_secret:
+        return None
+    asserted_data = DataType(
+        img_data="",
+        evaluated=None,
+        times=[],
+    ) if data is None else data
+    to_handle = ToHandle(
+        key=key,
+        user_name=user["screen_name"],
+        data=asserted_data,
+        **loaded,
+    )
+    return to_handle
 
 
-def write_data(key: str, data: str) -> None:
+def write_data(key: str, data: DataType) -> None:
     # print("write_data", key)
-    Vars._app.patch(f"to_handle/{key}", {"data": data})
+    Vars._app.patch(f"to_handle/{key}/data", data.dict())
 
 
 def write_refresh_token(refresh_token: str) -> None:

@@ -12,14 +12,15 @@ from pydantic import BaseModel
 
 class RequestPayload(BaseModel):
     url: str
-    params: typing.Optional[typing.Dict[str, str]] = None
-    evaluate: typing.Optional[str] = None
-    selector: typing.Optional[str] = None
+    params: typing.Optional[typing.Dict[str, str]]
+    evaluate: typing.Optional[str]
+    selector: typing.Optional[str]
+    previous_evaluation: typing.Optional[str]
 
 
 class ResponsePayload(BaseModel):
-    data: str
-    evaluate: typing.Optional[str]
+    img_data: str
+    evaluated: typing.Optional[str]
 
 
 # https://playwright.dev/python/docs/intro
@@ -62,8 +63,9 @@ class _Screenshot(abc.ABC):
             # TODO dcep93 evaluate based on previous evaluation
             (
                 "evaluate",
-                lambda rval: None if payload.evaluate is None else rval["page"]
-                .evaluate(payload.evaluate),
+                lambda rval: None
+                if payload.evaluate is None else rval["page"].evaluate(
+                    payload.evaluate, payload.previous_evaluation),
             ),
             (
                 "selector",
@@ -90,17 +92,17 @@ class _Screenshot(abc.ABC):
 
         chain = self.get_chain(key, payload, dest)
         rval = self.execute_chain(chain)
-        evaluate = json.dumps(rval.get("evaluate"))
+        evaluated = json.dumps(rval.get("evaluate"))
         binary_data = open(dest, "rb").read()
         os.remove(dest)
-        data = base64.b64encode(binary_data).decode('utf-8')
+        img_data = base64.b64encode(binary_data).decode('utf-8')
         # print(' '.join([
         #     f"{time.time() - s:.3f}s",
         #     str(payload.key),
         #     f"{len(binary_data)/1000}kb",
         #     datetime.datetime.now().strftime("%H:%M:%S.%f"),
         # ]))
-        return ResponsePayload(data=data, evaluate=evaluate)
+        return ResponsePayload(img_data=img_data, evaluated=evaluated)
 
 
 # TODO akshat make faster
