@@ -1,8 +1,8 @@
 import { createRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import firebase, { ScreenshotType } from "./firebase";
 
 import loading from "./loading.gif";
-import goToPath from "./Router";
 import { url } from "./Server";
 import { UserType } from "./User";
 
@@ -14,6 +14,7 @@ const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
 function Create(props: { user: UserType }): JSX.Element {
+  const navigate = useNavigate();
   const [data, update] = useState<string | undefined>(undefined);
   return (
     <div>
@@ -56,7 +57,12 @@ function Create(props: { user: UserType }): JSX.Element {
       </div>
       {props.user && (
         <div>
-          <form onSubmit={(e) => [e.preventDefault(), submitNew(props.user!)]}>
+          <form
+            onSubmit={(e) => [
+              e.preventDefault(),
+              submitNew(props.user!).then((key) => navigate(key)),
+            ]}
+          >
             <input type="submit" value="Submit" />
           </form>
         </div>
@@ -123,12 +129,12 @@ function checkScreenShot(update: (data: string | undefined) => void) {
     });
 }
 
-function submitNew(user: UserType) {
+function submitNew(user: UserType): Promise<string> {
   const data = getData();
   const payload = { ...data, user };
   const body = JSON.stringify({ payload });
   delete data.params!["cookie"];
-  fetch(`${url}/encrypt`, {
+  return fetch(`${url}/encrypt`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -142,8 +148,7 @@ function submitNew(user: UserType) {
         encrypted,
         user_name: user!.screen_name,
       })
-    )
-    .then((key) => goToPath(key));
+    );
 }
 
 export default Create;

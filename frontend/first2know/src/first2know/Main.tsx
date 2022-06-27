@@ -1,9 +1,6 @@
-import { useState } from "react";
-import Create from "./Create";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
+import Home from "./Home";
 import { recorded_sha } from "./recorded_sha";
-import Show from "./Show";
-import User, { UserType } from "./User";
 
 console.log(recorded_sha);
 class Main extends FirebaseWrapper<AllToHandleType> {
@@ -17,19 +14,8 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 
   render() {
     if (this.state === null) return <>Loading...</>;
-    return <SubFirebase allToHandle={this.state.state} />;
+    return <Home allToHandle={this.state.state} />;
   }
-}
-
-function SubFirebase(props: { allToHandle: AllToHandleType }) {
-  const [user, update] = useState<UserType>(null);
-  return (
-    <>
-      <User user={user} update={update} />
-      <Create user={user} />
-      <Show user={user} allToHandle={props.allToHandle} />
-    </>
-  );
 }
 
 export default Main;
