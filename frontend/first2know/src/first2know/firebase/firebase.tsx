@@ -50,8 +50,9 @@ function _set(path: string, obj: BlobType): void {
   set(ref(database, `${path}`), obj);
 }
 
-function _push(path: string, obj: BlobType): void {
-  push(ref(database, `${path}`), obj);
+function _push(path: string, obj: BlobType): string {
+  const pushed = push(ref(database, `${path}`), obj);
+  return pushed.key!;
 }
 
 function _delete(path: string): void {

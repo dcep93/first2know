@@ -2,6 +2,7 @@ import { createRef, useState } from "react";
 import firebase, { ScreenshotType } from "./firebase";
 
 import loading from "./loading.gif";
+import goToPath from "./Router";
 import { url } from "./Server";
 import { UserType } from "./User";
 
@@ -141,7 +142,8 @@ function submitNew(user: UserType) {
         encrypted,
         user_name: user!.screen_name,
       })
-    );
+    )
+    .then((key) => goToPath(key));
 }
 
 export default Create;

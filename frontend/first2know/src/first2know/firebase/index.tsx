@@ -21,8 +21,8 @@ export type ScreenshotType = {
   evaluation_to_img: boolean;
 };
 
-function pushToHandle(toHandle: ToHandleType) {
-  firebase._push(`/to_handle/`, toHandle);
+function pushToHandle(toHandle: ToHandleType): string {
+  return firebase._push(`/to_handle/`, toHandle);
 }
 
 function deleteToHandle(key: string) {
