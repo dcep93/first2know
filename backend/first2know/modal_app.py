@@ -21,14 +21,15 @@ image = modal.DebianSlim().run_commands([
     'apt install -y git',
 ]).pip_install([
     'grpcio==1.43.0',
-]).pip_install([
-    'cryptography',
-    'requests',
-    'requests_oauthlib',
 ]).run_commands([
     "pip install playwright==1.22",
     "playwright install-deps chromium",
     "playwright install chromium",
+]).pip_install([
+    'cryptography',
+    'requests',
+    'requests_oauthlib',
+    'pillow',
 ]).pip_install([
     'git+https://github.com/ozgur/python-firebase',
 ])

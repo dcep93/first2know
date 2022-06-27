@@ -9,6 +9,8 @@ import abc
 
 from pydantic import BaseModel
 
+from PIL import Image, ImageDraw
+
 
 class RequestPayload(BaseModel):
     url: str
@@ -95,14 +97,13 @@ class _Screenshot(abc.ABC):
         chain = self.get_chain(key, payload)
         d = self.execute_chain(chain)
         if payload.evaluation_to_img:
-            img_data = json.dumps(d["evaluation"], indent=1)
-
-            # TODO dcep93 text to img
+            text = json.dumps(d["evaluation"], indent=1)
+            binary_data = self.text_to_img_bytes(text)
         else:
             dest = d["dest"]
             binary_data = open(dest, "rb").read()
             os.remove(dest)
-            img_data = base64.b64encode(binary_data).decode('utf-8')
+        img_data = base64.b64encode(binary_data).decode('utf-8')
         # print(' '.join([
         #     f"{time.time() - s:.3f}s",
         #     str(key),
@@ -113,6 +114,14 @@ class _Screenshot(abc.ABC):
             img_data=img_data,
             evaluation=d["evaluation"],
         )
+
+    def text_to_img_bytes(self, text: str) -> bytes:
+        width = 100
+        height = 100
+        img = Image.new('1', (width, height))
+        draw = ImageDraw.Draw(img)
+        draw.text((0, 0), text, fill=(255, 255, 255))
+        return img.tobytes()
 
 
 # TODO akshat make faster
