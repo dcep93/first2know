@@ -38,7 +38,7 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
             should_continue = run_cron()
         except Exception as _e:  # noqa: F841
             e = _e
-            print(e)
+            print("run_cron exc", e)
             traceback.print_exc()
             time.sleep(1)
             continue
