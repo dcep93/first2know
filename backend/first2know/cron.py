@@ -28,7 +28,6 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
     start = time.time()
     end = start + period_seconds + grace_period_seconds
     loops = 0
-    e = None
     while time.time() < end:
         loops_per = loops / (time.time() - start)
         loops += 1
@@ -36,16 +35,13 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
             print(loops, "loops", f"{loops_per:.2f}/s")
         try:
             should_continue = run_cron()
-        except Exception as _e:  # noqa: F841
-            e = _e
+        except Exception as e:  # noqa: F841
             print("run_cron exc", e)
             traceback.print_exc()
             time.sleep(1)
             continue
         if not should_continue:
-            print("exiting cron", loops, e is None)
-            if e is not None:
-                raise e
+            print("exiting cron", loops)
             return True
     return False
 
