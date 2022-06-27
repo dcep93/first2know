@@ -64,7 +64,7 @@ def post_screenshot_len(payload: screenshot.RequestPayload):
             key,
             payload,
         )
-        screenshot_response.data = str(len(screenshot_response.img_data))
+        screenshot_response.img_data = str(len(screenshot_response.img_data))
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()

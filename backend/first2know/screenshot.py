@@ -14,13 +14,14 @@ class RequestPayload(BaseModel):
     url: str
     params: typing.Optional[typing.Dict[str, str]]
     evaluate: typing.Optional[str]
+    evaluation_to_img: bool
     selector: typing.Optional[str]
-    previous_evaluation: typing.Optional[str]
+    previous_evaluation: typing.Optional[typing.Any]
 
 
 class ResponsePayload(BaseModel):
     img_data: str
-    evaluated: typing.Optional[str]
+    evaluation: typing.Any
 
 
 # https://playwright.dev/python/docs/intro
@@ -40,69 +41,78 @@ class _Screenshot(abc.ABC):
         self,
         key: str,
         payload: RequestPayload,
-        screenshot_dest: str,
     ):
         params = None if payload.params is None else dict(payload.params)
         return [
             (
                 "context",
-                lambda rval: self.get_context(key),
+                lambda d: self.get_context(key),
             ),
             (
                 "page",
-                lambda rval: rval["context"].new_page(),
+                lambda d: d["context"].new_page(),
             ),
             (
                 "set_extra_http_headers",
-                lambda rval: rval["page"].set_extra_http_headers(params),
+                lambda d: d["page"].set_extra_http_headers(params),
             ),
             (
                 "goto",
-                lambda rval: rval["page"].goto(payload.url),
+                lambda d: d["page"].goto(payload.url),
             ),
-            # TODO dcep93 evaluate based on previous evaluation
             (
-                "evaluate",
-                lambda rval: None
-                if payload.evaluate is None else rval["page"].evaluate(
+                "evaluation",
+                lambda d: None
+                if payload.evaluate is None else d["page"].evaluate(
                     payload.evaluate, payload.previous_evaluation),
             ),
             (
-                "selector",
-                lambda rval: self.empty_apply(rval, {"selector": rval["page"]})
-                if payload.selector is None else rval["page"].locator(
-                    payload.selector),
+                "to_screenshot",
+                lambda d: self.get_to_screenshot(d, key, payload),
             ),
             (
                 "screenshot",
-                lambda rval: rval["selector"].screenshot(path=screenshot_dest),
+                lambda d: None if d["to_screenshot"] is None else d[
+                    "to_screenshot"].screenshot(path=d["dest"]),
             ),
-            # TODO dcep93 text to img
         ]
 
-    def empty_apply(self, rval, to_apply):
-        for i, j in to_apply.items():
-            rval[i] = j
-        return None
+    def get_to_screenshot(
+        self,
+        d: typing.Dict[str, typing.Any],
+        key: str,
+        payload: RequestPayload,
+    ):
+        if payload.evaluation_to_img:
+            return None
+        else:
+            d["dest"] = f"screenshot_{key}.png"
+            selector = "body" if payload.selector is None else payload.selector
+            return d["page"].locator(selector)
 
-    # TODO dcep93 make robust
     def screenshot(self, key: str, payload: RequestPayload) -> ResponsePayload:
         # s = time.time()
-        dest = f"screenshot_{key}.png"
+        chain = self.get_chain(key, payload)
+        d = self.execute_chain(chain)
+        if payload.evaluation_to_img:
+            img_data = json.dumps(d["evaluation"], indent=1)
 
-        chain = self.get_chain(key, payload, dest)
-        rval = self.execute_chain(chain)
-        evaluated = json.dumps(rval.get("evaluate"))
-        binary_data = open(dest, "rb").read()
-        os.remove(dest)
-        img_data = base64.b64encode(binary_data).decode('utf-8')
+            # TODO dcep93 text to img
+        else:
+            dest = d["dest"]
+            binary_data = open(dest, "rb").read()
+            os.remove(dest)
+            img_data = base64.b64encode(binary_data).decode('utf-8')
         # print(' '.join([
         #     f"{time.time() - s:.3f}s",
-        #     str(payload.key),
-        #     f"{len(binary_data)/1000}kb",
+        #     str(key),
+        #     f"{len(rval)/1000}kb",
         #     datetime.datetime.now().strftime("%H:%M:%S.%f"),
         # ]))
-        return ResponsePayload(img_data=img_data, evaluated=evaluated)
+        return ResponsePayload(
+            img_data=img_data,
+            evaluation=d["evaluation"],
+        )
 
 
 # TODO akshat make faster

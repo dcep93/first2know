@@ -17,7 +17,7 @@ from . import secrets
 
 class DataType(BaseModel):
     img_data: str
-    evaluated: typing.Optional[str]
+    evaluation: typing.Optional[str]
     times: typing.List[float]
 
 
@@ -26,6 +26,7 @@ class ToHandle(BaseModel):
     params: typing.Optional[typing.Dict[str, typing.Any]]
     evaluate: typing.Optional[str]
     selector: typing.Optional[str]
+    evaluation_to_img: bool
 
     user_name: str
 
@@ -65,7 +66,7 @@ def _decrypt_to_handle(
         return None
     asserted_data = DataType(
         img_data="",
-        evaluated=None,
+        evaluation=None,
         times=[],
     ) if data is None else data
     to_handle = ToHandle(

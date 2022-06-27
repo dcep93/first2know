@@ -77,18 +77,22 @@ def run_cron() -> bool:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    payload = screenshot.RequestPayload(
+    screenshot_payload = screenshot.RequestPayload(
         url=to_handle.url,
         params=to_handle.params,
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
-        previous_evaluation=to_handle.data.evaluated,
+        previous_evaluation=to_handle.data.evaluation,
+        evaluation_to_img=to_handle.evaluation_to_img,
     )
-    screenshot_response = Vars._screenshot.screenshot(to_handle.key, payload)
+    screenshot_response = Vars._screenshot.screenshot(
+        to_handle.key,
+        screenshot_payload,
+    )
 
     to_write = firebase_wrapper.DataType(
         img_data=screenshot_response.img_data,
-        evaluated=screenshot_response.evaluated,
+        evaluation=screenshot_response.evaluation,
         times=to_handle.data.times + [time.time()],
     )
 
