@@ -5,6 +5,7 @@ import Login, { UserType } from "./Login";
 import { recorded_sha } from "./recorded_sha";
 import ShowCurrent from "./ShowCurrent";
 
+console.log(recorded_sha);
 class Main extends FirebaseWrapper<AllToHandleType> {
   getTitle(): string {
     return "first2know";
@@ -16,7 +17,6 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 
   render() {
     if (this.state === null) return <>Loading...</>;
-    console.log(recorded_sha);
     return <SubFirebase allToHandle={this.state.state} />;
   }
 }

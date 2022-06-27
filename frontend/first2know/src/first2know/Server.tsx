@@ -6,6 +6,5 @@ export const url = IS_LOCAL
   : "https://dcep93-first2know-app.modal.run";
 fetch(url)
   .then((resp) => resp.text())
-  .then((text) => console.log(text));
-
-setInterval(() => fetch(url), FETCH_INTERVAL_MS);
+  .then((text) => console.log(text))
+  .then(() => setInterval(() => fetch(url), FETCH_INTERVAL_MS));
