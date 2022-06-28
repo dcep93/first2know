@@ -13,7 +13,7 @@ function Show(props: {
       {Object.entries(props.allToHandle)
         .filter(
           ([k, toHandle]) =>
-            toHandle.user_name !== undefined || isAdmin(props.user)
+            !toHandle.data_input.no_tweet || isAdmin(props.user)
         )
         .map(([k, toHandle]) => (
           <RenderToHandle key={k} k={k} toHandle={toHandle} />
