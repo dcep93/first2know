@@ -2,17 +2,25 @@ import React from "react";
 import firebase, { AllToHandleType, ScreenshotType } from "./firebase";
 import loading from "./loading.gif";
 
+type PropsType = {
+  allToHandle: AllToHandleType;
+  img_data: string | undefined;
+} & StateProps;
+
+export type StateProps = {
+  key?: string;
+  resolve?: (s: ScreenshotType) => void;
+  reject?: (s: string) => void;
+};
+
 class ScreenshotFetcher extends React.Component<
-  {
-    key?: string;
-    allToHandle: AllToHandleType;
-    resolve?: (s: ScreenshotType) => void;
-    reject?: (s: string) => void;
-    // TODO dcep93
-    img_data?: string;
-  },
+  PropsType,
   { img_data: string | undefined | null }
 > {
+  constructor(props: PropsType) {
+    super(props);
+    this.state = { img_data: this.props.img_data };
+  }
   componentDidUpdate() {
     const toHandle = this.props.allToHandle[this.props.key!];
     const data_output = toHandle?.data_output;
@@ -32,7 +40,7 @@ class ScreenshotFetcher extends React.Component<
   }
 
   render() {
-    const img_data = this.state?.img_data;
+    const img_data = this.state.img_data;
     return (
       <img
         src={

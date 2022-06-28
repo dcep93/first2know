@@ -15,16 +15,6 @@ type PropsType = {
 };
 
 class User extends React.Component<PropsType> {
-  constructor(props: PropsType) {
-    super(props);
-
-    const local = localStorage.getItem("login");
-    if (local) {
-      const user = JSON.parse(local);
-      this.props.update(user);
-    }
-  }
-
   render() {
     return this.props.user ? (
       <div>

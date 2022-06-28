@@ -25,7 +25,13 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 }
 
 function Helper(props: { allToHandle: AllToHandleType }) {
-  const [user, update] = useState<UserType | null>(null);
+  const local = localStorage.getItem("login");
+  var u = null;
+  if (local) {
+    u = JSON.parse(local);
+  }
+
+  const [user, update] = useState<UserType | null>(u);
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
       ([_, toHandle]) =>

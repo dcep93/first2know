@@ -6,7 +6,7 @@ import firebase, {
   ScreenshotType,
   ToHandleType,
 } from "./firebase";
-import ScreenshotFetcher from "./ScreenshotFetcher";
+import ScreenshotFetcher, { StateProps } from "./ScreenshotFetcher";
 import { UserType } from "./User";
 
 const urlRef = createRef<HTMLInputElement>();
@@ -24,13 +24,12 @@ type SubmitType = (
 type PropsType = {
   user: UserType;
   toHandle?: ToHandleType;
-  submit?: SubmitType;
+  submit: SubmitType;
   allToHandle: AllToHandleType;
 };
 
-class ToHandle extends React.Component<PropsType> {
+class ToHandle extends React.Component<PropsType, StateProps> {
   render() {
-    const navigate = useNavigate();
     const defaultParamsValue = this.props.toHandle?.data_input.params;
     return (
       <div>
@@ -92,21 +91,19 @@ class ToHandle extends React.Component<PropsType> {
           </div>
           <input type="submit" value="Check Screenshot" />
         </form>
-        <ScreenshotFetcher />
-        {this.props.submit && (
-          <button onClick={() => this.onSubmit(navigate)}>Submit</button>
-        )}
+        <ScreenshotFetcher
+          allToHandle={this.props.allToHandle}
+          img_data={this.props.toHandle?.data_output.img_data}
+        />
+        <SubmitableButton onSubmit={(navigate) => this.onSubmit(navigate)} />
       </div>
     );
   }
 
   onSubmit(navigate: (key: string) => void) {
-    const old_encrypted = getOldEncrypted(this.props.toHandle);
     Promise.resolve()
-      .then(() => this.getData(old_encrypted))
-      .then((data_input) =>
-        this.props.submit!({ old_encrypted, ...data_input })
-      )
+      .then(() => this.getData())
+      .then((data_input) => this.props.submit(data_input))
       .then((key) => navigate(key))
       .catch((err) => {
         alert(err);
@@ -114,7 +111,13 @@ class ToHandle extends React.Component<PropsType> {
       });
   }
 
-  getData(old_encrypted: string | null): Promise<ScreenshotType> {
+  getData(): Promise<ScreenshotType & { old_encrypted: string | null }> {
+    const old_encrypted =
+      this.props.toHandle === undefined
+        ? null
+        : reuseCookieRef.current?.checked
+        ? this.props.toHandle.encrypted
+        : null;
     const paramsJson = paramsRef.current!.value || null;
     const params = paramsJson ? JSON.parse(paramsJson) : {};
     const cookie = cookieRef.current!.value || null;
@@ -132,13 +135,18 @@ class ToHandle extends React.Component<PropsType> {
     }
     // always fetch screenshot
     // to validate the payload
-    return this.validateScreenshot(data_input, old_encrypted);
+    return this.validateScreenshot(data_input, old_encrypted).then(
+      (data_input) => ({ old_encrypted, ...data_input })
+    );
   }
 
   validateScreenshot(
     data_input: ScreenshotType,
     old_encrypted: string | null
   ): Promise<ScreenshotType> {
+    const p = new Promise<ScreenshotType>((resolve, reject) => {
+      this.setState({ resolve, reject });
+    });
     return encrypt(data_input, this.props.user, old_encrypted)
       .then((encrypted) =>
         firebase.pushToHandle(
@@ -147,26 +155,33 @@ class ToHandle extends React.Component<PropsType> {
           this.props.user.screen_name
         )
       )
-      .then(() => p)
-      .catch((err) => {
-        alert(err);
-        throw err;
-      })
-      .then((di) => di);
+      .then((key) => [p, this.setState({ key })][0]!)
+      .then(
+        (data_input) =>
+          [
+            data_input,
+            this.setState({
+              resolve: undefined,
+              reject: undefined,
+              key: undefined,
+            }),
+          ][0]!
+      );
   }
 
   checkScreenShot() {
-    const old_encrypted = getOldEncrypted(this.props.toHandle);
-    return this.getData(old_encrypted);
+    return this.getData().catch((err) => {
+      alert(err);
+      throw err;
+    });
   }
 }
 
-function getOldEncrypted(toHandle: ToHandleType | undefined) {
-  return toHandle === undefined
-    ? null
-    : reuseCookieRef.current?.checked
-    ? toHandle.encrypted
-    : null;
+function SubmitableButton(props: {
+  onSubmit: (navigate: (key: string) => void) => void;
+}) {
+  const navigate = useNavigate();
+  return <button onClick={() => props.onSubmit(navigate)}>Submit</button>;
 }
 
 export default ToHandle;
