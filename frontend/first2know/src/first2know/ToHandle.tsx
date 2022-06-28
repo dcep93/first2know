@@ -6,7 +6,8 @@ import firebase, {
   ScreenshotType,
   ToHandleType,
 } from "./firebase";
-import ScreenshotFetcher, { StateProps } from "./ScreenshotFetcher";
+import ImgRenderer from "./ImgRenderer";
+import Listener from "./Listener";
 import { UserType } from "./User";
 
 const urlRef = createRef<HTMLInputElement>();
@@ -28,12 +29,39 @@ type PropsType = {
   allToHandle: AllToHandleType;
 };
 
-class ToHandle extends React.Component<PropsType, StateProps> {
+class ToHandle extends React.Component<
+  PropsType,
+  {
+    img_data: string | undefined | null;
+    k?: string;
+    resolve?: () => void;
+    reject?: (s: string) => void;
+  }
+> {
+  constructor(props: PropsType) {
+    super(props);
+    this.state = { img_data: this.props.toHandle?.data_output.img_data };
+  }
+
+  updateImgData(img_data: string | undefined | null) {
+    if (this.state?.img_data !== img_data) this.setState({ img_data });
+  }
+
   render() {
     const defaultParamsValue = this.props.toHandle?.data_input.params;
     return (
       <div>
-        <form onSubmit={(e) => [e.preventDefault(), this.checkScreenShot()]}>
+        <Listener f={this.listenerF.bind(this)} p={this.props.allToHandle} />
+        <form
+          onSubmit={(e) =>
+            Promise.resolve(e.preventDefault())
+              .then(() => this.getData())
+              .catch((err) => {
+                alert(err);
+                throw err;
+              })
+          }
+        >
           <div>
             url:{" "}
             <input
@@ -96,20 +124,18 @@ class ToHandle extends React.Component<PropsType, StateProps> {
           </div>
           <input type="submit" value="Check Screenshot" />
         </form>
-        <ScreenshotFetcher
-          allToHandle={this.props.allToHandle}
-          img_data={this.props.toHandle?.data_output.img_data}
-          {...this.state}
+        <ImgRenderer img_data={this.state.img_data} />
+        <SubmitableButton
+          onSubmit={(navigate) => this.onSubmit(this.props.submit, navigate)}
         />
-        <SubmitableButton onSubmit={(navigate) => this.onSubmit(navigate)} />
       </div>
     );
   }
 
-  onSubmit(navigate: (key: string) => void) {
+  onSubmit(submit: SubmitType, navigate: (key: string) => void) {
     Promise.resolve()
       .then(() => this.getData())
-      .then((data_input) => this.props.submit(data_input))
+      .then((data_input) => submit(data_input))
       .then((key) => navigate(key))
       .catch((err) => {
         alert(err);
@@ -135,25 +161,16 @@ class ToHandle extends React.Component<PropsType, StateProps> {
       evaluation: null,
       evaluate: evaluateRef.current!.value || null,
       evaluation_to_img: evaluationToImgRef.current!.checked,
+      no_tweet: true,
     };
     if (data_input.url === "") {
       throw Error("need to have a url");
     }
     // always fetch screenshot
     // to validate the payload
-    return this.validateScreenshot(data_input, old_encrypted).then(
-      (data_input) => ({ old_encrypted, ...data_input })
-    );
-  }
-
-  validateScreenshot(
-    data_input: ScreenshotType,
-    old_encrypted: string | null
-  ): Promise<ScreenshotType> {
     const p = new Promise<void>((resolve, reject) => {
       this.setState({ resolve, reject });
     });
-    data_input = { no_tweet: true, ...data_input };
     return encrypt(data_input, this.props.user, old_encrypted)
       .then((encrypted) =>
         firebase.pushToHandle(
@@ -180,16 +197,29 @@ class ToHandle extends React.Component<PropsType, StateProps> {
         });
         return data_input;
       })
-      .then(({ no_tweet, ...data_input }) => data_input);
+      .then(({ no_tweet, ...data_input }) => ({
+        old_encrypted,
+        ...data_input,
+      }));
   }
 
-  checkScreenShot() {
-    return Promise.resolve()
-      .then(() => this.getData())
-      .catch((err) => {
-        alert(err);
-        throw err;
-      });
+  listenerF() {
+    const data_output = this.props.allToHandle[this.state.k!]?.data_output;
+    if (data_output) {
+      if (data_output.error) {
+        firebase
+          .deleteToHandle(this.state.k!)
+          .then(() => this.state.reject!(data_output.error!.message))
+          .then(() => this.updateImgData(undefined));
+      } else if (data_output.img_data) {
+        firebase
+          .deleteToHandle(this.state.k!)
+          .then(() => this.state.resolve!())
+          .then(() => this.updateImgData(data_output.img_data));
+      } else if (this.state.img_data !== null) {
+        this.updateImgData(null);
+      }
+    }
   }
 }
 
