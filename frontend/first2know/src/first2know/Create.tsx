@@ -9,7 +9,7 @@ function Create(props: { user: UserType | null }): JSX.Element {
     <ToHandle
       submit={
         props.user
-          ? (data_input, img_data) => submitNew(data_input, props.user!)
+          ? (data_input) => submitNew(data_input, props.user!)
           : undefined
       }
     />
@@ -20,8 +20,18 @@ function submitNew(
   data_input: ScreenshotType,
   user: UserType
 ): Promise<string> {
-  const payload = JSON.stringify({ ...data_input, user });
-  const body = JSON.stringify({ payload });
+  return encrypt(data_input, user).then((encrypted) =>
+    firebase.pushToHandle({
+      data_input,
+      data_output: { img_data: "", times: [Date.now()] },
+      encrypted,
+      user_name: user!.screen_name,
+    })
+  );
+}
+
+function encrypt(data_input: ScreenshotType, user: UserType): Promise<string> {
+  const body = JSON.stringify({ payload: { ...data_input, user } });
   delete data_input.params!["cookie"];
   return fetch(`${url}/encrypt`, {
     method: "POST",
@@ -34,15 +44,7 @@ function submitNew(
     .then(([ok, text]) => {
       if (!ok) throw Error(text);
       return text;
-    })
-    .then((encrypted) =>
-      firebase.pushToHandle({
-        data_input,
-        data_output: { img_data: "", times: [Date.now()] },
-        encrypted,
-        user_name: user!.screen_name,
-      })
-    );
+    });
 }
 
 export default Create;

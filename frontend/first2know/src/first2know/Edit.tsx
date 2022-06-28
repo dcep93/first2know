@@ -1,5 +1,10 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import firebase, { AllToHandleType, ToHandleType } from "./firebase";
+import firebase, {
+  AllToHandleType,
+  ScreenshotType,
+  ToHandleType,
+} from "./firebase";
+import { url } from "./Server";
 import ToHandle from "./ToHandle";
 import { UserType } from "./User";
 
@@ -28,16 +33,21 @@ function RoutedEdit(props: {
     <>
       <ToHandle
         toHandle={props.toHandle}
-        submit={(data_input) =>
-          firebase
-            .updateToHandle(props.k, {
-              data_input,
-              data_output: props.toHandle.data_output,
-              user_name: props.user!.screen_name,
-              // TODO dcep93 reencrypt
-              encrypted: "",
-            })
-            .then(() => props.k)
+        submit={(data_input, { reuse_cookie }) =>
+          reencrypt(
+            data_input,
+            props.user!,
+            reuse_cookie ? props.toHandle.encrypted : null
+          ).then((encrypted) =>
+            firebase
+              .updateToHandle(props.k, {
+                data_input,
+                data_output: props.toHandle.data_output,
+                user_name: props.user!.screen_name,
+                encrypted,
+              })
+              .then(() => props.k)
+          )
         }
       />
       <button
@@ -51,4 +61,29 @@ function RoutedEdit(props: {
     </>
   );
 }
+
+function reencrypt(
+  data_input: ScreenshotType,
+  user: UserType,
+  old_encrypted: string | null
+): Promise<string> {
+  const body = JSON.stringify({
+    payload: { ...data_input, user },
+    old_encrypted,
+  });
+  delete data_input.params!["cookie"];
+  return fetch(`${url}/reencrypt`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body,
+  })
+    .then((resp) => Promise.all([Promise.resolve(resp.ok), resp.text()]))
+    .then(([ok, text]) => {
+      if (!ok) throw Error(text);
+      return text;
+    });
+}
+
 export default Edit;

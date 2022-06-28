@@ -14,7 +14,10 @@ const cssSelectorRef = createRef<HTMLInputElement>();
 // TODO dcep93 edit
 function ToHandle(props: {
   toHandle?: ToHandleType;
-  submit?: (data_input: ScreenshotType, img_data: string) => Promise<string>;
+  submit?: (
+    data_input: ScreenshotType,
+    extra: { reuse_cookie: boolean }
+  ) => Promise<string>;
 }) {
   const [img_data, update] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
@@ -57,7 +60,8 @@ function ToHandle(props: {
             Promise.resolve()
               .then(() => getData())
               .then(({ img_data, ...data_input }) =>
-                props.submit!(data_input, img_data)
+                // TODO dcep93 reuse_cookie
+                props.submit!(data_input, { reuse_cookie: true })
               )
               .then((key) => navigate(key))
               .catch((err) => {

@@ -3,11 +3,11 @@ import json
 import io
 import uuid
 import traceback
+import typing
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
-from pydantic import BaseModel
 
 from . import cron
 from . import firebase_wrapper
@@ -32,13 +32,33 @@ def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-class EncryptPayload(BaseModel):
-    payload: str
+class EncryptPayload(firebase_wrapper.ScreenshotPayload):
+    user: typing.Any
 
 
 @web_app.post("/encrypt")
 def post_encrypt(payload: EncryptPayload):
-    encrypted = firebase_wrapper.encrypt(payload.payload)
+    json_str = payload.json()
+    encrypted = firebase_wrapper.encrypt(json_str)
+    return HTMLResponse(encrypted)
+
+
+class ReencryptPayload(EncryptPayload):
+    old_encrypted: typing.Optional[str]
+
+
+@web_app.post("/reencrypt")
+def post_reencrypt(payload: ReencryptPayload):
+    if payload.old_encrypted is not None:
+        decrypted = firebase_wrapper.decrypt(payload.old_encrypted)
+        decrypted_payload = EncryptPayload(**json.loads(decrypted))
+        decrypted_params = decrypted_payload.params
+        if decrypted_params is not None:
+            params = payload.params if payload.params is not None else {}
+            params["cookie"] = decrypted_params.get("cookie")
+            payload.params = params
+    json_str = payload.json()
+    encrypted = firebase_wrapper.encrypt(json_str)
     return HTMLResponse(encrypted)
 
 
