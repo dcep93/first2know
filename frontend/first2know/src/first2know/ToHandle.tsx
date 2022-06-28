@@ -125,6 +125,7 @@ function getData(
   }));
 }
 
+// TODO dcep93 have cron respond!
 function fetchScreenShot(
   data_input: ScreenshotType,
   old_encrypted: string | null
