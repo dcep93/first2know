@@ -31,17 +31,11 @@ type PropsType = {
 class ToHandle extends React.Component<
   PropsType,
   {
-    img_data: string | undefined | null;
     k?: string;
     resolve?: () => void;
     reject?: (s: string) => void;
   }
 > {
-  constructor(props: PropsType) {
-    super(props);
-    this.state = { img_data: this.props.toHandle?.data_output.img_data };
-  }
-
   render() {
     const defaultParamsValue = this.props.toHandle?.data_input.params;
     return (
@@ -201,23 +195,24 @@ class ToHandle extends React.Component<
       }));
   }
 
-  listenerF(updateImgData: (img_data: string | null | undefined) => void) {
+  listenerF(): Promise<string | null | undefined> | null {
     const data_output = this.props.allToHandle[this.state.k!]?.data_output;
     if (data_output) {
       if (data_output.error) {
-        firebase
+        return firebase
           .deleteToHandle(this.state.k!)
           .then(() => this.state.reject!(data_output.error!.message))
-          .then(() => updateImgData(undefined));
+          .then(() => undefined);
       } else if (data_output.img_data) {
-        firebase
+        return firebase
           .deleteToHandle(this.state.k!)
           .then(() => this.state.resolve!())
-          .then(() => updateImgData(data_output.img_data));
-      } else if (this.state.img_data !== null) {
-        updateImgData(null);
+          .then(() => data_output.img_data);
+      } else {
+        return Promise.resolve(null);
       }
     }
+    return null;
   }
 }
 
