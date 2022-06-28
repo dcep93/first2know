@@ -37,7 +37,7 @@ if (!window.firebaseinitialized) {
 function _connect(path: string, callback: (value: BlobType) => void): void {
   onValue(ref(database, `${path}`), (snapshot: ResultType) => {
     var val = snapshot.val();
-    console.log("firebase", window.location.href, val);
+    console.log("firebase", Date.now() / 1000, window.location.href, val);
     callback(val);
   });
 }

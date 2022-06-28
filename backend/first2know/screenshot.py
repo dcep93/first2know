@@ -1,9 +1,11 @@
 import asyncio
 import base64
 import collections
+import datetime
 import json
 import io
 import os
+import time
 import typing
 
 import abc
@@ -13,6 +15,7 @@ from pydantic import BaseModel
 from PIL import Image, ImageDraw
 
 from . import firebase_wrapper
+from . import secrets
 
 
 class ResponsePayload(BaseModel):
@@ -93,7 +96,7 @@ class _Screenshot(abc.ABC):
         payload: firebase_wrapper.ScreenshotPayload,
         previous_evaluation: typing.Any,
     ) -> ResponsePayload:
-        # s = time.time()
+        s = time.time()
         chain = self.get_chain(key, payload, previous_evaluation)
         d = self.execute_chain(chain)
         if payload.evaluation_to_img:
@@ -103,12 +106,13 @@ class _Screenshot(abc.ABC):
             binary_data = open(dest, "rb").read()
             os.remove(dest)
         img_data = base64.b64encode(binary_data).decode('utf-8')
-        # print(' '.join([
-        #     f"{time.time() - s:.3f}s",
-        #     str(key),
-        #     f"{len(rval)/1000}kb",
-        #     datetime.datetime.now().strftime("%H:%M:%S.%f"),
-        # ]))
+        if True or secrets.Vars.is_local:
+            print(' '.join([
+                f"{time.time() - s:.3f}s",
+                str(key),
+                f"{len(img_data)/1000}kb",
+                datetime.datetime.now().strftime("%H:%M:%S.%f"),
+            ]))
         return ResponsePayload(
             img_data=img_data,
             evaluation=d.get("evaluation"),

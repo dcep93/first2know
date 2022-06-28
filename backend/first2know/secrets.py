@@ -16,10 +16,12 @@ class Secrets(BaseModel):
 
 class Vars:
     secrets: Secrets = None  # type: ignore
+    is_local = False
 
 
 if Vars.secrets is None:
     if os.environ.get("LOCAL"):
+        Vars.is_local = True
         client_secret_path = os.path.join(
             os.path.dirname(__file__),
             "secrets.json",

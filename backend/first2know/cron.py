@@ -23,6 +23,7 @@ def init():
     firebase_wrapper.init()
     Vars._refresh_token = refresh_access_token()
     Vars._screenshot = screenshot.SyncScreenshot()
+    print("cron initialized")
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
@@ -73,7 +74,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if previous_error is not None and previous_error.version == VERSION:
         return
 
-    now = time.time()
     try:
         screenshot_response = Vars._screenshot.screenshot(
             to_handle.key,
@@ -82,10 +82,10 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         )
     except Exception as e:
         to_write = to_handle.data_output
-        to_write.times.append(now)
+        to_write.times.append(time.time())
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
-            time=now,
+            time=time.time(),
             message=str(e),
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
@@ -94,7 +94,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     to_write = firebase_wrapper.DataOutputType(
         img_data=screenshot_response.img_data,
         evaluation=screenshot_response.evaluation,
-        times=to_handle.data_output.times + [now],
+        times=to_handle.data_output.times + [time.time()],
     )
 
     if to_handle.data_output.img_data == to_write.img_data:

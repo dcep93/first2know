@@ -171,10 +171,12 @@ class ToHandle extends React.Component<PropsType, StateProps> {
   }
 
   checkScreenShot() {
-    return this.getData().catch((err) => {
-      alert(err);
-      throw err;
-    });
+    return Promise.resolve()
+      .then(() => this.getData())
+      .catch((err) => {
+        alert(err);
+        throw err;
+      });
   }
 }
 
