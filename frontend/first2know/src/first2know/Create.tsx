@@ -7,7 +7,11 @@ import { UserType } from "./User";
 function Create(props: { user: UserType }): JSX.Element {
   return (
     <ToHandle
-      submit={props.user ? (data) => submitNew(data, props.user) : undefined}
+      submit={
+        props.user
+          ? (data_input) => submitNew(data_input, props.user)
+          : undefined
+      }
     />
   );
 }

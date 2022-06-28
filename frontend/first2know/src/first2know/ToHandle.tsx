@@ -15,7 +15,7 @@ function ToHandle(props: {
   toHandle?: ToHandleType;
   submit?: (s: ScreenshotType) => Promise<string>;
 }) {
-  const [data, update] = useState<string | undefined>(undefined);
+  const [img_data, update] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   return (
     <div>
@@ -49,13 +49,13 @@ function ToHandle(props: {
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
-      <img src={data} alt=""></img>
+      <img src={img_data} alt=""></img>
       {props.submit && (
         <button
           onClick={() =>
             Promise.resolve()
               .then(() => getData())
-              .then((data) => props.submit!(data))
+              .then((data_input) => props.submit!(data_input))
               .then((key) => navigate(key))
               .catch((err) => {
                 alert(err);
@@ -88,10 +88,10 @@ function getData(): ScreenshotType {
   return rval;
 }
 
-function checkScreenShot(update: (data: string | undefined) => void) {
-  const data = getData();
+function checkScreenShot(update: (img_data: string | undefined) => void) {
+  const data_input = getData();
   update(loading);
-  return fetchScreenShot(data)
+  return fetchScreenShot(data_input)
     .then((bytes) => `data:image/png;base64,${bytes}`)
     .then(update)
     .catch((err) => {

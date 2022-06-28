@@ -69,26 +69,20 @@ def run_cron() -> bool:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    previous_error = to_handle.data.error
+    previous_error = to_handle.data_output.error
     if previous_error is not None and previous_error.version == VERSION:
         return
 
     now = time.time()
-    screenshot_payload = firebase_wrapper.ScreenshotPayload(
-        url=to_handle.url,
-        params=to_handle.params,
-        evaluate=to_handle.evaluate,
-        selector=to_handle.selector,
-        evaluation=to_handle.data.evaluation,
-        evaluation_to_img=to_handle.evaluation_to_img,
-    )
+    screenshot_payload = to_handle.data_input.copy()
+    screenshot_payload.evaluation = to_handle.data_output.evaluation
     try:
         screenshot_response = Vars._screenshot.screenshot(
             to_handle.key,
             screenshot_payload,
         )
     except Exception as e:
-        to_write = to_handle.data
+        to_write = to_handle.data_output
         to_write.times.append(now)
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
@@ -101,10 +95,10 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     to_write = firebase_wrapper.DataType(
         img_data=screenshot_response.img_data,
         evaluation=screenshot_response.evaluation,
-        times=to_handle.data.times + [now],
+        times=to_handle.data_output.times + [now],
     )
 
-    if to_handle.data.img_data == to_write.img_data:
+    if to_handle.data_output.img_data == to_write.img_data:
         return
 
     tweet(to_handle.user_name, to_write.img_data)

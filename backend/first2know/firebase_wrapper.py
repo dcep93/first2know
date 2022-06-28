@@ -21,7 +21,7 @@ class ErrorType(BaseModel):
     message: str
 
 
-class DataType(BaseModel):
+class DataOutputType(BaseModel):
     img_data: str
     evaluation: typing.Optional[typing.Any]
     times: typing.List[float]
@@ -39,7 +39,7 @@ class ScreenshotPayload(BaseModel):
 
 class ToHandle(BaseModel):
     data_input: ScreenshotPayload
-    data_output: DataType
+    data_output: DataOutputType
     user_name: str
     key: str
 
@@ -60,7 +60,8 @@ def get_to_handle() -> typing.List[ToHandle]:
     raw_all_to_handle: typing.Dict = raw  # type: ignore
     return [
         i for i in [
-            _decrypt_to_handle(k, v["encrypted"], v.get("data"))
+            # TODO dcep93
+            _decrypt_to_handle(k, v["encrypted"], v.get("data_output"))
             for k, v in raw_all_to_handle.items()
         ] if i
     ]
@@ -69,18 +70,13 @@ def get_to_handle() -> typing.List[ToHandle]:
 def _decrypt_to_handle(
     key: str,
     encrypted: str,
-    data: typing.Optional[DataType],
+    data_output: DataOutputType,
 ) -> typing.Optional[ToHandle]:
     data_input = json.loads(decrypt(encrypted))
     encrypted_user = data_input.pop("user")["encrypted"]
     user = json.loads(decrypt(encrypted_user))
     if user["client_secret"] != secrets.Vars.secrets.client_secret:
         return None
-    data_output = DataType(
-        img_data="",
-        evaluation=None,
-        times=[],
-    ) if data is None else data
     to_handle = ToHandle(
         key=key,
         user_name=user["screen_name"],
@@ -90,9 +86,9 @@ def _decrypt_to_handle(
     return to_handle
 
 
-def write_data(key: str, data: DataType) -> None:
+def write_data(key: str, data_output: DataOutputType) -> None:
     # print("write_data", key)
-    Vars._app.patch(f"to_handle/{key}/data", data.dict())
+    Vars._app.patch(f"to_handle/{key}/data_output", data_output.dict())
 
 
 def write_refresh_token(refresh_token: str) -> None:
