@@ -1,8 +1,12 @@
 import { createRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ScreenshotType, ToHandleType } from "./firebase";
+import { encrypt } from "./Edit";
+import firebase, {
+  AllToHandleType,
+  ScreenshotType,
+  ToHandleType,
+} from "./firebase";
 import loading from "./loading.gif";
-import { url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
@@ -16,8 +20,16 @@ type SubmitType = (
   data_input: ScreenshotType & { old_encrypted: string | null }
 ) => Promise<string>;
 
-function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
-  const [img_data, update] = useState<string | undefined>(
+type PropsType = {
+  toHandle?: ToHandleType;
+  submit?: SubmitType;
+  allToHandle: AllToHandleType;
+};
+
+type UpdateType = (img_data: string | null | undefined) => void;
+
+function ToHandle(props: PropsType) {
+  const [img_data, update] = useState<string | null | undefined>(
     props.toHandle?.data_output.img_data
   );
   const navigate = useNavigate();
@@ -25,10 +37,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
   return (
     <div>
       <form
-        onSubmit={(e) => [
-          e.preventDefault(),
-          checkScreenShot(props.toHandle, update),
-        ]}
+        onSubmit={(e) => [e.preventDefault(), checkScreenShot(props, update)]}
       >
         <div>
           url:{" "}
@@ -89,33 +98,29 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
         src={
           img_data === undefined
             ? undefined
+            : img_data === null
+            ? loading
             : `data:image/png;base64,${img_data}`
         }
         alt=""
       ></img>
       {props.submit && (
-        <button
-          onClick={() =>
-            onSubmit(props.toHandle, props.submit!, navigate, update)
-          }
-        >
+        <button onClick={() => onSubmit(props, navigate, update)}>
           Submit
         </button>
       )}
     </div>
   );
 }
-
 function onSubmit(
-  toHandle: ToHandleType | undefined,
-  submit: SubmitType,
+  props: PropsType,
   navigate: (key: string) => void,
-  update: (img_data: string | undefined) => void
+  update: UpdateType
 ) {
-  const old_encrypted = getOldEncrypted(toHandle);
+  const old_encrypted = getOldEncrypted(props.toHandle);
   Promise.resolve()
-    .then(() => getData(old_encrypted, update))
-    .then((data_input) => submit({ old_encrypted, ...data_input }))
+    .then(() => getData(old_encrypted, update, props.allToHandle))
+    .then((data_input) => props.submit!({ old_encrypted, ...data_input }))
     .then((key) => navigate(key))
     .catch((err) => {
       alert(err);
@@ -133,7 +138,8 @@ function getOldEncrypted(toHandle: ToHandleType | undefined) {
 
 function getData(
   old_encrypted: string | null,
-  update: (img_data: string | undefined) => void
+  update: (img_data: string | null | undefined) => void,
+  allToHandle: AllToHandleType
 ): Promise<ScreenshotType> {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
@@ -152,48 +158,48 @@ function getData(
   }
   // always fetch screenshot
   // to validate the payload
-  return validateScreenshot(data_input, old_encrypted, update);
+  return validateScreenshot(data_input, old_encrypted, update, allToHandle);
 }
 
-// TODO dcep93 have cron respond!
 function validateScreenshot(
   data_input: ScreenshotType,
   old_encrypted: string | null,
-  update: (img_data: string | undefined) => void
+  update: (img_data: string | null | undefined) => void,
+  allToHandle: AllToHandleType
 ): Promise<ScreenshotType> {
   const body = JSON.stringify({
     ...data_input,
     old_encrypted,
   });
-  update(loading);
-  return fetch(`${url}/screenshot`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body,
-  })
-    .then((resp) => Promise.all([Promise.resolve(resp.ok), resp.text()]))
-    .then(([ok, text]) => {
-      if (!ok) throw Error(text.substring(text.length - 1000));
-      return text;
-    })
-    .then((text) => JSON.parse(text))
-    .then((json) => [json.img_data, console.log(json.evaluate)][0])
-    .then((img_data) => [data_input, update(img_data)][0]!)
+  update(null);
+  return encrypt(data_input, null, old_encrypted)
+    .then((encrypted) => firebase.pushToHandle(data_input, encrypted, null))
+    .then(
+      (key) =>
+        new Promise((resolve, reject) => {
+          const toHandle = allToHandle[key];
+          const data_output = toHandle.data_output;
+          if (data_output) {
+            if (data_output.error) reject(data_output.error!.message);
+            update(data_output.img_data);
+            firebase.deleteToHandle(key).then(() => resolve(data_input));
+          }
+        })
+    )
     .catch((err) => {
       update(undefined);
       alert(err);
       throw err;
-    });
+    })
+    .then((di) => di as ScreenshotType);
 }
 
 function checkScreenShot(
-  toHandle: ToHandleType | undefined,
-  update: (img_data: string | undefined) => void
+  props: PropsType,
+  update: (img_data: string | null | undefined) => void
 ) {
-  const old_encrypted = getOldEncrypted(toHandle);
-  return getData(old_encrypted, update);
+  const old_encrypted = getOldEncrypted(props.toHandle);
+  return getData(old_encrypted, update, props.allToHandle);
 }
 
 export default ToHandle;

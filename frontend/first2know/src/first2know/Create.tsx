@@ -1,10 +1,13 @@
 import { encrypt } from "./Edit";
-import firebase, { ScreenshotType } from "./firebase";
+import firebase, { AllToHandleType, ScreenshotType } from "./firebase";
 
 import ToHandle from "./ToHandle";
 import { UserType } from "./User";
 
-function Create(props: { user: UserType | null }): JSX.Element {
+function Create(props: {
+  user: UserType | null;
+  allToHandle: AllToHandleType;
+}): JSX.Element {
   return (
     <ToHandle
       submit={
@@ -12,6 +15,7 @@ function Create(props: { user: UserType | null }): JSX.Element {
           ? (data_input) => submitNew(data_input, props.user!)
           : undefined
       }
+      allToHandle={props.allToHandle}
     />
   );
 }

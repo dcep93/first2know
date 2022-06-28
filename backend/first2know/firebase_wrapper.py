@@ -39,7 +39,7 @@ class ScreenshotPayload(BaseModel):
 class ToHandle(BaseModel):
     data_input: ScreenshotPayload
     data_output: DataOutputType
-    user_name: str
+    user_name: typing.Optional[str]
     key: str
 
 

@@ -15,7 +15,7 @@ export type DataType = {
 export type ToHandleType = {
   data_input: ScreenshotType;
   data_output: DataType;
-  user_name: string;
+  user_name?: string;
   encrypted: string;
 };
 
@@ -30,7 +30,7 @@ export type ScreenshotType = {
 function pushToHandle(
   data_input: ScreenshotType,
   encrypted: string,
-  user_name: string
+  user_name: string | null
 ): Promise<string> {
   const toHandle = {
     data_input,
@@ -45,7 +45,7 @@ function deleteToHandle(key: string): Promise<void> {
   return firebase._delete(`/to_handle/${key}`);
 }
 
-function updateToHandle(key: string, toHandle: ToHandleType): Promise<void> {
+function updateToHandle(key: string, toHandle: {}): Promise<void> {
   return firebase._set(`/to_handle/${key}`, toHandle);
 }
 

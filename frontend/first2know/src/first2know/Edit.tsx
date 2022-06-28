@@ -14,7 +14,12 @@ function Edit(props: { user: UserType | null; allToHandle: AllToHandleType }) {
   const toHandle = props.allToHandle[key];
   return (
     <>
-      <RoutedEdit k={key} user={props.user} toHandle={toHandle} />
+      <RoutedEdit
+        k={key}
+        user={props.user}
+        toHandle={toHandle}
+        allToHandle={props.allToHandle}
+      />
       <div>
         <Link to="/">Home</Link>
       </div>
@@ -26,6 +31,7 @@ function RoutedEdit(props: {
   user: UserType | null;
   k: string;
   toHandle: ToHandleType;
+  allToHandle: AllToHandleType;
 }) {
   const navigate = useNavigate();
   if (!props.toHandle) return <pre>key not found: {props.k}</pre>;
@@ -38,13 +44,12 @@ function RoutedEdit(props: {
             firebase
               .updateToHandle(props.k, {
                 data_input,
-                data_output: props.toHandle.data_output,
-                user_name: props.user!.screen_name,
                 encrypted,
               })
               .then(() => props.k)
           )
         }
+        allToHandle={props.allToHandle}
       />
       <button
         onClick={() => {
@@ -60,7 +65,7 @@ function RoutedEdit(props: {
 
 export function encrypt(
   data_input: ScreenshotType,
-  user: UserType,
+  user: UserType | null,
   old_encrypted: string | null
 ): Promise<string> {
   const body = JSON.stringify({
