@@ -10,20 +10,25 @@ const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
+// TODO dcep93 reuse_cookie
+const reuseCookieRef = createRef<HTMLInputElement>();
+
+type SubmitType = (
+  data_input: ScreenshotType & { old_encrypted: string | null }
+) => Promise<string>;
 
 // TODO dcep93 edit
-function ToHandle(props: {
-  toHandle?: ToHandleType;
-  submit?: (
-    data_input: ScreenshotType,
-    extra: { reuse_cookie: boolean }
-  ) => Promise<string>;
-}) {
+function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
   const [img_data, update] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   return (
     <div>
-      <form onSubmit={(e) => [e.preventDefault(), checkScreenShot(update)]}>
+      <form
+        onSubmit={(e) => [
+          e.preventDefault(),
+          checkScreenShot(props.toHandle, update),
+        ]}
+      >
         <div>
           url: <input ref={urlRef} type="text" />
         </div>
@@ -56,19 +61,7 @@ function ToHandle(props: {
       <img src={img_data} alt=""></img>
       {props.submit && (
         <button
-          onClick={() =>
-            Promise.resolve()
-              .then(() => getData())
-              .then(({ img_data, ...data_input }) =>
-                // TODO dcep93 reuse_cookie
-                props.submit!(data_input, { reuse_cookie: true })
-              )
-              .then((key) => navigate(key))
-              .catch((err) => {
-                alert(err);
-                throw err;
-              })
-          }
+          onClick={() => onSubmit(props.toHandle, props.submit!, navigate)}
         >
           Submit
         </button>
@@ -77,7 +70,33 @@ function ToHandle(props: {
   );
 }
 
-function getData(): Promise<ScreenshotType & { img_data: string }> {
+function onSubmit(
+  toHandle: ToHandleType | undefined,
+  submit: SubmitType,
+  navigate: (key: string) => void
+) {
+  const old_encrypted = getOldEncrypted(toHandle);
+  Promise.resolve()
+    .then(() => getData(old_encrypted))
+    .then((data_input) => submit({ old_encrypted, ...data_input }))
+    .then((key) => navigate(key))
+    .catch((err) => {
+      alert(err);
+      throw err;
+    });
+}
+
+function getOldEncrypted(toHandle: ToHandleType | undefined) {
+  return toHandle === undefined
+    ? null
+    : reuseCookieRef.current?.checked
+    ? toHandle.encrypted
+    : null;
+}
+
+function getData(
+  old_encrypted: string | null
+): Promise<ScreenshotType & { img_data: string }> {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
   params.cookie = cookieRef.current!.value || null;
@@ -94,14 +113,20 @@ function getData(): Promise<ScreenshotType & { img_data: string }> {
   }
   // always fetch screenshot
   // to validate the payload
-  return fetchScreenShot(data_input).then((img_data) => ({
+  return fetchScreenShot(data_input, old_encrypted).then((img_data) => ({
     img_data,
     ...data_input,
   }));
 }
 
-function fetchScreenShot(data_input: ScreenshotType): Promise<string> {
-  const body = JSON.stringify(data_input);
+function fetchScreenShot(
+  data_input: ScreenshotType,
+  old_encrypted: string | null
+): Promise<string> {
+  const body = JSON.stringify({
+    ...data_input,
+    old_encrypted,
+  });
   return fetch(`${url}/screenshot`, {
     method: "POST",
     headers: {
@@ -118,9 +143,13 @@ function fetchScreenShot(data_input: ScreenshotType): Promise<string> {
     .then((json) => [json.img_data, console.log(json.evaluate)][0]);
 }
 
-function checkScreenShot(update: (img_data: string | undefined) => void) {
+function checkScreenShot(
+  toHandle: ToHandleType | undefined,
+  update: (img_data: string | undefined) => void
+) {
+  const old_encrypted = getOldEncrypted(toHandle);
   update(loading);
-  return getData()
+  return getData(old_encrypted)
     .then(({ img_data }) => `data:image/png;base64,${img_data}`)
     .then(update)
     .catch((err) => {

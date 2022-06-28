@@ -33,12 +33,8 @@ function RoutedEdit(props: {
     <>
       <ToHandle
         toHandle={props.toHandle}
-        submit={(data_input, { reuse_cookie }) =>
-          reencrypt(
-            data_input,
-            props.user!,
-            reuse_cookie ? props.toHandle.encrypted : null
-          ).then((encrypted) =>
+        submit={({ old_encrypted, ...data_input }) =>
+          reencrypt(data_input, props.user!, old_encrypted).then((encrypted) =>
             firebase
               .updateToHandle(props.k, {
                 data_input,

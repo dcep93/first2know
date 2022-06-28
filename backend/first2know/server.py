@@ -62,8 +62,13 @@ def post_reencrypt(payload: ReencryptPayload):
     return HTMLResponse(encrypted)
 
 
+# TODO dcep93 use old_encrypted
+class SupplementedScreenshotPayload(firebase_wrapper.ScreenshotPayload):
+    old_encrypted: typing.Optional[str]
+
+
 @web_app.post("/screenshot_img")
-def post_screenshot_img(payload: firebase_wrapper.ScreenshotPayload):
+def post_screenshot_img(payload: SupplementedScreenshotPayload):
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -79,7 +84,7 @@ def post_screenshot_img(payload: firebase_wrapper.ScreenshotPayload):
 
 
 @web_app.post("/screenshot_len")
-def post_screenshot_len(payload: firebase_wrapper.ScreenshotPayload):
+def post_screenshot_len(payload: SupplementedScreenshotPayload):
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -95,7 +100,7 @@ def post_screenshot_len(payload: firebase_wrapper.ScreenshotPayload):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: firebase_wrapper.ScreenshotPayload):
+def post_screenshot(payload: SupplementedScreenshotPayload):
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
