@@ -4,7 +4,7 @@ import Edit from "./Edit";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import Home from "./Home";
 import { recorded_sha } from "./recorded_sha";
-import User, { UserType } from "./User";
+import User, { isAdmin, UserType } from "./User";
 
 console.log(recorded_sha);
 
@@ -24,16 +24,6 @@ class Main extends FirebaseWrapper<AllToHandleType> {
   }
 }
 
-function hashCode(s: string): number {
-  var hash = 0;
-  for (var i = 0; i < s.length; i++) {
-    var code = s.charCodeAt(i);
-    hash = (hash << 5) - hash + code;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return hash;
-}
-
 function Helper(props: { allToHandle: AllToHandleType }) {
   const [user, update] = useState<UserType | null>(null);
   const filteredAllToHandle = Object.fromEntries(
@@ -41,7 +31,7 @@ function Helper(props: { allToHandle: AllToHandleType }) {
       ([_, toHandle]) =>
         toHandle.user_name === undefined ||
         toHandle.user_name === user?.screen_name ||
-        [-73599652].includes(hashCode(user?.encrypted || "")) // admin
+        isAdmin(user)
     )
   );
   return (

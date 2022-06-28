@@ -22,7 +22,7 @@ class ErrorType(BaseModel):
 
 
 class DataOutputType(BaseModel):
-    img_data: str
+    img_data: typing.Optional[str]
     evaluation: typing.Optional[typing.Any]
     times: typing.List[float]
     error: typing.Optional[ErrorType] = None
@@ -56,6 +56,8 @@ def init():
 
 def get_to_handle() -> typing.List[ToHandle]:
     raw = Vars._app.get("to_handle", None)
+    if raw is None:
+        return []
     raw_all_to_handle: typing.Dict = raw  # type: ignore
     return [
         i for i in [
@@ -71,13 +73,19 @@ def _decrypt_to_handle(
     data_output: DataOutputType,
 ) -> typing.Optional[ToHandle]:
     data_input = json.loads(decrypt(encrypted))
-    encrypted_user = data_input.pop("user")["encrypted"]
-    user = json.loads(decrypt(encrypted_user))
-    if user["client_secret"] != secrets.Vars.secrets.client_secret:
-        return None
+    user = data_input.pop("user")
+    if user is None:
+        user_name = None
+    else:
+        print(user)
+        encrypted_user = user["encrypted"]
+        user = json.loads(decrypt(encrypted_user))
+        if user["client_secret"] != secrets.Vars.secrets.client_secret:
+            return None
+        user_name = user["screen_name"]
     to_handle = ToHandle(
         key=key,
-        user_name=user["screen_name"],
+        user_name=user_name,
         data_output=data_output,
         data_input=data_input,
     )
@@ -111,7 +119,7 @@ def encrypt(a: str) -> str:
 
 def decrypt(e: str) -> str:
     cipher_suite = _get_cipher_suite()
-    d = e.encode('utf-8')
+    d = (e + '==').encode('utf-8')
     c = base64.b64decode(d)
     b = cipher_suite.decrypt(c)
     a = b.decode('utf-8')

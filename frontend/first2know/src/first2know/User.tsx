@@ -66,4 +66,18 @@ class User extends React.Component<PropsType> {
   }
 }
 
+export function isAdmin(user: UserType | null): boolean {
+  return [-73599652].includes(hashCode(user?.encrypted || ""));
+}
+
+function hashCode(s: string): number {
+  var hash = 0;
+  for (var i = 0; i < s.length; i++) {
+    var code = s.charCodeAt(i);
+    hash = (hash << 5) - hash + code;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 export default User;

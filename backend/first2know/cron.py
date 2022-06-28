@@ -101,7 +101,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         return
 
     if to_handle.user_name is not None:
-        tweet(to_handle.user_name, to_write.img_data)
+        tweet(to_handle.user_name, screenshot_response.img_data)
     firebase_wrapper.write_data(to_handle.key, to_write)
 
 

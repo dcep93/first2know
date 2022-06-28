@@ -7,7 +7,7 @@ function Home(props: { user: UserType | null; allToHandle: AllToHandleType }) {
   return (
     <>
       <Create user={props.user} allToHandle={props.allToHandle} />
-      <Show allToHandle={props.allToHandle} />
+      <Show user={props.user} allToHandle={props.allToHandle} />
     </>
   );
 }

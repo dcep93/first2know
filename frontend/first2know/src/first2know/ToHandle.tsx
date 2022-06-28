@@ -173,8 +173,9 @@ function validateScreenshot(
     .then(
       (key) =>
         new Promise((resolve, reject) => {
+          // TODO dcep93 listen for changes
           const toHandle = allToHandle[key];
-          const data_output = toHandle.data_output;
+          const data_output = toHandle?.data_output;
           if (data_output) {
             if (data_output.error) reject(data_output.error!.message);
             update(data_output.img_data);

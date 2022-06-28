@@ -34,7 +34,7 @@ function pushToHandle(
 ): Promise<string> {
   const toHandle = {
     data_input,
-    data_output: { img_data: "", times: [Date.now()] },
+    data_output: { times: [Date.now()] },
     encrypted,
     user_name,
   };
