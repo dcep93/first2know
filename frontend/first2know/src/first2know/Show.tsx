@@ -2,21 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AllToHandleType, ToHandleType } from "./firebase";
 import styles from "./index.module.css";
-import { UserType } from "./User";
 
-function Show(props: {
-  user: UserType;
-  allToHandle: AllToHandleType;
-}): JSX.Element {
+function Show(props: { allToHandle: AllToHandleType }): JSX.Element {
   return (
     <div>
-      {Object.entries(props.allToHandle)
-        .filter(
-          ([_, toHandle]) => toHandle.user_name === props.user?.screen_name
-        )
-        .map(([k, toHandle]) => (
-          <RenderToHandle key={k} k={k} toHandle={toHandle} />
-        ))}
+      {Object.entries(props.allToHandle).map(([k, toHandle]) => (
+        <RenderToHandle key={k} k={k} toHandle={toHandle} />
+      ))}
     </div>
   );
 }
