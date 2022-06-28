@@ -16,10 +16,12 @@ type SubmitType = (
   data_input: ScreenshotType & { old_encrypted: string | null }
 ) => Promise<string>;
 
-// TODO dcep93 edit
 function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
-  const [img_data, update] = useState<string | undefined>(undefined);
+  const [img_data, update] = useState<string | undefined>(
+    props.toHandle?.data_output.img_data
+  );
   const navigate = useNavigate();
+  const defaultParamsValue = props.toHandle?.data_input.params;
   return (
     <div>
       <form
@@ -29,7 +31,12 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
         ]}
       >
         <div>
-          url: <input ref={urlRef} type="text" />
+          url:{" "}
+          <input
+            ref={urlRef}
+            defaultValue={props.toHandle?.data_input.url}
+            type="text"
+          />
         </div>
         <div title={"will be encrypted"}>
           cookie: <input ref={cookieRef} type="text" />
@@ -41,10 +48,24 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
           </div>
         )}
         <div>
-          params: <input ref={paramsRef} type="text" />
+          params:{" "}
+          <input
+            ref={paramsRef}
+            defaultValue={
+              defaultParamsValue === null
+                ? undefined
+                : JSON.stringify(defaultParamsValue)
+            }
+            type="text"
+          />
         </div>
         <div>
-          css_selector: <input ref={cssSelectorRef} type="text" />
+          css_selector:{" "}
+          <input
+            ref={cssSelectorRef}
+            defaultValue={props.toHandle?.data_input.selector || undefined}
+            type="text"
+          />
         </div>
         <div>
           js_evaluate: {"("}transform evaluation to img
@@ -53,6 +74,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
               (cssSelectorRef.current!.disabled =
                 evaluationToImgRef.current!.checked)
             }
+            defaultChecked={props.toHandle?.data_input.evaluation_to_img}
             ref={evaluationToImgRef}
             type="checkbox"
           />
@@ -63,10 +85,19 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
-      <img src={img_data} alt=""></img>
+      <img
+        src={
+          img_data === undefined
+            ? undefined
+            : `data:image/png;base64,${img_data}`
+        }
+        alt=""
+      ></img>
       {props.submit && (
         <button
-          onClick={() => onSubmit(props.toHandle, props.submit!, navigate)}
+          onClick={() =>
+            onSubmit(props.toHandle, props.submit!, navigate, update)
+          }
         >
           Submit
         </button>
@@ -78,11 +109,12 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
 function onSubmit(
   toHandle: ToHandleType | undefined,
   submit: SubmitType,
-  navigate: (key: string) => void
+  navigate: (key: string) => void,
+  update: (img_data: string | undefined) => void
 ) {
   const old_encrypted = getOldEncrypted(toHandle);
   Promise.resolve()
-    .then(() => getData(old_encrypted))
+    .then(() => getData(old_encrypted, update))
     .then((data_input) => submit({ old_encrypted, ...data_input }))
     .then((key) => navigate(key))
     .catch((err) => {
@@ -100,8 +132,9 @@ function getOldEncrypted(toHandle: ToHandleType | undefined) {
 }
 
 function getData(
-  old_encrypted: string | null
-): Promise<ScreenshotType & { img_data: string }> {
+  old_encrypted: string | null,
+  update: (img_data: string | undefined) => void
+): Promise<ScreenshotType> {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
   const cookie = cookieRef.current!.value || null;
@@ -119,21 +152,20 @@ function getData(
   }
   // always fetch screenshot
   // to validate the payload
-  return fetchScreenShot(data_input, old_encrypted).then((img_data) => ({
-    img_data,
-    ...data_input,
-  }));
+  return validateScreenshot(data_input, old_encrypted, update);
 }
 
 // TODO dcep93 have cron respond!
-function fetchScreenShot(
+function validateScreenshot(
   data_input: ScreenshotType,
-  old_encrypted: string | null
-): Promise<string> {
+  old_encrypted: string | null,
+  update: (img_data: string | undefined) => void
+): Promise<ScreenshotType> {
   const body = JSON.stringify({
     ...data_input,
     old_encrypted,
   });
+  update(loading);
   return fetch(`${url}/screenshot`, {
     method: "POST",
     headers: {
@@ -147,7 +179,13 @@ function fetchScreenShot(
       return text;
     })
     .then((text) => JSON.parse(text))
-    .then((json) => [json.img_data, console.log(json.evaluate)][0]);
+    .then((json) => [json.img_data, console.log(json.evaluate)][0])
+    .then((img_data) => [data_input, update(img_data)][0]!)
+    .catch((err) => {
+      update(undefined);
+      alert(err);
+      throw err;
+    });
 }
 
 function checkScreenShot(
@@ -155,15 +193,7 @@ function checkScreenShot(
   update: (img_data: string | undefined) => void
 ) {
   const old_encrypted = getOldEncrypted(toHandle);
-  update(loading);
-  return getData(old_encrypted)
-    .then(({ img_data }) => `data:image/png;base64,${img_data}`)
-    .then(update)
-    .catch((err) => {
-      update(undefined);
-      alert(err);
-      throw err;
-    });
+  return getData(old_encrypted, update);
 }
 
 export default ToHandle;
