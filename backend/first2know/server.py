@@ -43,32 +43,23 @@ def post_encrypt(payload: EncryptPayload):
     return HTMLResponse(encrypted)
 
 
-class ReencryptPayload(EncryptPayload):
-    old_encrypted: typing.Optional[str]
-
-
-@web_app.post("/reencrypt")
-def post_reencrypt(payload: ReencryptPayload):
-    if payload.old_encrypted is not None:
-        decrypted = firebase_wrapper.decrypt(payload.old_encrypted)
-        decrypted_payload = EncryptPayload(**json.loads(decrypted))
-        decrypted_params = decrypted_payload.params
-        if decrypted_params is not None:
-            params = payload.params if payload.params is not None else {}
-            params["cookie"] = decrypted_params.get("cookie")
-            payload.params = params
-    json_str = payload.json()
-    encrypted = firebase_wrapper.encrypt(json_str)
-    return HTMLResponse(encrypted)
-
-
-# TODO dcep93 use old_encrypted
 class SupplementedScreenshotPayload(firebase_wrapper.ScreenshotPayload):
     old_encrypted: typing.Optional[str]
+
+    def reencrypt_cookie(self):
+        if self.old_encrypted is not None:
+            decrypted = firebase_wrapper.decrypt(self.old_encrypted)
+            decrypted_payload = EncryptPayload(**json.loads(decrypted))
+            decrypted_params = decrypted_payload.params
+            if decrypted_params is not None:
+                params = self.params if self.params is not None else {}
+                params["cookie"] = decrypted_params.get("cookie")
+                self.params = params
 
 
 @web_app.post("/screenshot_img")
 def post_screenshot_img(payload: SupplementedScreenshotPayload):
+    payload.reencrypt_cookie()
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -85,6 +76,7 @@ def post_screenshot_img(payload: SupplementedScreenshotPayload):
 
 @web_app.post("/screenshot_len")
 def post_screenshot_len(payload: SupplementedScreenshotPayload):
+    payload.reencrypt_cookie()
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -101,6 +93,7 @@ def post_screenshot_len(payload: SupplementedScreenshotPayload):
 
 @web_app.post("/screenshot")
 def post_screenshot(payload: SupplementedScreenshotPayload):
+    payload.reencrypt_cookie()
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -112,6 +105,18 @@ def post_screenshot(payload: SupplementedScreenshotPayload):
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)
+
+
+class ReencryptPayload(SupplementedScreenshotPayload):
+    user: typing.Any
+
+
+@web_app.post("/reencrypt")
+def post_reencrypt(payload: ReencryptPayload):
+    payload.reencrypt_cookie()
+    json_str = payload.json()
+    encrypted = firebase_wrapper.encrypt(json_str)
+    return HTMLResponse(encrypted)
 
 
 @web_app.post("/proxy")
