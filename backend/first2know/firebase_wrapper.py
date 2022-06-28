@@ -59,7 +59,6 @@ def get_to_handle() -> typing.List[ToHandle]:
     raw_all_to_handle: typing.Dict = raw  # type: ignore
     return [
         i for i in [
-            # TODO dcep93
             _decrypt_to_handle(k, v["encrypted"], v["data_output"])
             for k, v in raw_all_to_handle.items()
         ] if i
