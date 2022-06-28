@@ -13,6 +13,7 @@ export type StateProps = {
   reject?: (s: string) => void;
 };
 
+// TODO dcep93 use listener
 class ScreenshotFetcher extends React.Component<
   PropsType,
   { img_data: string | undefined | null }
