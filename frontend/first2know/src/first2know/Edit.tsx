@@ -3,6 +3,17 @@ import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 
 // TODO dcep93 edit
 function Edit(props: { allToHandle: AllToHandleType }) {
+  return (
+    <>
+      <Helper {...props} />
+      <div>
+        <Link to="/">Home</Link>
+      </div>
+    </>
+  );
+}
+
+function Helper(props: { allToHandle: AllToHandleType }) {
   let params = useParams();
   const key = params.key!;
   const toHandle = props.allToHandle[key];
@@ -23,9 +34,6 @@ function RoutedEdit(props: { k: string; toHandle: ToHandleType }) {
       >
         Delete {props.k}
       </button>
-      <div>
-        <Link to="/">Home</Link>
-      </div>
     </>
   );
 }
