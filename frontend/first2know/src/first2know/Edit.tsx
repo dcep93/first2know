@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 
 // TODO dcep93 edit
-// todo can only edit your own
 function Edit(props: { allToHandle: AllToHandleType }) {
   let params = useParams();
   const key = params.key!;
