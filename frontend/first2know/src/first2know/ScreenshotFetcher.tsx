@@ -31,13 +31,14 @@ class ScreenshotFetcher extends React.Component<
         this.props.reject!(data_output.error!.message);
         return;
       }
-      if (data_output.img_data)
+      if (data_output.img_data) {
         firebase
           .deleteToHandle(this.props.k!)
           .then(() => this.props.resolve!())
           .then(() => this.setState({ img_data: data_output.img_data }));
-    } else if (toHandle) {
-      this.setState({ img_data: null });
+      } else if (this.state.img_data !== null) {
+        this.setState({ img_data: null });
+      }
     }
   }
 

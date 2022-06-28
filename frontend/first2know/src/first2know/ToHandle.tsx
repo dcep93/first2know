@@ -124,8 +124,7 @@ class ToHandle extends React.Component<PropsType, StateProps> {
     const cookie = cookieRef.current!.value || null;
     if (cookie) params.cookie = cookie;
     const data_input = {
-      // TODO dcep93
-      url: urlRef.current!.value || "https://chess.com",
+      url: urlRef.current!.value,
       params,
       selector: cssSelectorRef.current!.value || null,
       evaluation: null,
