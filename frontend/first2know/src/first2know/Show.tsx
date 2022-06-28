@@ -1,5 +1,6 @@
 import { useState } from "react";
-import firebase, { AllToHandleType, ToHandleType } from "./firebase";
+import { Link } from "react-router-dom";
+import { AllToHandleType, ToHandleType } from "./firebase";
 import styles from "./index.module.css";
 import { UserType } from "./User";
 
@@ -40,14 +41,7 @@ function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
         alt=""
       ></img>
       <div>
-        <button
-          onClick={() => {
-            if (window.confirm(`Do you really want to delete ${props.k}?`))
-              firebase.deleteToHandle(props.k);
-          }}
-        >
-          Edit {props.k}
-        </button>
+        <Link to={`/${props.k}`}>Edit {props.k}</Link>
       </div>
     </div>
   );
