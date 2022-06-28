@@ -3,7 +3,6 @@ import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 import ToHandle from "./ToHandle";
 import { UserType } from "./User";
 
-// TODO dcep93 edit
 function Edit(props: { user: UserType | null; allToHandle: AllToHandleType }) {
   let params = useParams();
   const key = params.key!;

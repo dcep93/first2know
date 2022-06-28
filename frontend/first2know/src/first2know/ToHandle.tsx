@@ -11,6 +11,7 @@ const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
 
+// TODO dcep93 edit
 function ToHandle(props: {
   toHandle?: ToHandleType;
   submit?: (data_input: ScreenshotType, img_data: string) => Promise<string>;
@@ -87,6 +88,8 @@ function getData(): Promise<ScreenshotType & { img_data: string }> {
   if (data_input.url === "") {
     throw "need to have a url";
   }
+  // always fetch screenshot
+  // to validate the payload
   return fetchScreenShot(data_input).then((img_data) => ({
     img_data,
     ...data_input,
