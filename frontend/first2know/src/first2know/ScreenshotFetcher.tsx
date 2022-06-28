@@ -22,7 +22,11 @@ class ScreenshotFetcher extends React.Component<
     this.state = { img_data: this.props.img_data };
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: PropsType) {
+    if (this.props.img_data && !prevProps.img_data) {
+      this.updateImgData(this.props.img_data);
+      return;
+    }
     const data_output = this.props.allToHandle[this.props.k!]?.data_output;
     if (data_output) {
       console.log(data_output);
