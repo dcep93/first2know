@@ -115,7 +115,7 @@ def encrypt(a: str) -> str:
 
 def decrypt(e: str) -> str:
     cipher_suite = _get_cipher_suite()
-    d = (e + '==').encode('utf-8')
+    d = e.encode('utf-8')
     c = base64.b64decode(d)
     b = cipher_suite.decrypt(c)
     a = b.decode('utf-8')

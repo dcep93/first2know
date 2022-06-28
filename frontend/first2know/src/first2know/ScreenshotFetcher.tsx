@@ -21,6 +21,7 @@ class ScreenshotFetcher extends React.Component<
     super(props);
     this.state = { img_data: this.props.img_data };
   }
+
   componentDidUpdate() {
     const toHandle = this.props.allToHandle[this.props.key!];
     const data_output = toHandle?.data_output;
