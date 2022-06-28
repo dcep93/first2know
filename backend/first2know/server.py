@@ -53,8 +53,10 @@ class SupplementedScreenshotPayload(firebase_wrapper.ScreenshotPayload):
             decrypted_params = decrypted_payload.params
             if decrypted_params is not None:
                 params = self.params if self.params is not None else {}
-                params["cookie"] = decrypted_params.get("cookie")
-                self.params = params
+                cookie = decrypted_params.get("cookie")
+                if cookie is not None:
+                    params["cookie"] = cookie
+                    self.params = params
 
 
 @web_app.post("/screenshot_img")
