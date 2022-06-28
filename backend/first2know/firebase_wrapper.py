@@ -23,7 +23,7 @@ class ErrorType(BaseModel):
 
 class DataType(BaseModel):
     img_data: str
-    evaluation: typing.Optional[str]
+    evaluation: typing.Optional[typing.Any]
     times: typing.List[float]
     error: typing.Optional[ErrorType] = None
 
@@ -39,7 +39,6 @@ class ScreenshotPayload(BaseModel):
 
 class ToHandle(ScreenshotPayload):
     user_name: str
-
     data: DataType
     key: str
 

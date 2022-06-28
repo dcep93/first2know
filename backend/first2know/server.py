@@ -43,7 +43,7 @@ def post_encrypt(payload: EncryptPayload):
 
 
 @web_app.post("/screenshot_img")
-def post_screenshot_img(payload: screenshot.RequestPayload):
+def post_screenshot_img(payload: firebase_wrapper.ScreenshotPayload):
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -58,7 +58,7 @@ def post_screenshot_img(payload: screenshot.RequestPayload):
 
 
 @web_app.post("/screenshot_len")
-def post_screenshot_len(payload: screenshot.RequestPayload):
+def post_screenshot_len(payload: firebase_wrapper.ScreenshotPayload):
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
@@ -73,7 +73,7 @@ def post_screenshot_len(payload: screenshot.RequestPayload):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: screenshot.RequestPayload):
+def post_screenshot(payload: firebase_wrapper.ScreenshotPayload):
     key = str(uuid.uuid1())
     try:
         screenshot_response = screenshot.AsyncScreenshot().screenshot(

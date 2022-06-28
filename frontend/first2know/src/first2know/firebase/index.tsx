@@ -5,7 +5,12 @@ export type AllToHandleType = {
   [key: string]: ToHandleType;
 };
 
-export type DataType = { data: string; times: number[] };
+export type DataType = {
+  img_data: string;
+  evaluation: any;
+  times: number[];
+  error: { version: string; time: number; message: string };
+};
 
 export type ToHandleType = ScreenshotType & {
   data: DataType;
@@ -16,9 +21,10 @@ export type ToHandleType = ScreenshotType & {
 export type ScreenshotType = {
   url: string;
   params: { [s: string]: any } | null;
-  evaluate: string | null;
   selector: string | null;
+  evaluate: string | null;
   evaluation_to_img: boolean;
+  evaluation: any;
 };
 
 function pushToHandle(toHandle: ToHandleType): Promise<string> {

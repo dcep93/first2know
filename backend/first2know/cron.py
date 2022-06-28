@@ -74,12 +74,12 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         return
 
     now = time.time()
-    screenshot_payload = screenshot.RequestPayload(
+    screenshot_payload = firebase_wrapper.ScreenshotPayload(
         url=to_handle.url,
         params=to_handle.params,
         evaluate=to_handle.evaluate,
         selector=to_handle.selector,
-        previous_evaluation=to_handle.data.evaluation,
+        evaluation=to_handle.data.evaluation,
         evaluation_to_img=to_handle.evaluation_to_img,
     )
     try:
