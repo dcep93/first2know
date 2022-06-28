@@ -36,7 +36,7 @@ def refresh_access_token(refresh_token: str) -> typing.Tuple[str, str]:
     return r["access_token"], r["refresh_token"]
 
 
-# tweet_ids = ['1261326399320715264', '1278347468690915330']
+# tweet_ids = [1261326399320715264, 1278347468690915330]
 def read_tweets(access_token: str, tweet_ids: typing.List[int]) -> typing.Any:
     str_ids = ",".join([str(i) for i in tweet_ids])
     url = f'https://api.twitter.com/2/tweets?ids={str_ids}'

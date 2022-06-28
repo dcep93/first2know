@@ -20,7 +20,6 @@ function submitNew(
   data_input: ScreenshotType,
   user: UserType
 ): Promise<string> {
-  // fetchScreenShot first to make sure it works
   const payload = JSON.stringify({ ...data_input, user });
   const body = JSON.stringify({ payload });
   delete data_input.params!["cookie"];
