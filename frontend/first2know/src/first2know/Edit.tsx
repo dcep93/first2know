@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 
 // TODO dcep93 edit
@@ -15,6 +15,7 @@ function RoutedEdit(props: { k: string; toHandle: ToHandleType }) {
   const navigate = useNavigate();
   return (
     <>
+      <pre>{JSON.stringify(props.toHandle, null, 2)}</pre>
       <button
         onClick={() => {
           if (window.confirm(`Do you really want to delete ${props.k}?`))
@@ -23,6 +24,7 @@ function RoutedEdit(props: { k: string; toHandle: ToHandleType }) {
       >
         Delete {props.k}
       </button>
+      <Link to="/">Home</Link>
     </>
   );
 }

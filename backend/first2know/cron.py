@@ -1,9 +1,11 @@
 import time
-import traceback
 
 from . import firebase_wrapper
 from . import screenshot
 from . import twitter_wrapper
+
+# update version to clear errors
+VERSION = '1.0'
 
 
 class Vars:
@@ -33,13 +35,7 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
         loops += 1
         if loops % 10 == 0:
             print(loops, "loops", f"{loops_per:.2f}/s")
-        try:
-            should_continue = run_cron()
-        except Exception as e:  # noqa: F841
-            print("run_cron exc", e)
-            traceback.print_exc()
-            time.sleep(1)
-            continue
+        should_continue = run_cron()
         if not should_continue:
             print("exiting cron", loops)
             return True
@@ -73,6 +69,11 @@ def run_cron() -> bool:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+    previous_error = to_handle.data.error
+    if previous_error is not None and previous_error.version == VERSION:
+        return
+
+    now = time.time()
     screenshot_payload = screenshot.RequestPayload(
         url=to_handle.url,
         params=to_handle.params,
@@ -81,15 +82,26 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         previous_evaluation=to_handle.data.evaluation,
         evaluation_to_img=to_handle.evaluation_to_img,
     )
-    screenshot_response = Vars._screenshot.screenshot(
-        to_handle.key,
-        screenshot_payload,
-    )
+    try:
+        screenshot_response = Vars._screenshot.screenshot(
+            to_handle.key,
+            screenshot_payload,
+        )
+    except Exception as e:
+        to_write = to_handle.data
+        to_write.times.append(now)
+        to_write.error = firebase_wrapper.ErrorType(
+            version=VERSION,
+            time=now,
+            message=str(e),
+        )
+        firebase_wrapper.write_data(to_handle.key, to_write)
+        return
 
     to_write = firebase_wrapper.DataType(
         img_data=screenshot_response.img_data,
         evaluation=screenshot_response.evaluation,
-        times=to_handle.data.times + [time.time()],
+        times=to_handle.data.times + [now],
     )
 
     if to_handle.data.img_data == to_write.img_data:

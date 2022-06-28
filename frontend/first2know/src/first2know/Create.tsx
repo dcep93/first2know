@@ -136,7 +136,7 @@ function checkScreenShot(update: (data: string | undefined) => void) {
 
 function submitNew(user: UserType): Promise<string> {
   const data = getData();
-  const payload = { ...data, user };
+  const payload = JSON.stringify({ ...data, user });
   const body = JSON.stringify({ payload });
   delete data.params!["cookie"];
   return fetch(`${url}/encrypt`, {

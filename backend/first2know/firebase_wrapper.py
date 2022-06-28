@@ -15,10 +15,17 @@ from firebase import firebase
 from . import secrets
 
 
+class ErrorType(BaseModel):
+    version: str
+    time: float
+    message: str
+
+
 class DataType(BaseModel):
     img_data: str
     evaluation: typing.Optional[str]
     times: typing.List[float]
+    error: typing.Optional[ErrorType] = None
 
 
 class ToHandle(BaseModel):
