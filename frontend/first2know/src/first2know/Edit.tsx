@@ -34,7 +34,7 @@ function RoutedEdit(props: {
       <ToHandle
         toHandle={props.toHandle}
         submit={({ old_encrypted, ...data_input }) =>
-          reencrypt(data_input, props.user!, old_encrypted).then((encrypted) =>
+          encrypt(data_input, props.user!, old_encrypted).then((encrypted) =>
             firebase
               .updateToHandle(props.k, {
                 data_input,
@@ -58,7 +58,7 @@ function RoutedEdit(props: {
   );
 }
 
-function reencrypt(
+export function encrypt(
   data_input: ScreenshotType,
   user: UserType,
   old_encrypted: string | null
@@ -69,7 +69,7 @@ function reencrypt(
     old_encrypted,
   });
   delete data_input.params!["cookie"];
-  return fetch(`${url}/reencrypt`, {
+  return fetch(`${url}/encrypt`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -32,25 +32,13 @@ def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-class EncryptPayload(firebase_wrapper.ScreenshotPayload):
-    user: typing.Any
-
-
-@web_app.post("/encrypt")
-def post_encrypt(payload: EncryptPayload):
-    json_str = payload.json()
-    encrypted = firebase_wrapper.encrypt(json_str)
-    return HTMLResponse(encrypted)
-
-
 class SupplementedScreenshotPayload(firebase_wrapper.ScreenshotPayload):
     old_encrypted: typing.Optional[str]
 
     def reencrypt_cookie(self):
         if self.old_encrypted is not None:
             decrypted = firebase_wrapper.decrypt(self.old_encrypted)
-            decrypted_payload = EncryptPayload(**json.loads(decrypted))
-            decrypted_params = decrypted_payload.params
+            decrypted_params = json.loads(decrypted).get("params")
             if decrypted_params is not None:
                 params = self.params if self.params is not None else {}
                 cookie = decrypted_params.get("cookie")
@@ -109,12 +97,12 @@ def post_screenshot(payload: SupplementedScreenshotPayload):
         return HTMLResponse(err, 500)
 
 
-class ReencryptPayload(SupplementedScreenshotPayload):
+class EncryptPayload(SupplementedScreenshotPayload):
     user: typing.Any
 
 
-@web_app.post("/reencrypt")
-def post_reencrypt(payload: ReencryptPayload):
+@web_app.post("/encrypt")
+def post_encrypt(payload: EncryptPayload):
     payload.reencrypt_cookie()
     json_str = payload.json()
     encrypted = firebase_wrapper.encrypt(json_str)

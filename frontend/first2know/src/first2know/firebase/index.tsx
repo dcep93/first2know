@@ -27,7 +27,17 @@ export type ScreenshotType = {
   evaluation_to_img: boolean;
 };
 
-function pushToHandle(toHandle: ToHandleType): Promise<string> {
+function pushToHandle(
+  data_input: ScreenshotType,
+  encrypted: string,
+  user_name: string
+): Promise<string> {
+  const toHandle = {
+    data_input,
+    data_output: { img_data: "", times: [Date.now()] },
+    encrypted,
+    user_name,
+  };
   return firebase._push(`/to_handle/`, toHandle);
 }
 
