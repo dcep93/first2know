@@ -21,9 +21,14 @@ class User extends React.Component<PropsType> {
         <div>
           {this.props.user.screen_name}
           <span> </span>
-          <button onClick={this.logout.bind(this)} className="button">
+          <button
+            disabled={window.location.hostname === "localhost"}
+            onClick={this.logout.bind(this)}
+            className="button"
+          >
             Log out
           </button>
+          {isAdmin(this.props.user) ? <span> admin</span> : null}
         </div>
       </div>
     ) : (
