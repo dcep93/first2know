@@ -12,14 +12,7 @@ from pydantic import BaseModel
 
 from PIL import Image, ImageDraw
 
-
-class RequestPayload(BaseModel):
-    url: str
-    params: typing.Optional[typing.Dict[str, typing.Any]]
-    evaluate: typing.Optional[str]
-    evaluation_to_img: bool
-    selector: typing.Optional[str]
-    evaluation: typing.Optional[typing.Any]
+from . import firebase_wrapper
 
 
 class ResponsePayload(BaseModel):
@@ -43,7 +36,7 @@ class _Screenshot(abc.ABC):
     def get_chain(
         self,
         key: str,
-        payload: RequestPayload,
+        payload: firebase_wrapper.ScreenshotPayload,
     ):
         params = None if payload.params is None else dict(payload.params)
         return [
@@ -84,7 +77,7 @@ class _Screenshot(abc.ABC):
         self,
         d: typing.Dict[str, typing.Any],
         key: str,
-        payload: RequestPayload,
+        payload: firebase_wrapper.ScreenshotPayload,
     ):
         if payload.evaluation_to_img:
             return None
@@ -93,7 +86,11 @@ class _Screenshot(abc.ABC):
             selector = "body" if payload.selector is None else payload.selector
             return d["page"].locator(selector)
 
-    def screenshot(self, key: str, payload: RequestPayload) -> ResponsePayload:
+    def screenshot(
+        self,
+        key: str,
+        payload: firebase_wrapper.ScreenshotPayload,
+    ) -> ResponsePayload:
         # s = time.time()
         chain = self.get_chain(key, payload)
         d = self.execute_chain(chain)

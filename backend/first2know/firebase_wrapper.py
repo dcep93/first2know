@@ -28,13 +28,16 @@ class DataType(BaseModel):
     error: typing.Optional[ErrorType] = None
 
 
-class ToHandle(BaseModel):
+class ScreenshotPayload(BaseModel):
     url: str
     params: typing.Optional[typing.Dict[str, typing.Any]]
-    evaluate: typing.Optional[str]
     selector: typing.Optional[str]
+    evaluate: typing.Optional[str]
     evaluation_to_img: bool
+    evaluation: typing.Optional[typing.Any]
 
+
+class ToHandle(ScreenshotPayload):
     user_name: str
 
     data: DataType
