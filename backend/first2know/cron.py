@@ -23,7 +23,6 @@ def init():
     firebase_wrapper.init()
     Vars._screenshot = screenshot.SyncScreenshot()
     Vars._refresh_token = refresh_access_token()
-    print("cron initialized")
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
