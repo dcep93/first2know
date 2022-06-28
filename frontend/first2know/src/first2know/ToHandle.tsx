@@ -6,8 +6,7 @@ import firebase, {
   ScreenshotType,
   ToHandleType,
 } from "./firebase";
-import ImgRenderer from "./ImgRenderer";
-import Listener from "./Listener";
+import ScreenshotFetcher from "./ScreenshotFetcher";
 import { UserType } from "./User";
 
 const urlRef = createRef<HTMLInputElement>();
@@ -43,15 +42,10 @@ class ToHandle extends React.Component<
     this.state = { img_data: this.props.toHandle?.data_output.img_data };
   }
 
-  updateImgData(img_data: string | undefined | null) {
-    if (this.state?.img_data !== img_data) this.setState({ img_data });
-  }
-
   render() {
     const defaultParamsValue = this.props.toHandle?.data_input.params;
     return (
       <div>
-        <Listener f={this.listenerF.bind(this)} p={this.props.allToHandle} />
         <form
           onSubmit={(e) =>
             Promise.resolve(e.preventDefault())
@@ -124,7 +118,11 @@ class ToHandle extends React.Component<
           </div>
           <input type="submit" value="Check Screenshot" />
         </form>
-        <ImgRenderer img_data={this.state.img_data} />
+        <ScreenshotFetcher
+          allToHandle={this.props.allToHandle}
+          img_data={this.props.toHandle?.data_output.img_data}
+          listenerF={this.listenerF.bind(this)}
+        />
         <SubmitableButton
           onSubmit={(navigate) => this.onSubmit(this.props.submit, navigate)}
         />
@@ -203,21 +201,21 @@ class ToHandle extends React.Component<
       }));
   }
 
-  listenerF() {
+  listenerF(updateImgData: (img_data: string | null | undefined) => void) {
     const data_output = this.props.allToHandle[this.state.k!]?.data_output;
     if (data_output) {
       if (data_output.error) {
         firebase
           .deleteToHandle(this.state.k!)
           .then(() => this.state.reject!(data_output.error!.message))
-          .then(() => this.updateImgData(undefined));
+          .then(() => updateImgData(undefined));
       } else if (data_output.img_data) {
         firebase
           .deleteToHandle(this.state.k!)
           .then(() => this.state.resolve!())
-          .then(() => this.updateImgData(data_output.img_data));
+          .then(() => updateImgData(data_output.img_data));
       } else if (this.state.img_data !== null) {
-        this.updateImgData(null);
+        updateImgData(null);
       }
     }
   }
