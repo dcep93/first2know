@@ -1,5 +1,5 @@
 import React from "react";
-import firebase, { AllToHandleType, ScreenshotType } from "./firebase";
+import firebase, { AllToHandleType } from "./firebase";
 import loading from "./loading.gif";
 
 type PropsType = {
@@ -9,7 +9,7 @@ type PropsType = {
 
 export type StateProps = {
   key?: string;
-  resolve?: (s: ScreenshotType) => void;
+  resolve?: () => void;
   reject?: (s: string) => void;
 };
 
@@ -33,7 +33,7 @@ class ScreenshotFetcher extends React.Component<
       this.setState({ img_data: data_output.img_data });
       firebase
         .deleteToHandle(this.props.key!)
-        .then(() => this.props.resolve!(toHandle!.data_input));
+        .then(() => this.props.resolve!());
     } else if (toHandle) {
       this.setState({ img_data: null });
     }

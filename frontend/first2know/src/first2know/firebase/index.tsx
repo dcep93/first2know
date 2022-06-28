@@ -25,6 +25,8 @@ export type ScreenshotType = {
   selector: string | null;
   evaluate: string | null;
   evaluation_to_img: boolean;
+
+  no_tweet?: boolean;
 };
 
 function pushToHandle(

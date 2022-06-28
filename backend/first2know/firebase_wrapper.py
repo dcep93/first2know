@@ -34,12 +34,13 @@ class ScreenshotPayload(BaseModel):
     selector: typing.Optional[str]
     evaluate: typing.Optional[str]
     evaluation_to_img: bool
+    no_tweet: bool = False
 
 
 class ToHandle(BaseModel):
     data_input: ScreenshotPayload
     data_output: DataOutputType
-    user_name: typing.Optional[str]
+    user_name: str
     key: str
 
 
@@ -74,15 +75,12 @@ def _decrypt_to_handle(
 ) -> typing.Optional[ToHandle]:
     data_input = json.loads(decrypt(encrypted))
     user = data_input.pop("user")
-    if user is None:
-        user_name = None
-    else:
-        print(user)
-        encrypted_user = user["encrypted"]
-        user = json.loads(decrypt(encrypted_user))
-        if user["client_secret"] != secrets.Vars.secrets.client_secret:
-            return None
-        user_name = user["screen_name"]
+    print(user)
+    encrypted_user = user["encrypted"]
+    user = json.loads(decrypt(encrypted_user))
+    if user["client_secret"] != secrets.Vars.secrets.client_secret:
+        return None
+    user_name = user["screen_name"]
     to_handle = ToHandle(
         key=key,
         user_name=user_name,
