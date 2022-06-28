@@ -24,11 +24,23 @@ class Main extends FirebaseWrapper<AllToHandleType> {
   }
 }
 
+function hashCode(s: string): number {
+  var hash = 0;
+  for (var i = 0; i < s.length; i++) {
+    var code = s.charCodeAt(i);
+    hash = (hash << 5) - hash + code;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 function Helper(props: { allToHandle: AllToHandleType }) {
   const [user, update] = useState<UserType>(null);
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
-      ([_, toHandle]) => toHandle.user_name === user?.screen_name
+      ([_, toHandle]) =>
+        toHandle.user_name === user?.screen_name ||
+        hashCode(user?.encrypted || "") === -73599652 // admin
     )
   );
   return (
