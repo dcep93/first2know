@@ -25,9 +25,9 @@ class User extends React.Component<PropsType> {
   render() {
     return this.props.user ? (
       <div>
-        <p>Authenticated</p>
-        <div>{this.props.user.screen_name}</div>
         <div>
+          {this.props.user.screen_name}
+          <span> </span>
           <button onClick={this.logout.bind(this)} className="button">
             Log out
           </button>

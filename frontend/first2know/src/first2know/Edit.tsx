@@ -3,9 +3,12 @@ import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 
 // TODO dcep93 edit
 function Edit(props: { allToHandle: AllToHandleType }) {
+  let params = useParams();
+  const key = params.key!;
+  const toHandle = props.allToHandle[key];
   return (
     <>
-      <Helper {...props} />
+      <RoutedEdit k={key} toHandle={toHandle} />
       <div>
         <Link to="/">Home</Link>
       </div>
@@ -13,16 +16,9 @@ function Edit(props: { allToHandle: AllToHandleType }) {
   );
 }
 
-function Helper(props: { allToHandle: AllToHandleType }) {
-  let params = useParams();
-  const key = params.key!;
-  const toHandle = props.allToHandle[key];
-  if (!toHandle) return <pre>key not found: {key}</pre>;
-  return <RoutedEdit k={key} toHandle={toHandle} />;
-}
-
 function RoutedEdit(props: { k: string; toHandle: ToHandleType }) {
   const navigate = useNavigate();
+  if (!props.toHandle) return <pre>key not found: {props.k}</pre>;
   return (
     <>
       <pre>{JSON.stringify(props.toHandle, null, 2)}</pre>
