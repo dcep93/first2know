@@ -86,7 +86,7 @@ function getData(): Promise<ScreenshotType & { img_data: string }> {
     evaluation_to_img: evaluationToImgRef.current!.checked,
   };
   if (data_input.url === "") {
-    throw "need to have a url";
+    throw Error("need to have a url");
   }
   // always fetch screenshot
   // to validate the payload
