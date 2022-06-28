@@ -29,24 +29,26 @@ function Helper(props: { allToHandle: AllToHandleType }) {
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
       ([_, toHandle]) =>
-        toHandle.user_name === user?.screen_name || isAdmin(user)
+        toHandle.user_name === user?.screen_name || (user && isAdmin(user))
     )
   );
   return (
     <>
       <User user={user} update={update} />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path=":key"
-            element={<Edit user={user} allToHandle={filteredAllToHandle} />}
-          />
-          <Route
-            index
-            element={<Home user={user} allToHandle={filteredAllToHandle} />}
-          />
-        </Routes>
-      </BrowserRouter>
+      {user && (
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path=":key"
+              element={<Edit user={user} allToHandle={filteredAllToHandle} />}
+            />
+            <Route
+              index
+              element={<Home user={user} allToHandle={filteredAllToHandle} />}
+            />
+          </Routes>
+        </BrowserRouter>
+      )}
     </>
   );
 }

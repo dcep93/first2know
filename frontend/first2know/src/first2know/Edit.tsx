@@ -8,7 +8,7 @@ import { url } from "./Server";
 import ToHandle from "./ToHandle";
 import { UserType } from "./User";
 
-function Edit(props: { user: UserType | null; allToHandle: AllToHandleType }) {
+function Edit(props: { user: UserType; allToHandle: AllToHandleType }) {
   let params = useParams();
   const key = params.key!;
   const toHandle = props.allToHandle[key];
@@ -28,7 +28,7 @@ function Edit(props: { user: UserType | null; allToHandle: AllToHandleType }) {
 }
 
 function RoutedEdit(props: {
-  user: UserType | null;
+  user: UserType;
   k: string;
   toHandle: ToHandleType;
   allToHandle: AllToHandleType;
@@ -38,9 +38,10 @@ function RoutedEdit(props: {
   return (
     <>
       <ToHandle
+        user={props.user}
         toHandle={props.toHandle}
         submit={({ old_encrypted, ...data_input }) =>
-          encrypt(data_input, props.user!, old_encrypted).then((encrypted) =>
+          encrypt(data_input, props.user, old_encrypted).then((encrypted) =>
             firebase
               .updateToHandle(props.k, {
                 data_input,
@@ -65,7 +66,7 @@ function RoutedEdit(props: {
 
 export function encrypt(
   data_input: ScreenshotType,
-  user: UserType | null,
+  user: UserType,
   old_encrypted: string | null
 ): Promise<string> {
   const body = JSON.stringify({

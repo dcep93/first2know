@@ -5,7 +5,7 @@ import styles from "./index.module.css";
 import { isAdmin, UserType } from "./User";
 
 function Show(props: {
-  user: UserType | null;
+  user: UserType;
   allToHandle: AllToHandleType;
 }): JSX.Element {
   return (

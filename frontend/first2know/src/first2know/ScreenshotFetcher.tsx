@@ -8,6 +8,8 @@ class ScreenshotFetcher extends React.Component<
     allToHandle: AllToHandleType;
     resolve?: (s: ScreenshotType) => void;
     reject?: (s: string) => void;
+    // TODO dcep93
+    img_data?: string;
   },
   { img_data: string | undefined | null }
 > {

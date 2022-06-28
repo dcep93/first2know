@@ -5,16 +5,13 @@ import ToHandle from "./ToHandle";
 import { UserType } from "./User";
 
 function Create(props: {
-  user: UserType | null;
+  user: UserType;
   allToHandle: AllToHandleType;
 }): JSX.Element {
   return (
     <ToHandle
-      submit={
-        props.user
-          ? (data_input) => submitNew(data_input, props.user!)
-          : undefined
-      }
+      user={props.user}
+      submit={(data_input) => submitNew(data_input, props.user!)}
       allToHandle={props.allToHandle}
     />
   );
