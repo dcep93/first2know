@@ -86,7 +86,12 @@ class ToHandle extends React.Component<PropsType, StateProps> {
             />
             {")"}
             <div>
-              <textarea ref={evaluateRef} />
+              <textarea
+                defaultValue={
+                  this.props.toHandle?.data_input.evaluate || undefined
+                }
+                ref={evaluateRef}
+              />
             </div>
           </div>
           <input type="submit" value="Check Screenshot" />
