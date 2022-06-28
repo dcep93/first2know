@@ -34,7 +34,6 @@ class ScreenshotPayload(BaseModel):
     selector: typing.Optional[str]
     evaluate: typing.Optional[str]
     evaluation_to_img: bool
-    evaluation: typing.Optional[typing.Any]
 
 
 class ToHandle(BaseModel):
@@ -61,7 +60,7 @@ def get_to_handle() -> typing.List[ToHandle]:
     return [
         i for i in [
             # TODO dcep93
-            _decrypt_to_handle(k, v["encrypted"], v.get("data_output"))
+            _decrypt_to_handle(k, v["encrypted"], v["data_output"])
             for k, v in raw_all_to_handle.items()
         ] if i
     ]

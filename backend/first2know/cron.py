@@ -74,12 +74,11 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         return
 
     now = time.time()
-    screenshot_payload = to_handle.data_input.copy()
-    screenshot_payload.evaluation = to_handle.data_output.evaluation
     try:
         screenshot_response = Vars._screenshot.screenshot(
             to_handle.key,
-            screenshot_payload,
+            to_handle.data_input,
+            to_handle.data_output.evaluation,
         )
     except Exception as e:
         to_write = to_handle.data_output
@@ -92,7 +91,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         firebase_wrapper.write_data(to_handle.key, to_write)
         return
 
-    to_write = firebase_wrapper.DataType(
+    to_write = firebase_wrapper.DataOutputType(
         img_data=screenshot_response.img_data,
         evaluation=screenshot_response.evaluation,
         times=to_handle.data_output.times + [now],

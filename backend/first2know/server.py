@@ -49,6 +49,7 @@ def post_screenshot_img(payload: firebase_wrapper.ScreenshotPayload):
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
             key,
             payload,
+            None,
         )
         bytes = base64.b64decode(screenshot_response.img_data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
@@ -64,6 +65,7 @@ def post_screenshot_len(payload: firebase_wrapper.ScreenshotPayload):
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
             key,
             payload,
+            None,
         )
         screenshot_response.img_data = str(len(screenshot_response.img_data))
         return HTMLResponse(screenshot_response.json())
@@ -79,6 +81,7 @@ def post_screenshot(payload: firebase_wrapper.ScreenshotPayload):
         screenshot_response = screenshot.AsyncScreenshot().screenshot(
             key,
             payload,
+            None,
         )
         return HTMLResponse(screenshot_response.json())
     except Exception:

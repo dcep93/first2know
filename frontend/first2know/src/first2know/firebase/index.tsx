@@ -25,7 +25,6 @@ export type ScreenshotType = {
   selector: string | null;
   evaluate: string | null;
   evaluation_to_img: boolean;
-  evaluation: any;
 };
 
 function pushToHandle(toHandle: ToHandleType): Promise<string> {

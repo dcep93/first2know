@@ -37,6 +37,7 @@ class _Screenshot(abc.ABC):
         self,
         key: str,
         payload: firebase_wrapper.ScreenshotPayload,
+        previous_evaluation: typing.Any,
     ):
         params = None if payload.params is None else dict(payload.params)
         return [
@@ -60,7 +61,7 @@ class _Screenshot(abc.ABC):
                 "evaluation",
                 lambda d: None
                 if payload.evaluate is None else d["page"].evaluate(
-                    payload.evaluate, payload.evaluation),
+                    payload.evaluate, previous_evaluation),
             ),
             (
                 "to_screenshot",
@@ -90,9 +91,10 @@ class _Screenshot(abc.ABC):
         self,
         key: str,
         payload: firebase_wrapper.ScreenshotPayload,
+        previous_evaluation: typing.Any,
     ) -> ResponsePayload:
         # s = time.time()
-        chain = self.get_chain(key, payload)
+        chain = self.get_chain(key, payload, previous_evaluation)
         d = self.execute_chain(chain)
         if payload.evaluation_to_img:
             binary_data = self.evaluation_to_img_bytes(d["evaluation"])
