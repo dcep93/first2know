@@ -8,7 +8,7 @@ export type AllToHandleType = {
 export type DataType = { data: string; times: number[] };
 
 export type ToHandleType = ScreenshotType & {
-  data?: DataType;
+  data: DataType;
   user_name: string;
   encrypted: string;
 };

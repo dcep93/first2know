@@ -104,9 +104,21 @@ function getData(): ScreenshotType {
 
 function checkScreenShot(update: (data: string | undefined) => void) {
   const data = getData();
-  const body = JSON.stringify(data);
   update(loading);
-  fetch(`${url}/screenshot`, {
+  return fetchScreenShot(data)
+    .then((bytes) => `data:image/png;base64,${bytes}`)
+    .then(update)
+    .catch((err) => {
+      update(undefined);
+      const e: string = err.toString();
+      alert(e.substring(e.length - 1000));
+      throw err;
+    });
+}
+
+export function fetchScreenShot(data: ScreenshotType): Promise<string> {
+  const body = JSON.stringify(data);
+  return fetch(`${url}/screenshot`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -119,15 +131,7 @@ function checkScreenShot(update: (data: string | undefined) => void) {
       return text;
     })
     .then((text) => JSON.parse(text))
-    .then((json) => [json.img_data, console.log(json.evaluate)][0])
-    .then((bytes) => `data:image/png;base64,${bytes}`)
-    .then(update)
-    .catch((err) => {
-      update(undefined);
-      const e: string = err.toString();
-      alert(e.substring(e.length - 1000));
-      throw err;
-    });
+    .then((json) => [json.img_data, console.log(json.evaluate)][0]);
 }
 
 export default ToHandle;
