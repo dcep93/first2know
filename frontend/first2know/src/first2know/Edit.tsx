@@ -64,7 +64,8 @@ function reencrypt(
   old_encrypted: string | null
 ): Promise<string> {
   const body = JSON.stringify({
-    payload: { ...data_input, user },
+    ...data_input,
+    user,
     old_encrypted,
   });
   delete data_input.params!["cookie"];

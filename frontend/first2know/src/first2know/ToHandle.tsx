@@ -37,7 +37,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
         {props.toHandle && (
           <div>
             reuse saved cookie?<span> </span>
-            <input ref={reuseCookieRef} checked type="checkbox" />
+            <input ref={reuseCookieRef} defaultChecked type="checkbox" />
           </div>
         )}
         <div>

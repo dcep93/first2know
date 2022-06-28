@@ -31,7 +31,7 @@ function submitNew(
 }
 
 function encrypt(data_input: ScreenshotType, user: UserType): Promise<string> {
-  const body = JSON.stringify({ payload: { ...data_input, user } });
+  const body = JSON.stringify({ ...data_input, user });
   delete data_input.params!["cookie"];
   return fetch(`${url}/encrypt`, {
     method: "POST",
