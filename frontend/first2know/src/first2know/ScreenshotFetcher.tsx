@@ -29,7 +29,6 @@ class ScreenshotFetcher extends React.Component<
     }
     const data_output = this.props.allToHandle[this.props.k!]?.data_output;
     if (data_output) {
-      console.log(data_output);
       if (data_output.error) {
         firebase
           .deleteToHandle(this.props.k!)
