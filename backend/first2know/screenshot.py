@@ -19,7 +19,7 @@ class RequestPayload(BaseModel):
     evaluate: typing.Optional[str]
     evaluation_to_img: bool
     selector: typing.Optional[str]
-    previous_evaluation: typing.Optional[typing.Any]
+    evaluation: typing.Optional[typing.Any]
 
 
 class ResponsePayload(BaseModel):
@@ -67,7 +67,7 @@ class _Screenshot(abc.ABC):
                 "evaluation",
                 lambda d: None
                 if payload.evaluate is None else d["page"].evaluate(
-                    payload.evaluate, payload.previous_evaluation),
+                    payload.evaluate, payload.evaluation),
             ),
             (
                 "to_screenshot",
