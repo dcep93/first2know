@@ -85,7 +85,7 @@ class _Screenshot(abc.ABC):
         else:
             d["dest"] = f"screenshot_{key}.png"
             selector = "body" if payload.selector is None else payload.selector
-            return d["page"].locator(selector)
+            d["to_screenshot"] = d["page"].locator(selector)
 
     def screenshot(
         self,
@@ -97,7 +97,7 @@ class _Screenshot(abc.ABC):
         chain = self.get_chain(key, payload, previous_evaluation)
         d = self.execute_chain(chain)
         if payload.evaluation_to_img:
-            binary_data = self.evaluation_to_img_bytes(d["evaluation"])
+            binary_data = self.evaluation_to_img_bytes(d.get("evaluation"))
         else:
             dest = d["dest"]
             binary_data = open(dest, "rb").read()
@@ -111,7 +111,7 @@ class _Screenshot(abc.ABC):
         # ]))
         return ResponsePayload(
             img_data=img_data,
-            evaluation=d["evaluation"],
+            evaluation=d.get("evaluation"),
         )
 
     def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:

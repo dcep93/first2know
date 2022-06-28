@@ -104,7 +104,8 @@ function getData(
 ): Promise<ScreenshotType & { img_data: string }> {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
-  params.cookie = cookieRef.current!.value || null;
+  const cookie = cookieRef.current!.value || null;
+  if (cookie) params.cookie = cookie;
   const data_input = {
     url: urlRef.current!.value,
     params,
@@ -159,6 +160,7 @@ function checkScreenShot(
     .then(update)
     .catch((err) => {
       update(undefined);
+      alert(err);
       throw err;
     });
 }
