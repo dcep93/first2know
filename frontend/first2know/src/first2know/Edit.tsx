@@ -23,7 +23,9 @@ function RoutedEdit(props: { k: string; toHandle: ToHandleType }) {
       >
         Delete {props.k}
       </button>
-      <Link to="/">Home</Link>
+      <div>
+        <Link to="/">Home</Link>
+      </div>
     </>
   );
 }
