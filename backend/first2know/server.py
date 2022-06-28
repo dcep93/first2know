@@ -7,6 +7,7 @@ import traceback
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
+from pydantic import BaseModel
 
 from . import cron
 from . import firebase_wrapper
@@ -31,7 +32,7 @@ def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-class EncryptPayload(screenshot.RequestPayload):
+class EncryptPayload(BaseModel):
     payload: str
 
 
