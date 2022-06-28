@@ -6,7 +6,7 @@ import firebase, {
   ScreenshotType,
   ToHandleType,
 } from "./firebase";
-import loading from "./loading.gif";
+import ScreenshotFetcher from "./ScreenshotFetcher";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
@@ -26,18 +26,17 @@ type PropsType = {
   allToHandle: AllToHandleType;
 };
 
-type UpdateType = (img_data: string | null | undefined) => void;
-
 function ToHandle(props: PropsType) {
-  const [img_data, update] = useState<string | null | undefined>(
-    props.toHandle?.data_output.img_data
-  );
+  const [screenshotKey, updateKey] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const defaultParamsValue = props.toHandle?.data_input.params;
   return (
     <div>
       <form
-        onSubmit={(e) => [e.preventDefault(), checkScreenShot(props, update)]}
+        onSubmit={(e) => [
+          e.preventDefault(),
+          checkScreenShot(props, updateKey),
+        ]}
       >
         <div>
           url:{" "}
@@ -94,18 +93,9 @@ function ToHandle(props: PropsType) {
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
-      <img
-        src={
-          img_data === undefined
-            ? undefined
-            : img_data === null
-            ? loading
-            : `data:image/png;base64,${img_data}`
-        }
-        alt=""
-      ></img>
+      <ScreenshotFetcher />
       {props.submit && (
-        <button onClick={() => onSubmit(props, navigate, update)}>
+        <button onClick={() => onSubmit(props, navigate, updateKey)}>
           Submit
         </button>
       )}
@@ -115,11 +105,11 @@ function ToHandle(props: PropsType) {
 function onSubmit(
   props: PropsType,
   navigate: (key: string) => void,
-  update: UpdateType
+  updateKey: (s: string) => void
 ) {
   const old_encrypted = getOldEncrypted(props.toHandle);
   Promise.resolve()
-    .then(() => getData(old_encrypted, update, props.allToHandle))
+    .then(() => getData(old_encrypted, updateKey))
     .then((data_input) => props.submit!({ old_encrypted, ...data_input }))
     .then((key) => navigate(key))
     .catch((err) => {
@@ -138,8 +128,7 @@ function getOldEncrypted(toHandle: ToHandleType | undefined) {
 
 function getData(
   old_encrypted: string | null,
-  update: (img_data: string | null | undefined) => void,
-  allToHandle: AllToHandleType
+  updateKey: (s: string) => void
 ): Promise<ScreenshotType> {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
@@ -158,45 +147,30 @@ function getData(
   }
   // always fetch screenshot
   // to validate the payload
-  return validateScreenshot(data_input, old_encrypted, update, allToHandle);
+  return validateScreenshot(data_input, old_encrypted, updateKey);
 }
 
 function validateScreenshot(
   data_input: ScreenshotType,
   old_encrypted: string | null,
-  update: (img_data: string | null | undefined) => void,
-  allToHandle: AllToHandleType
+  updateKey: (s: string) => void
 ): Promise<ScreenshotType> {
-  update(null);
   return encrypt(data_input, null, old_encrypted)
-    .then((encrypted) => firebase.pushToHandle(data_input, encrypted, null))
-    .then(
-      (key) =>
-        new Promise((resolve, reject) => {
-          // TODO dcep93 listen for changes
-          const toHandle = allToHandle[key];
-          const data_output = toHandle?.data_output;
-          if (data_output) {
-            if (data_output.error) reject(data_output.error!.message);
-            update(data_output.img_data);
-            firebase.deleteToHandle(key).then(() => resolve(data_input));
-          }
-        })
+    .then((encrypted) =>
+      firebase.pushToHandle(data_input, encrypted, user.screen_name)
     )
+    .then(updateKey)
+    .then(() => p)
     .catch((err) => {
-      update(undefined);
       alert(err);
       throw err;
     })
-    .then((di) => di as ScreenshotType);
+    .then((di) => di);
 }
 
-function checkScreenShot(
-  props: PropsType,
-  update: (img_data: string | null | undefined) => void
-) {
+function checkScreenShot(props: PropsType, updateKey: (s: string) => void) {
   const old_encrypted = getOldEncrypted(props.toHandle);
-  return getData(old_encrypted, update, props.allToHandle);
+  return getData(old_encrypted, updateKey);
 }
 
 export default ToHandle;

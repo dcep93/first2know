@@ -15,7 +15,7 @@ export type DataType = {
 export type ToHandleType = {
   data_input: ScreenshotType;
   data_output: DataType;
-  user_name?: string;
+  user_name: string;
   encrypted: string;
 };
 
@@ -30,7 +30,7 @@ export type ScreenshotType = {
 function pushToHandle(
   data_input: ScreenshotType,
   encrypted: string,
-  user_name: string | null
+  user_name: string
 ): Promise<string> {
   const toHandle = {
     data_input,

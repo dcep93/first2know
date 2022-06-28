@@ -29,9 +29,7 @@ function Helper(props: { allToHandle: AllToHandleType }) {
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
       ([_, toHandle]) =>
-        toHandle.user_name === undefined ||
-        toHandle.user_name === user?.screen_name ||
-        isAdmin(user)
+        toHandle.user_name === user?.screen_name || isAdmin(user)
     )
   );
   return (
