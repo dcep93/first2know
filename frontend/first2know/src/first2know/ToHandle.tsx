@@ -10,7 +10,6 @@ const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
-// TODO dcep93 reuse_cookie
 const reuseCookieRef = createRef<HTMLInputElement>();
 
 type SubmitType = (
@@ -35,6 +34,12 @@ function ToHandle(props: { toHandle?: ToHandleType; submit?: SubmitType }) {
         <div title={"will be encrypted"}>
           cookie: <input ref={cookieRef} type="text" />
         </div>
+        {props.toHandle && (
+          <div>
+            reuse saved cookie?<span> </span>
+            <input ref={reuseCookieRef} checked type="checkbox" />
+          </div>
+        )}
         <div>
           params: <input ref={paramsRef} type="text" />
         </div>
