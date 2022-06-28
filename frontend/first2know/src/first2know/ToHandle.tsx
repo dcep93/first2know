@@ -167,10 +167,6 @@ function validateScreenshot(
   update: (img_data: string | null | undefined) => void,
   allToHandle: AllToHandleType
 ): Promise<ScreenshotType> {
-  const body = JSON.stringify({
-    ...data_input,
-    old_encrypted,
-  });
   update(null);
   return encrypt(data_input, null, old_encrypted)
     .then((encrypted) => firebase.pushToHandle(data_input, encrypted, null))
