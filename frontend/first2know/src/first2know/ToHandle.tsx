@@ -13,7 +13,7 @@ const cssSelectorRef = createRef<HTMLInputElement>();
 
 function ToHandle(props: {
   toHandle?: ToHandleType;
-  submit?: (s: ScreenshotType) => Promise<string>;
+  submit?: (data_input: ScreenshotType, img_data: string) => Promise<string>;
 }) {
   const [img_data, update] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
@@ -55,7 +55,9 @@ function ToHandle(props: {
           onClick={() =>
             Promise.resolve()
               .then(() => getData())
-              .then((data_input) => props.submit!(data_input))
+              .then(({ img_data, ...data_input }) =>
+                props.submit!(data_input, img_data)
+              )
               .then((key) => navigate(key))
               .catch((err) => {
                 alert(err);
@@ -70,11 +72,11 @@ function ToHandle(props: {
   );
 }
 
-function getData(): ScreenshotType {
+function getData(): Promise<ScreenshotType & { img_data: string }> {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
-  Object.assign(params, { cookie: cookieRef.current!.value || null });
-  const rval = {
+  params.cookie = cookieRef.current!.value || null;
+  const data_input = {
     url: urlRef.current!.value,
     params,
     selector: cssSelectorRef.current!.value || null,
@@ -82,25 +84,16 @@ function getData(): ScreenshotType {
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked,
   };
-  if (rval.url === "") {
+  if (data_input.url === "") {
     throw "need to have a url";
   }
-  return rval;
+  return fetchScreenShot(data_input).then((img_data) => ({
+    img_data,
+    ...data_input,
+  }));
 }
 
-function checkScreenShot(update: (img_data: string | undefined) => void) {
-  const data_input = getData();
-  update(loading);
-  return fetchScreenShot(data_input)
-    .then((bytes) => `data:image/png;base64,${bytes}`)
-    .then(update)
-    .catch((err) => {
-      update(undefined);
-      throw err;
-    });
-}
-
-export function fetchScreenShot(data_input: ScreenshotType): Promise<string> {
+function fetchScreenShot(data_input: ScreenshotType): Promise<string> {
   const body = JSON.stringify(data_input);
   return fetch(`${url}/screenshot`, {
     method: "POST",
@@ -116,6 +109,17 @@ export function fetchScreenShot(data_input: ScreenshotType): Promise<string> {
     })
     .then((text) => JSON.parse(text))
     .then((json) => [json.img_data, console.log(json.evaluate)][0]);
+}
+
+function checkScreenShot(update: (img_data: string | undefined) => void) {
+  update(loading);
+  return getData()
+    .then(({ img_data }) => `data:image/png;base64,${img_data}`)
+    .then(update)
+    .catch((err) => {
+      update(undefined);
+      throw err;
+    });
 }
 
 export default ToHandle;
