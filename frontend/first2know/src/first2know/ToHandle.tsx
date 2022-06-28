@@ -159,6 +159,14 @@ class ToHandle extends React.Component<PropsType, StateProps> {
       )
       .then((k) => this.setState({ k }))
       .then(() => p)
+      .catch((err) => {
+        this.setState({
+          resolve: undefined,
+          reject: undefined,
+          k: undefined,
+        });
+        throw err;
+      })
       .then(() => {
         this.setState({
           resolve: undefined,

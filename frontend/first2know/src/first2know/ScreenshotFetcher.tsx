@@ -23,24 +23,27 @@ class ScreenshotFetcher extends React.Component<
   }
 
   componentDidUpdate() {
-    const toHandle = this.props.allToHandle[this.props.k!];
-    const data_output = toHandle?.data_output;
+    const data_output = this.props.allToHandle[this.props.k!]?.data_output;
     if (data_output) {
+      console.log(data_output);
       if (data_output.error) {
-        this.setState({ img_data: undefined });
-        this.props.reject!(data_output.error!.message);
-        return;
-      }
-      if (data_output.img_data) {
-        console.log(data_output.times);
+        firebase
+          .deleteToHandle(this.props.k!)
+          .then(() => this.props.reject!(data_output.error!.message))
+          .then(() => this.updateImgData(undefined));
+      } else if (data_output.img_data) {
         firebase
           .deleteToHandle(this.props.k!)
           .then(() => this.props.resolve!())
-          .then(() => this.setState({ img_data: data_output.img_data }));
+          .then(() => this.updateImgData(data_output.img_data));
       } else if (this.state.img_data !== null) {
-        this.setState({ img_data: null });
+        this.updateImgData(null);
       }
     }
+  }
+
+  updateImgData(img_data: string | undefined | null) {
+    if (this.state?.img_data !== img_data) this.setState({ img_data });
   }
 
   render() {

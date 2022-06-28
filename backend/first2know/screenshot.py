@@ -106,17 +106,20 @@ class _Screenshot(abc.ABC):
             binary_data = open(dest, "rb").read()
             os.remove(dest)
         img_data = base64.b64encode(binary_data).decode('utf-8')
-        if True or secrets.Vars.is_local:
-            print(' '.join([
-                f"{time.time() - s:.3f}s",
-                str(key),
-                f"{len(img_data)/1000}kb",
-                datetime.datetime.now().strftime("%H:%M:%S.%f"),
-            ]))
+        self.log(' '.join([
+            f"{time.time() - s:.3f}s",
+            str(key),
+            f"{len(img_data)/1000}kb",
+            datetime.datetime.now().strftime("%H:%M:%S.%f"),
+        ]))
         return ResponsePayload(
             img_data=img_data,
             evaluation=d.get("evaluation"),
         )
+
+    def log(self, s: str):
+        if True or secrets.Vars.is_local:
+            print(s)
 
     def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:
         text = evaluation if type(evaluation) is str else json.dumps(
@@ -157,9 +160,11 @@ class AsyncScreenshot(_Screenshot):
         async def helper():
             rval = {}
             for i, c in chain:
+                start = time.time()
                 j = c(rval)
                 if j is not None:
                     rval[i] = await j
+                self.log(f"{i} {time.time() - start}")
             await self.close()
             return rval
 
@@ -190,7 +195,9 @@ class SyncScreenshot(_Screenshot):
     ) -> typing.Dict[str, typing.Any]:
         rval = {}
         for i, c in chain:
+            start = time.time()
             j = c(rval)
             if j is not None:
                 rval[i] = j
+            self.log(f"{i} {time.time() - start}")
         return rval

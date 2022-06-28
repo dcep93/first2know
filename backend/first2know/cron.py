@@ -21,8 +21,8 @@ def main():
 
 def init():
     firebase_wrapper.init()
-    Vars._refresh_token = refresh_access_token()
     Vars._screenshot = screenshot.SyncScreenshot()
+    Vars._refresh_token = refresh_access_token()
     print("cron initialized")
 
 
@@ -72,6 +72,9 @@ def run_cron() -> bool:
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     previous_error = to_handle.data_output.error
     if previous_error is not None and previous_error.version == VERSION:
+        return
+
+    if to_handle.data_input.no_tweet and to_handle.data_output.img_data:
         return
 
     try:
