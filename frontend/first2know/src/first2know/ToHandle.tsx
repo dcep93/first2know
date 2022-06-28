@@ -149,11 +149,8 @@ class ToHandle extends React.Component<PropsType, StateProps> {
     const p = new Promise<void>((resolve, reject) => {
       this.setState({ resolve, reject });
     });
-    return encrypt(
-      { no_tweet: true, ...data_input },
-      this.props.user,
-      old_encrypted
-    )
+    data_input = { no_tweet: true, ...data_input };
+    return encrypt(data_input, this.props.user, old_encrypted)
       .then((encrypted) =>
         firebase.pushToHandle(
           data_input,
@@ -170,7 +167,8 @@ class ToHandle extends React.Component<PropsType, StateProps> {
           k: undefined,
         });
         return data_input;
-      });
+      })
+      .then(({ no_tweet, ...data_input }) => data_input);
   }
 
   checkScreenShot() {
