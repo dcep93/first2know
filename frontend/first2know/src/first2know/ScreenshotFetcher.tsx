@@ -8,7 +8,7 @@ type PropsType = {
 } & StateProps;
 
 export type StateProps = {
-  key?: string;
+  k: string | undefined;
   resolve?: () => void;
   reject?: (s: string) => void;
 };
@@ -23,7 +23,7 @@ class ScreenshotFetcher extends React.Component<
   }
 
   componentDidUpdate() {
-    const toHandle = this.props.allToHandle[this.props.key!];
+    const toHandle = this.props.allToHandle[this.props.k!];
     const data_output = toHandle?.data_output;
     if (data_output) {
       if (data_output.error) {
@@ -31,10 +31,11 @@ class ScreenshotFetcher extends React.Component<
         this.props.reject!(data_output.error!.message);
         return;
       }
-      this.setState({ img_data: data_output.img_data });
-      firebase
-        .deleteToHandle(this.props.key!)
-        .then(() => this.props.resolve!());
+      if (data_output.img_data)
+        firebase
+          .deleteToHandle(this.props.k!)
+          .then(() => this.props.resolve!())
+          .then(() => this.setState({ img_data: data_output.img_data }));
     } else if (toHandle) {
       this.setState({ img_data: null });
     }

@@ -94,6 +94,7 @@ class ToHandle extends React.Component<PropsType, StateProps> {
         <ScreenshotFetcher
           allToHandle={this.props.allToHandle}
           img_data={this.props.toHandle?.data_output.img_data}
+          {...this.state}
         />
         <SubmitableButton onSubmit={(navigate) => this.onSubmit(navigate)} />
       </div>
@@ -160,18 +161,16 @@ class ToHandle extends React.Component<PropsType, StateProps> {
           this.props.user.screen_name
         )
       )
-      .then((key) => [p, this.setState({ key })][0]!)
-      .then(
-        () =>
-          [
-            data_input,
-            this.setState({
-              resolve: undefined,
-              reject: undefined,
-              key: undefined,
-            }),
-          ][0]!
-      );
+      .then((k) => this.setState({ k }))
+      .then(() => p)
+      .then(() => {
+        this.setState({
+          resolve: undefined,
+          reject: undefined,
+          k: undefined,
+        });
+        return data_input;
+      });
   }
 
   checkScreenShot() {

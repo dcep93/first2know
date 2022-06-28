@@ -36,7 +36,7 @@ function pushToHandle(
 ): Promise<string> {
   const toHandle = {
     data_input,
-    data_output: { times: [Date.now()] },
+    data_output: { times: [Date.now() / 1000] },
     encrypted,
     user_name,
   };
