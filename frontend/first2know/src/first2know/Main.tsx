@@ -35,7 +35,7 @@ function hashCode(s: string): number {
 }
 
 function Helper(props: { allToHandle: AllToHandleType }) {
-  const [user, update] = useState<UserType>(null);
+  const [user, update] = useState<UserType | null>(null);
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
       ([_, toHandle]) =>
@@ -50,7 +50,7 @@ function Helper(props: { allToHandle: AllToHandleType }) {
         <Routes>
           <Route
             path=":key"
-            element={<Edit allToHandle={filteredAllToHandle} />}
+            element={<Edit user={user} allToHandle={filteredAllToHandle} />}
           />
           <Route
             index

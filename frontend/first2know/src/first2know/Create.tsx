@@ -4,12 +4,12 @@ import { url } from "./Server";
 import ToHandle, { fetchScreenShot } from "./ToHandle";
 import { UserType } from "./User";
 
-function Create(props: { user: UserType }): JSX.Element {
+function Create(props: { user: UserType | null }): JSX.Element {
   return (
     <ToHandle
       submit={
         props.user
-          ? (data_input) => submitNew(data_input, props.user)
+          ? (data_input) => submitNew(data_input, props.user!)
           : undefined
       }
     />

@@ -7,9 +7,12 @@ export type UserType = {
   screen_name: string;
   user_id: string;
   encrypted: string;
-} | null;
+};
 
-type PropsType = { user: UserType; update: (user: UserType) => void };
+type PropsType = {
+  user: UserType | null;
+  update: (user: UserType | null) => void;
+};
 
 class User extends React.Component<PropsType> {
   constructor(props: PropsType) {

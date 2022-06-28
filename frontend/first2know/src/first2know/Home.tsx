@@ -3,7 +3,7 @@ import { AllToHandleType } from "./firebase";
 import Show from "./Show";
 import { UserType } from "./User";
 
-function Home(props: { user: UserType; allToHandle: AllToHandleType }) {
+function Home(props: { user: UserType | null; allToHandle: AllToHandleType }) {
   return (
     <>
       <Create user={props.user} />
