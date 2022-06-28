@@ -17,14 +17,12 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 
   render() {
     if (this.state === null) return <>Loading...</>;
+    const allToHandle = this.state.state || {};
     return (
       <BrowserRouter>
         <Routes>
-          <Route
-            path=":key"
-            element={<Edit allToHandle={this.state.state} />}
-          />
-          <Route index element={<Home allToHandle={this.state.state} />} />
+          <Route path=":key" element={<Edit allToHandle={allToHandle} />} />
+          <Route index element={<Home allToHandle={allToHandle} />} />
         </Routes>
       </BrowserRouter>
     );

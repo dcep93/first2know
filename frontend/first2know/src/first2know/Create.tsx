@@ -60,7 +60,12 @@ function Create(props: { user: UserType }): JSX.Element {
           <form
             onSubmit={(e) => [
               e.preventDefault(),
-              submitNew(props.user!).then((key) => navigate(key)),
+              submitNew(props.user!)
+                .then((key) => navigate(key))
+                .catch((err) => {
+                  alert(err);
+                  throw err;
+                }),
             ]}
           >
             <input type="submit" value="Submit" />
@@ -141,7 +146,11 @@ function submitNew(user: UserType): Promise<string> {
     },
     body,
   })
-    .then((resp) => resp.text())
+    .then((resp) => Promise.all([Promise.resolve(resp.ok), resp.text()]))
+    .then(([ok, text]) => {
+      if (!ok) throw Error(text);
+      return text;
+    })
     .then((encrypted) =>
       firebase.pushToHandle({
         ...data,
