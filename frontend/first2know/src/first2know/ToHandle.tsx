@@ -77,8 +77,9 @@ function getData(): ScreenshotType {
   const rval = {
     url: urlRef.current!.value,
     params,
-    evaluate: evaluateRef.current!.value || null,
     selector: cssSelectorRef.current!.value || null,
+    evaluation: null,
+    evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked,
   };
   if (rval.url === "") {
@@ -99,8 +100,8 @@ function checkScreenShot(update: (data: string | undefined) => void) {
     });
 }
 
-export function fetchScreenShot(data: ScreenshotType): Promise<string> {
-  const body = JSON.stringify(data);
+export function fetchScreenShot(data_input: ScreenshotType): Promise<string> {
+  const body = JSON.stringify(data_input);
   return fetch(`${url}/screenshot`, {
     method: "POST",
     headers: {

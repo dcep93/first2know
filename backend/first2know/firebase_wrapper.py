@@ -37,9 +37,10 @@ class ScreenshotPayload(BaseModel):
     evaluation: typing.Optional[typing.Any]
 
 
-class ToHandle(ScreenshotPayload):
+class ToHandle(BaseModel):
+    data_input: ScreenshotPayload
+    data_output: DataType
     user_name: str
-    data: DataType
     key: str
 
 
@@ -66,14 +67,16 @@ def get_to_handle() -> typing.List[ToHandle]:
 
 
 def _decrypt_to_handle(
-        key: str, encrypted: str,
-        data: typing.Optional[DataType]) -> typing.Optional[ToHandle]:
-    loaded = json.loads(decrypt(encrypted))
-    encrypted_user = loaded.pop("user")["encrypted"]
+    key: str,
+    encrypted: str,
+    data: typing.Optional[DataType],
+) -> typing.Optional[ToHandle]:
+    data_input = json.loads(decrypt(encrypted))
+    encrypted_user = data_input.pop("user")["encrypted"]
     user = json.loads(decrypt(encrypted_user))
     if user["client_secret"] != secrets.Vars.secrets.client_secret:
         return None
-    asserted_data = DataType(
+    data_output = DataType(
         img_data="",
         evaluation=None,
         times=[],
@@ -81,8 +84,8 @@ def _decrypt_to_handle(
     to_handle = ToHandle(
         key=key,
         user_name=user["screen_name"],
-        data=asserted_data,
-        **loaded,
+        data_output=data_output,
+        data_input=data_input,
     )
     return to_handle
 

@@ -12,11 +12,15 @@ function Create(props: { user: UserType }): JSX.Element {
   );
 }
 
-function submitNew(data: ScreenshotType, user: UserType): Promise<string> {
-  return fetchScreenShot(data).then((img_data) => {
-    const payload = JSON.stringify({ ...data, user });
+function submitNew(
+  data_input: ScreenshotType,
+  user: UserType
+): Promise<string> {
+  // fetchScreenShot first to make sure it works
+  return fetchScreenShot(data_input).then((img_data) => {
+    const payload = JSON.stringify({ ...data_input, user });
     const body = JSON.stringify({ payload });
-    delete data.params!["cookie"];
+    delete data_input.params!["cookie"];
     return fetch(`${url}/encrypt`, {
       method: "POST",
       headers: {
@@ -31,8 +35,8 @@ function submitNew(data: ScreenshotType, user: UserType): Promise<string> {
       })
       .then((encrypted) =>
         firebase.pushToHandle({
-          ...data,
-          data: { data: "", times: [Date.now()] },
+          data_input,
+          data_output: { img_data: "", times: [Date.now()] },
           encrypted,
           user_name: user!.screen_name,
         })

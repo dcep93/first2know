@@ -7,13 +7,14 @@ export type AllToHandleType = {
 
 export type DataType = {
   img_data: string;
-  evaluation: any;
   times: number[];
-  error: { version: string; time: number; message: string };
+  evaluation?: any;
+  error?: { version: string; time: number; message: string };
 };
 
-export type ToHandleType = ScreenshotType & {
-  data: DataType;
+export type ToHandleType = {
+  data_input: ScreenshotType;
+  data_output: DataType;
   user_name: string;
   encrypted: string;
 };
