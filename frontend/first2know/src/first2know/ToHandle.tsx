@@ -19,12 +19,7 @@ function ToHandle(props: {
   const navigate = useNavigate();
   return (
     <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          checkScreenShot(update);
-        }}
-      >
+      <form onSubmit={(e) => [e.preventDefault(), checkScreenShot(update)]}>
         <div>
           url: <input ref={urlRef} type="text" />
         </div>
@@ -58,7 +53,9 @@ function ToHandle(props: {
       {props.submit && (
         <button
           onClick={() =>
-            props.submit!(getData())
+            Promise.resolve()
+              .then(() => getData())
+              .then((data) => props.submit!(data))
               .then((key) => navigate(key))
               .catch((err) => {
                 alert(err);
@@ -75,17 +72,7 @@ function ToHandle(props: {
 
 function getData(): ScreenshotType {
   const paramsJson = paramsRef.current!.value || null;
-  var params;
-  if (paramsJson) {
-    try {
-      params = JSON.parse(paramsJson);
-    } catch (err) {
-      alert(err);
-      throw err;
-    }
-  } else {
-    params = {};
-  }
+  const params = paramsJson ? JSON.parse(paramsJson) : {};
   Object.assign(params, { cookie: cookieRef.current!.value || null });
   const rval = {
     url: urlRef.current!.value,
@@ -95,9 +82,7 @@ function getData(): ScreenshotType {
     evaluation_to_img: evaluationToImgRef.current!.checked,
   };
   if (rval.url === "") {
-    const err = "need to have a url";
-    alert(err);
-    throw err;
+    throw "need to have a url";
   }
   return rval;
 }
@@ -110,8 +95,6 @@ function checkScreenShot(update: (data: string | undefined) => void) {
     .then(update)
     .catch((err) => {
       update(undefined);
-      const e: string = err.toString();
-      alert(e.substring(e.length - 1000));
       throw err;
     });
 }
@@ -127,7 +110,7 @@ export function fetchScreenShot(data: ScreenshotType): Promise<string> {
   })
     .then((resp) => Promise.all([Promise.resolve(resp.ok), resp.text()]))
     .then(([ok, text]) => {
-      if (!ok) throw Error(text);
+      if (!ok) throw Error(text.substring(text.length - 1000));
       return text;
     })
     .then((text) => JSON.parse(text))
