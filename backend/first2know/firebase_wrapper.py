@@ -51,10 +51,14 @@ project = 'first2know'
 
 
 def init():
-    firebase_admin.initialize_app(options={
-        'databaseURL':
-        'https://{project}-default-rtdb.firebaseio.com/'
-    }, )
+    cred = None
+    firebase_admin.initialize_app(
+        cred,
+        options={
+            'databaseURL': f'https://{project}-default-rtdb.firebaseio.com/',
+            'projectId': project,
+        },
+    )
 
     def listenF(raw):
         Vars._raw_all_to_handle = raw

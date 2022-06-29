@@ -36,6 +36,7 @@ modal_app = modal.Stub(image=image)
 
 
 def init(s: str):
+    return
     print("modal init", s, recorded_sha.recorded_sha)
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
