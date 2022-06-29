@@ -30,8 +30,7 @@ image = modal.DebianSlim().run_commands([
     'requests',
     'requests_oauthlib',
     'pillow',
-]).pip_install([
-    'git+https://github.com/ozgur/python-firebase',
+    'firebase-admin',
 ])
 modal_app = modal.Stub(image=image)
 

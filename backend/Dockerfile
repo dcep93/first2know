@@ -36,7 +36,7 @@ RUN pip3 install fastapi
 RUN pip3 install requests_oauthlib
 RUN pip3 install pillow
 
-RUN pip3 install git+https://github.com/ozgur/python-firebase
+RUN pip3 install firebase-admin
 
 EXPOSE 8000
 

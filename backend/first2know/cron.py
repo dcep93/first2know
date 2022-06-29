@@ -60,7 +60,6 @@ def run_cron() -> bool:
     if new_refresh_token != Vars._refresh_token:
         return False
 
-    # TODO dcep93 connect instead of get
     to_handle = firebase_wrapper.get_to_handle()
 
     # TODO akshat async

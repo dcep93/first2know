@@ -8,9 +8,8 @@ from pydantic import BaseModel
 
 from cryptography.fernet import Fernet
 
-# /usr/local/Cellar/python@3.9/3.9.6/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown # noqa: E501
-# pip install git+https://github.com/ozgur/python-firebase
-from firebase import firebase
+import firebase_admin
+from firebase_admin import db
 
 from . import secrets
 
@@ -45,25 +44,29 @@ class ToHandle(BaseModel):
 
 
 class Vars:
-    _app: firebase.FirebaseApplication
+    _raw_all_to_handle: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
+
+
+project = 'first2know'
 
 
 def init():
-    Vars._app = firebase.FirebaseApplication(
-        'https://first2know-default-rtdb.firebaseio.com/',
-        None,
-    )
+    firebase_admin.initialize_app(options={
+        'databaseURL':
+        'https://{project}-default-rtdb.firebaseio.com/'
+    }, )
+
+    def listenF(raw):
+        Vars._raw_all_to_handle = raw
+
+    db.reference("/to_handle").listen(listenF)
 
 
 def get_to_handle() -> typing.List[ToHandle]:
-    raw = Vars._app.get("to_handle", None)
-    if raw is None:
-        return []
-    raw_all_to_handle: typing.Dict = raw  # type: ignore
     return [
         i for i in [
             _decrypt_to_handle(k, v["encrypted"], v["data_output"])
-            for k, v in raw_all_to_handle.items()
+            for k, v in Vars._raw_all_to_handle.items()
         ] if i
     ]
 
@@ -90,16 +93,16 @@ def _decrypt_to_handle(
 
 def write_data(key: str, data_output: DataOutputType) -> None:
     # print("write_data", key)
-    Vars._app.patch(f"to_handle/{key}/data_output", data_output.dict())
+    db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
 
 
 def write_refresh_token(refresh_token: str) -> None:
     encrypted = encrypt(refresh_token)
-    Vars._app.patch("", {"refresh_token": encrypted})
+    db.reference("refresh_token").set(encrypted)
 
 
 def get_refresh_token() -> str:
-    raw = Vars._app.get("refresh_token", None)
+    raw = db.reference("refresh_token").get()
     refresh_token: str = raw  # type: ignore
     return decrypt(refresh_token)
 
