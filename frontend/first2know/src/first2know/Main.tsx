@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Edit from "./Edit";
 import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import Home from "./Home";
@@ -46,7 +46,9 @@ function Helper(props: { allToHandle: AllToHandleType }) {
           <Routes>
             <Route
               path=":key"
-              element={<Edit user={user} allToHandle={filteredAllToHandle} />}
+              element={
+                <RoutedEdit user={user} allToHandle={filteredAllToHandle} />
+              }
             />
             <Route
               index
@@ -57,6 +59,12 @@ function Helper(props: { allToHandle: AllToHandleType }) {
       )}
     </>
   );
+}
+
+function RoutedEdit(props: { user: UserType; allToHandle: AllToHandleType }) {
+  let params = useParams();
+  const k = params.key!;
+  return <Edit k={k} user={props.user} allToHandle={props.allToHandle} />;
 }
 
 export default Main;

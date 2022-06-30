@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import firebase, {
   AllToHandleType,
   ScreenshotType,
@@ -8,14 +8,16 @@ import { url } from "./Server";
 import ToHandle from "./ToHandle";
 import { UserType } from "./User";
 
-function Edit(props: { user: UserType; allToHandle: AllToHandleType }) {
-  let params = useParams();
-  const key = params.key!;
-  const toHandle = props.allToHandle[key];
+function Edit(props: {
+  k: string;
+  user: UserType;
+  allToHandle: AllToHandleType;
+}) {
+  const toHandle = props.allToHandle[props.k];
   return (
     <>
       <RoutedEdit
-        k={key}
+        k={props.k}
         user={props.user}
         toHandle={toHandle}
         allToHandle={props.allToHandle}
