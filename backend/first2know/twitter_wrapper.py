@@ -1,6 +1,4 @@
-import base64
 import json
-import requests
 import typing
 
 from requests_oauthlib import OAuth1Session
@@ -8,75 +6,92 @@ from requests_oauthlib import OAuth1Session
 from . import secrets
 
 
-def _get_encoded_auth(client_id: str, client_secret: str) -> str:
-    raw_auth = f"{client_id}:{client_secret}"
-    return base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
+def message(user_id: int, img_data: str):
+    media_id = _post_image(img_data)
+    return _send_message(user_id, "", media_id)
 
 
-def refresh_access_token(refresh_token: str) -> typing.Tuple[str, str]:
-    encoded_auth = _get_encoded_auth(
-        secrets.Vars.secrets.client_id,
-        secrets.Vars.secrets.client_secret,
-    )
-    resp = requests.post(
-        'https://api.twitter.com/2/oauth2/token',
-        headers={
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': f"Basic {encoded_auth}",
-        },
-        data={
-            'grant_type': 'refresh_token',
-            'refresh_token': refresh_token,
-        },
-    )
-    if resp.status_code >= 300:
-        print(resp)
-        raise Exception(resp.text)
-    r = json.loads(resp.text)
-    return r["access_token"], r["refresh_token"]
+def tweet(user_name: str, img_data: str) -> str:
+    media_id = _post_image(img_data)
+    tweet_id = _post_tweet(user_name, media_id)
+    resp = _read_tweets(
+        [tweet_id], {
+            "expansions": "attachments.media_keys",
+            "media.fields": "url,preview_image_url",
+        })
+    return resp["includes"]["media"][0]["url"]
 
 
-# tweet_ids = [1261326399320715264, 1278347468690915330]
-def read_tweets(access_token: str, tweet_ids: typing.List[int]) -> typing.Any:
-    str_ids = ",".join([str(i) for i in tweet_ids])
-    url = f'https://api.twitter.com/2/tweets?ids={str_ids}'
-    resp = requests.get(url,
-                        headers={
-                            'Authorization': f"Bearer {access_token}",
-                        })
-    if resp.status_code >= 300:
-        print(resp)
-        raise Exception(resp.text)
-    r = json.loads(resp.text)
-    return r["data"]
-
-
-def send_message(
-    user_id: int,
-    text: typing.Optional[str],
-    img_data: str,
+def _read_tweets(
+    tweet_ids: typing.List[int],
+    params: typing.Optional[typing.Dict[str, str]] = None,
 ) -> typing.Any:
+    params = dict(params) if params else {}
+    params["ids"] = ",".join([str(i) for i in tweet_ids])
+    params_arr = [f"{k}={v}" for k, v in params.items()]
+    url = f'https://api.twitter.com/2/tweets?{"&".join(params_arr)}'
     oauth = OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,
         secrets.Vars.secrets.oauth_token,
         secrets.Vars.secrets.oauth_token_secret,
     )
+    resp = oauth.get(url)
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
+    return json.loads(resp.text)
 
-    message_obj = {"media_data": img_data}
+
+def _post_image(img_data: str) -> int:
+    oauth = OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    )
     resp = oauth.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        data=message_obj,
+        data={"media_data": img_data},
     )
     if resp.status_code >= 300:
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    media_id = r["media_id"]
+    return r["media_id"]
 
+
+def _post_tweet(user_name: str, media_id: int) -> int:
+    message_obj = {
+        "text": f"@{user_name}",
+        "media": {
+            "media_ids": [str(media_id)]
+        },
+    }
+    oauth = OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    )
+    resp = oauth.post(
+        'https://api.twitter.com/2/tweets',
+        headers={
+            'Content-Type': 'application/json',
+        },
+        data=json.dumps(message_obj),
+    )
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
+    r = json.loads(resp.text)
+    return r["data"]["id"]
+
+
+def _send_message(user_id: int, text: str, media_id: int):
     message_obj = {
         "event": {
             "type": "message_create",
@@ -97,6 +112,13 @@ def send_message(
         }
     }
 
+    oauth = OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    )
+
     resp = oauth.post(
         'https://api.twitter.com/1.1/direct_messages/events/new.json',
         headers={
@@ -104,8 +126,9 @@ def send_message(
         },
         data=json.dumps(message_obj),
     )
+
     if resp.status_code >= 300:
         print(resp)
         raise Exception(resp.text)
-
-    return json.loads(resp.text)
+    r = json.loads(resp.text)
+    return r["data"]

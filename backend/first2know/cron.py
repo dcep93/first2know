@@ -1,4 +1,3 @@
-import json
 import time
 
 from . import firebase_wrapper
@@ -10,7 +9,7 @@ VERSION = '1.0'
 
 
 class Vars:
-    _refresh_token: str
+    _token: str
     _screenshot: screenshot._Screenshot
 
 
@@ -23,7 +22,7 @@ def main():
 def init():
     firebase_wrapper.init()
     Vars._screenshot = screenshot.SyncScreenshot()
-    Vars._refresh_token = refresh_access_token()
+    Vars._token = refresh_access_token()
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
@@ -45,20 +44,18 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
 
 # refresh token is not actually used to auth anymore
 # it's still used to detect if a new cron has been spun up and taken over
-def refresh_access_token():
-    print("refreshing access token")
-    old_refresh_token = firebase_wrapper.get_refresh_token()
-    rval = twitter_wrapper.refresh_access_token(old_refresh_token)
-    _, refresh_token = rval
-    firebase_wrapper.write_refresh_token(refresh_token)
-    print("access token refreshed")
-    return refresh_token
+def refresh_access_token() -> str:
+    print("refreshing token")
+    new_token = str(time.time())
+    firebase_wrapper.write_token(new_token)
+    print("token refreshed")
+    return new_token
 
 
 def run_cron() -> bool:
     # if another process has spun up to take over, exit early
-    new_refresh_token = firebase_wrapper.get_refresh_token()
-    if new_refresh_token != Vars._refresh_token:
+    new_token = firebase_wrapper.get_token()
+    if new_token != Vars._token:
         return False
 
     to_handle_arr = firebase_wrapper.get_to_handle()
@@ -102,17 +99,10 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if img_hash == old_img_hash:
         return
 
-    text = screenshot_response.evaluation \
-        if type(screenshot_response.evaluation) is str \
-        else json.dumps(screenshot_response.evaluation)
-
-    resp = twitter_wrapper.send_message(
-        to_handle.user.user_id,
-        text,
+    img_url = twitter_wrapper.tweet(
+        to_handle.user.screen_name,
         screenshot_response.img_data,
     )
-
-    img_url = resp["img_url"]
 
     to_write = firebase_wrapper.DataOutput(
         img_data=firebase_wrapper.ImgData(

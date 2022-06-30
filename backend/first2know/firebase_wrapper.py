@@ -124,15 +124,15 @@ def write_data(key: str, data_output: DataOutput) -> None:
     db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
 
 
-def write_refresh_token(refresh_token: str) -> None:
-    encrypted = encrypt(refresh_token)
-    db.reference("refresh_token").set(encrypted)
+def write_token(token: str) -> None:
+    encrypted = encrypt(token)
+    db.reference("token").set(encrypted)
 
 
-def get_refresh_token() -> str:
-    raw = db.reference("refresh_token").get()
-    refresh_token: str = raw  # type: ignore
-    return decrypt(refresh_token)
+def get_token() -> str:
+    raw = db.reference("token").get()
+    token: str = raw  # type: ignore
+    return decrypt(token)
 
 
 def encrypt(a: str) -> str:
