@@ -2,6 +2,7 @@
 
 import base64
 import json
+import threading
 import typing
 
 from pydantic import BaseModel
@@ -67,10 +68,13 @@ def init():
         },
     )
 
-    def listenF(raw):
-        Vars._raw_all_to_handle = raw
+    def listenF(event: db.Event):
+        Vars._raw_all_to_handle = event.data
 
-    db.reference("/to_handle").listen(listenF)
+    threading.Thread(
+        target=lambda: db.reference("/to_handle").listen(listenF),
+        daemon=True,
+    ).start()
 
 
 def get_to_handle() -> typing.List[ToHandle]:
