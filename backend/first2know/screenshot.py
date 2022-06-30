@@ -42,7 +42,9 @@ class _Screenshot(abc.ABC):
         payload: firebase_wrapper.ScreenshotPayload,
         previous_evaluation: typing.Any,
     ):
-        params = None if payload.params is None else dict(payload.params)
+        params = None \
+            if payload.params is None \
+            else dict(payload.params)
         return [
             (
                 "context",
@@ -87,7 +89,9 @@ class _Screenshot(abc.ABC):
             return None
         else:
             d["dest"] = f"screenshot_{key}.png"
-            selector = "body" if payload.selector is None else payload.selector
+            selector = "body" \
+                if payload.selector is None \
+                else payload.selector
             d["to_screenshot"] = d["page"].locator(selector)
 
     def screenshot(
@@ -122,10 +126,9 @@ class _Screenshot(abc.ABC):
             print(s)
 
     def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:
-        text = evaluation if type(evaluation) is str else json.dumps(
-            evaluation,
-            indent=1,
-        )
+        text = evaluation \
+            if type(evaluation) is str \
+            else json.dumps(evaluation, indent=1)
         width = 100
         height = 100
         img = Image.new('1', (width, height))

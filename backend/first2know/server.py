@@ -40,7 +40,9 @@ class SupplementedScreenshotPayload(firebase_wrapper.ScreenshotPayload):
             decrypted = firebase_wrapper.decrypt(self.old_encrypted)
             decrypted_params = json.loads(decrypted).get("params")
             if decrypted_params is not None:
-                params = self.params if self.params is not None else {}
+                params = self.params \
+                    if self.params is not None \
+                    else {}
                 cookie = decrypted_params.get("cookie")
                 if cookie is not None:
                     params["cookie"] = cookie

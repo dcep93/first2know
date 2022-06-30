@@ -1,4 +1,5 @@
 import time
+import typing
 
 from . import firebase_wrapper
 from . import screenshot
@@ -76,11 +77,15 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if to_handle.data_input.no_tweet and to_handle.data_output.img_data:
         return
 
+    evaluation = None \
+        if to_handle.data_output.img_data is None \
+        else to_handle.data_output.img_data.evaluation
+
     try:
         screenshot_response = Vars._screenshot.screenshot(
             to_handle.key,
             to_handle.data_input,
-            to_handle.data_output.evaluation,
+            evaluation,
         )
     except Exception as e:
         to_write = to_handle.data_output
@@ -93,30 +98,44 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         firebase_wrapper.write_data(to_handle.key, to_write)
         return
 
+    img_hash = screenshot_response.img_data
+    old_img_hash = None \
+        if to_handle.data_output.img_data is None \
+        else to_handle.data_output.img_data.img_hash
+    if img_hash == old_img_hash:
+        return
+
+    media_id = tweet(
+        None if to_handle.data_input.no_tweet is None else to_handle.user_name,
+        screenshot_response.img_data,
+    )
+
+    img_url = f"twitter.com/media/{media_id}"
+
     to_write = firebase_wrapper.DataOutputType(
-        img_data=screenshot_response.img_data,
-        evaluation=screenshot_response.evaluation,
+        img_data=firebase_wrapper.ImgData(
+            img_url=img_url,
+            img_hash=img_hash,
+            evaluation=screenshot_response.evaluation,
+        ),
         times=to_handle.data_output.times + [time.time()],
     )
 
-    if to_handle.data_output.img_data == to_write.img_data:
-        return
-
-    if not to_handle.data_input.no_tweet:
-        tweet(to_handle.user_name, screenshot_response.img_data)
     firebase_wrapper.write_data(to_handle.key, to_write)
 
 
-def tweet(user: str, img_data: str) -> None:
+def tweet(user: typing.Optional[str], img_data: str) -> int:
     media_id = twitter_wrapper.post_image(img_data)
-    message_obj = {
-        "text": f"@{user}",
-        "media": {
-            "media_ids": [str(media_id)]
-        },
-    }
-    resp = twitter_wrapper.post_tweet(message_obj)
-    print(resp)
+    if user is not None:
+        message_obj = {
+            "text": f"@{user}",
+            "media": {
+                "media_ids": [str(media_id)]
+            },
+        }
+        resp = twitter_wrapper.post_tweet(message_obj)
+        print(resp)
+    return media_id
 
 
 if __name__ == "__main__":

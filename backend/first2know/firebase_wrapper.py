@@ -23,9 +23,14 @@ class ErrorType(BaseModel):
     message: str
 
 
+class ImgData(BaseModel):
+    img_url: str
+    img_hash: str
+    evaluation: typing.Any
+
+
 class DataOutputType(BaseModel):
-    img_data: typing.Optional[str]
-    evaluation: typing.Optional[typing.Any]
+    img_data: ImgData
     times: typing.List[float]
     error: typing.Optional[ErrorType] = None
 
