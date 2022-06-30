@@ -47,7 +47,9 @@ class ToHandle(BaseModel):
 
 
 class Vars:
-    _raw_all_to_handle: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
+    _raw_all_to_handle: typing.Optional[typing.Dict[str,
+                                                    typing.Dict[str,
+                                                                typing.Any]]]
 
 
 class Creds(firebase_creds.ApplicationDefault):
@@ -78,6 +80,8 @@ def init():
 
 
 def get_to_handle() -> typing.List[ToHandle]:
+    if Vars._raw_all_to_handle is None:
+        return []
     return [
         i for i in [
             _decrypt_to_handle(k, v["encrypted"], v["data_output"])
