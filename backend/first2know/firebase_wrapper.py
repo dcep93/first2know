@@ -25,29 +25,34 @@ class ErrorType(BaseModel):
 
 class ImgData(BaseModel):
     img_url: str
-    img_hash: str
+    img_hash: int
     evaluation: typing.Any
 
 
-class DataOutputType(BaseModel):
-    img_data: ImgData
+class DataOutput(BaseModel):
     times: typing.List[float]
+    img_data: typing.Optional[ImgData] = None
     error: typing.Optional[ErrorType] = None
 
 
-class ScreenshotPayload(BaseModel):
+class DataInput(BaseModel):
     url: str
-    params: typing.Optional[typing.Dict[str, typing.Any]]
+    params: typing.Dict[str, typing.Any]
     selector: typing.Optional[str]
     evaluate: typing.Optional[str]
     evaluation_to_img: bool
-    no_tweet: bool = False
+
+
+class User(BaseModel):
+    screen_name: str
+    user_id: int
+    encrypted: str
 
 
 class ToHandle(BaseModel):
-    data_input: ScreenshotPayload
-    data_output: DataOutputType
-    user_name: str
+    data_input: DataInput
+    data_output: DataOutput
+    user: User
     key: str
 
 
@@ -98,24 +103,23 @@ def get_to_handle() -> typing.List[ToHandle]:
 def _decrypt_to_handle(
     key: str,
     encrypted: str,
-    data_output: DataOutputType,
+    data_output: DataOutput,
 ) -> typing.Optional[ToHandle]:
-    data_input = json.loads(decrypt(encrypted))
-    encrypted_user = data_input.pop("user")["encrypted"]
-    user = json.loads(decrypt(encrypted_user))
-    if user["client_secret"] != secrets.Vars.secrets.client_secret:
+    data_input_d = json.loads(decrypt(encrypted))
+    encrypted_user = data_input_d.pop("user")["encrypted"]
+    user = User(**json.loads(decrypt(encrypted_user)))
+    if user.encrypted != secrets.Vars.secrets.client_secret:
         return None
-    user_name = user["screen_name"]
     to_handle = ToHandle(
         key=key,
-        user_name=user_name,
+        user=user,
         data_output=data_output,
-        data_input=data_input,
+        data_input=DataInput(**data_input_d),
     )
     return to_handle
 
 
-def write_data(key: str, data_output: DataOutputType) -> None:
+def write_data(key: str, data_output: DataOutput) -> None:
     # print("write_data", key)
     db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
 

@@ -18,7 +18,7 @@ from . import firebase_wrapper
 from . import secrets
 
 
-class ResponsePayload(BaseModel):
+class Response(BaseModel):
     img_data: str
     evaluation: typing.Any
 
@@ -39,7 +39,7 @@ class _Screenshot(abc.ABC):
     def get_chain(
         self,
         key: str,
-        payload: firebase_wrapper.ScreenshotPayload,
+        payload: firebase_wrapper.DataInput,
         previous_evaluation: typing.Any,
     ):
         params = None \
@@ -83,7 +83,7 @@ class _Screenshot(abc.ABC):
         self,
         d: typing.Dict[str, typing.Any],
         key: str,
-        payload: firebase_wrapper.ScreenshotPayload,
+        payload: firebase_wrapper.DataInput,
     ):
         if payload.evaluation_to_img:
             return None
@@ -97,9 +97,9 @@ class _Screenshot(abc.ABC):
     def screenshot(
         self,
         key: str,
-        payload: firebase_wrapper.ScreenshotPayload,
+        payload: firebase_wrapper.DataInput,
         previous_evaluation: typing.Any,
-    ) -> ResponsePayload:
+    ) -> Response:
         s = time.time()
         chain = self.get_chain(key, payload, previous_evaluation)
         d = self.execute_chain(chain)
@@ -116,7 +116,7 @@ class _Screenshot(abc.ABC):
             f"{len(img_data)/1000}kb",
             datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))
-        return ResponsePayload(
+        return Response(
             img_data=img_data,
             evaluation=d.get("evaluation"),
         )

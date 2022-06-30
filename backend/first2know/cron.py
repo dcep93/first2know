@@ -1,5 +1,5 @@
+import json
 import time
-import typing
 
 from . import firebase_wrapper
 from . import screenshot
@@ -61,10 +61,10 @@ def run_cron() -> bool:
     if new_refresh_token != Vars._refresh_token:
         return False
 
-    to_handle = firebase_wrapper.get_to_handle()
+    to_handle_arr = firebase_wrapper.get_to_handle()
 
     # TODO akshat async
-    [i for i in map(handle, to_handle)]
+    [i for i in map(handle, to_handle_arr)]
 
     return True
 
@@ -72,9 +72,6 @@ def run_cron() -> bool:
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     previous_error = to_handle.data_output.error
     if previous_error is not None and previous_error.version == VERSION:
-        return
-
-    if to_handle.data_input.no_tweet and to_handle.data_output.img_data:
         return
 
     evaluation = None \
@@ -96,23 +93,28 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
             message=str(e),
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
-        return
+        raise e
 
-    img_hash = screenshot_response.img_data
+    img_hash = hash(screenshot_response.img_data)
     old_img_hash = None \
         if to_handle.data_output.img_data is None \
         else to_handle.data_output.img_data.img_hash
     if img_hash == old_img_hash:
         return
 
-    media_id = tweet(
-        None if to_handle.data_input.no_tweet is None else to_handle.user_name,
+    text = screenshot_response.evaluation \
+        if type(screenshot_response.evaluation) is str \
+        else json.dumps(screenshot_response.evaluation)
+
+    resp = twitter_wrapper.send_message(
+        to_handle.user.user_id,
+        text,
         screenshot_response.img_data,
     )
 
-    img_url = f"twitter.com/media/{media_id}"
+    img_url = resp["img_url"]
 
-    to_write = firebase_wrapper.DataOutputType(
+    to_write = firebase_wrapper.DataOutput(
         img_data=firebase_wrapper.ImgData(
             img_url=img_url,
             img_hash=img_hash,
@@ -122,20 +124,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     )
 
     firebase_wrapper.write_data(to_handle.key, to_write)
-
-
-def tweet(user: typing.Optional[str], img_data: str) -> int:
-    media_id = twitter_wrapper.post_image(img_data)
-    if user is not None:
-        message_obj = {
-            "text": f"@{user}",
-            "media": {
-                "media_ids": [str(media_id)]
-            },
-        }
-        resp = twitter_wrapper.post_tweet(message_obj)
-        print(resp)
-    return media_id
 
 
 if __name__ == "__main__":

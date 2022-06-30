@@ -8,13 +8,13 @@ from requests_oauthlib import OAuth1Session
 from . import secrets
 
 
-def get_encoded_auth(client_id: str, client_secret: str) -> str:
+def _get_encoded_auth(client_id: str, client_secret: str) -> str:
     raw_auth = f"{client_id}:{client_secret}"
     return base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
 
 
 def refresh_access_token(refresh_token: str) -> typing.Tuple[str, str]:
-    encoded_auth = get_encoded_auth(
+    encoded_auth = _get_encoded_auth(
         secrets.Vars.secrets.client_id,
         secrets.Vars.secrets.client_secret,
     )
@@ -51,35 +51,19 @@ def read_tweets(access_token: str, tweet_ids: typing.List[int]) -> typing.Any:
     return r["data"]
 
 
-def post_tweet(message_obj: typing.Dict[str, str], ) -> typing.Any:
+def send_message(
+    user_id: int,
+    text: typing.Optional[str],
+    img_data: str,
+) -> typing.Any:
     oauth = OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,
         secrets.Vars.secrets.oauth_token,
         secrets.Vars.secrets.oauth_token_secret,
     )
-    resp = oauth.post(
-        'https://api.twitter.com/2/tweets',
-        headers={
-            'Content-Type': 'application/json',
-        },
-        data=json.dumps(message_obj),
-    )
-    if resp.status_code >= 300:
-        print(resp)
-        raise Exception(resp.text)
-    r = json.loads(resp.text)
-    return r["data"]
 
-
-def post_image(data: str) -> int:
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    )
-    message_obj = {"media_data": data}
+    message_obj = {"media_data": img_data}
     resp = oauth.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
@@ -91,4 +75,37 @@ def post_image(data: str) -> int:
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    return r["media_id"]
+    media_id = r["media_id"]
+
+    message_obj = {
+        "event": {
+            "type": "message_create",
+            "message_create": {
+                "target": {
+                    "recipient_id": user_id
+                },
+                "message_data": {
+                    "text": text,
+                    "attachment": {
+                        "type": "media",
+                        "media": {
+                            "id": media_id
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    resp = oauth.post(
+        'https://api.twitter.com/1.1/direct_messages/events/new.json',
+        headers={
+            'Content-Type': 'application/json',
+        },
+        data=message_obj,
+    )
+    if resp.status_code >= 300:
+        print(resp)
+        raise Exception(resp.text)
+
+    return json.loads(resp.text)

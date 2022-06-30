@@ -4,12 +4,12 @@ import typing
 from pydantic import BaseModel
 
 
-class RequestPayload(BaseModel):
+class Request(BaseModel):
     url: str
     params: typing.Dict[str, typing.Any] = {}
 
 
-def proxy(payload: RequestPayload) -> str:
+def proxy(payload: Request) -> str:
     headers = payload.params.get("headers")
     data = payload.params.get("data")
     resp = requests.get(
