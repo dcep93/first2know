@@ -11,7 +11,6 @@ class Secrets(BaseModel):
     client_secret: str
     oauth_token: str
     oauth_token_secret: str
-    redirect_uri: str
 
 
 class Vars:

@@ -102,7 +102,7 @@ def send_message(
         headers={
             'Content-Type': 'application/json',
         },
-        data=message_obj,
+        data=json.dumps(message_obj),
     )
     if resp.status_code >= 300:
         print(resp)
