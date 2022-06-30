@@ -9,6 +9,8 @@ from pydantic import BaseModel
 from cryptography.fernet import Fernet
 
 import firebase_admin
+from google.auth import credentials as auth_creds
+from firebase_admin import credentials as firebase_creds
 from firebase_admin import db
 
 from . import secrets
@@ -47,13 +49,18 @@ class Vars:
     _raw_all_to_handle: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
 
 
+class Creds(firebase_creds.ApplicationDefault):
+    def get_credential(self):
+        return auth_creds.AnonymousCredentials()
+
+
 project = 'first2know'
 
 
 def init():
-    cred = None
+    creds = Creds()
     firebase_admin.initialize_app(
-        cred,
+        creds,
         options={
             'databaseURL': f'https://{project}-default-rtdb.firebaseio.com/',
             'projectId': project,
