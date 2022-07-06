@@ -11,6 +11,7 @@ if not modal.is_local():
     from . import recorded_sha
     from . import secrets
     from . import server
+    from . import test
 
 image = modal.DebianSlim().run_commands([
     "apt-get install -y software-properties-common",
@@ -36,7 +37,7 @@ modal_app = modal.Stub(image=image)
 
 
 def init(s: str):
-    return
+    test.run_tests()
     print("modal init", s, recorded_sha.recorded_sha)
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))

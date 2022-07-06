@@ -4,10 +4,11 @@ set -euo pipefail
 
 SA_KEY="$1"
 
-# firebase init hosting --project first2know
-# gcloud iam service-accounts create firebase-deployer-github
-# gcloud projects add-iam-policy-binding first2know --member="serviceAccount:firebase-deployer-github@first2know.iam.gserviceaccount.com" --role="roles/firebasehosting.admin"
-# gcloud iam service-accounts keys create gac.json --iam-account firebase-deployer-github@first2know.iam.gserviceaccount.com
+# GOOGLE_CLOUD_PROJECT=first2know
+# firebase init hosting --project "$GOOGLE_CLOUD_PROJECT"
+# gcloud iam service-accounts create deployer-github
+# gcloud projects add-iam-policy-binding "$GOOGLE_CLOUD_PROJECT" --member="serviceAccount:deployer-github@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com" --role="roles/firebasehosting.admin"
+# gcloud iam service-accounts keys create gac.json --iam-account "deployer-github@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com"
 # cat gac.json
 
 cd ../../frontend/first2know
