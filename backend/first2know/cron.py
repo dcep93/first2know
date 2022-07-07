@@ -60,7 +60,7 @@ def run_cron() -> bool:
 
     to_handle_arr = firebase_wrapper.get_to_handle()
 
-    # TODO akshat async
+    # TODO dcep93 queue
     [i for i in map(handle, to_handle_arr)]
 
     return True

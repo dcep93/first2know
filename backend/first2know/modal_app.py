@@ -37,7 +37,6 @@ modal_app = modal.Stub(image=image)
 
 
 def init(s: str):
-    test.run_tests()
     print("modal init", s, recorded_sha.recorded_sha)
     raw_json = os.environ["secrets.json"]
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
@@ -49,6 +48,9 @@ def init(s: str):
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
+    test.run_tests()
+    # TODO dcep93 restore
+    return
     init("cron")
     was_successful = cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
     if not was_successful:

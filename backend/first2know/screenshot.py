@@ -139,7 +139,6 @@ class _Screenshot(abc.ABC):
         return img_byte_arr.getvalue()
 
 
-# TODO akshat make faster
 class AsyncScreenshot(_Screenshot):
     async def get_context(self, key: typing.Optional[str]):
         from playwright.async_api import async_playwright as p  # type: ignore
