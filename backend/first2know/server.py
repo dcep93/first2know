@@ -1,7 +1,6 @@
 import base64
 import json
 import io
-import uuid
 import traceback
 import typing
 
@@ -17,6 +16,14 @@ from . import screenshot
 from . import secrets
 from . import twitter_auth
 
+NUM_SCREENSHOTTERS = 4
+
+
+class Vars:
+    _token: str
+    _screenshot_manager: screenshot.Manager
+
+
 web_app = FastAPI()
 web_app.add_middleware(
     CORSMiddleware,
@@ -25,6 +32,10 @@ web_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def init():
+    Vars._screenshot_manager = screenshot.Manager(NUM_SCREENSHOTTERS)
 
 
 @web_app.get("/")
@@ -48,13 +59,12 @@ class InputWithOldEncrypted(firebase_wrapper.DataInput):
 @web_app.post("/screenshot_img")
 def post_screenshot_img(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
-    key = str(uuid.uuid1())
     try:
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(
-            key,
-            payload,
-            None,
-        )
+        screenshot_response = Vars._screenshot_manager.run(
+            screenshot.Request(
+                data_input=payload,
+                evaluation=None,
+            ))
         bytes = base64.b64decode(screenshot_response.img_data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
     except Exception:
@@ -65,13 +75,12 @@ def post_screenshot_img(payload: InputWithOldEncrypted):
 @web_app.post("/screenshot_len")
 def post_screenshot_len(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
-    key = str(uuid.uuid1())
     try:
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(
-            key,
-            payload,
-            None,
-        )
+        screenshot_response = Vars._screenshot_manager.run(
+            screenshot.Request(
+                data_input=payload,
+                evaluation=None,
+            ))
         screenshot_response.img_data = str(len(screenshot_response.img_data))
         return HTMLResponse(screenshot_response.json())
     except Exception:
@@ -82,13 +91,12 @@ def post_screenshot_len(payload: InputWithOldEncrypted):
 @web_app.post("/screenshot")
 def post_screenshot(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
-    key = str(uuid.uuid1())
     try:
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(
-            key,
-            payload,
-            None,
-        )
+        screenshot_response = Vars._screenshot_manager.run(
+            screenshot.Request(
+                data_input=payload,
+                evaluation=None,
+            ))
         return HTMLResponse(screenshot_response.json())
     except Exception:
         err = traceback.format_exc()

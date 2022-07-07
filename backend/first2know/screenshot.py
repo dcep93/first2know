@@ -4,16 +4,16 @@ import hashlib
 import io
 import json
 import os
-import random
-import string
 import time
 import typing
+import uuid
 
 from pydantic import BaseModel
 
 from PIL import Image, ImageDraw
 
 from . import firebase_wrapper
+from . import manager
 from . import secrets
 
 TIMEOUT_SECONDS = 10.0
@@ -84,8 +84,7 @@ class Screenshot:
             evaluation = d.get("evaluation")
             binary_data = self.evaluation_to_img_bytes(evaluation)
         else:
-            key = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10))
+            key = str(uuid.uuid1())
             dest = f"screenshot_{key}.png"
             to_screenshot = d["page"] \
                 if payload.selector is None \
@@ -144,3 +143,17 @@ class Screenshot:
                 rval[i] = j
             self.log(f"{i} {time.time() - start}")
         return rval
+
+
+class Manager:
+    _m: manager.Manager[Screenshot, Request, Response]
+
+    def __init__(self, num_screenshotters: int):
+        self._m = manager.Manager(
+            Screenshot,
+            lambda screenshotter, request: screenshotter.screenshot(request),
+            num_screenshotters,
+        )
+
+    def run(self, request: Request):
+        return self._m.run(request)

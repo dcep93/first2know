@@ -3,7 +3,6 @@ import time
 import concurrent.futures
 
 from . import firebase_wrapper
-from . import manager
 from . import screenshot
 from . import twitter_wrapper
 
@@ -15,9 +14,7 @@ NUM_SCREENSHOTTERS = 8
 
 class Vars:
     _token: str
-    _screenshot_manager: manager.Manager[screenshot.Screenshot,
-                                         screenshot.Request,
-                                         screenshot.Response]
+    _screenshot_manager: screenshot.Manager
 
 
 def main():
@@ -28,11 +25,7 @@ def main():
 
 def init():
     firebase_wrapper.init()
-    Vars._screenshot_manager = manager.Manager(
-        screenshot.Screenshot,
-        lambda screenshotter, request: screenshotter.screenshot(request),
-        NUM_SCREENSHOTTERS,
-    )
+    Vars._screenshot_manager = screenshot.Manager(NUM_SCREENSHOTTERS)
     Vars._token = refresh_access_token()
 
 
