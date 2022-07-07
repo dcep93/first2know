@@ -95,7 +95,7 @@ def get_to_handle() -> typing.List[ToHandle]:
     return [
         i for i in [
             _decrypt_to_handle(k, v["encrypted"], v["data_output"])
-            for k, v in Vars._raw_all_to_handle.items()
+            for k, v in Vars._raw_all_to_handle.items() if "encrypted" in v
         ] if i
     ]
 
