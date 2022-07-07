@@ -1,7 +1,6 @@
 import React, { createRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { encrypt } from "./Edit";
-import firebase, {
+import {
   AllToHandleType,
   DataInputType,
   ToHandleType,
@@ -124,7 +123,7 @@ class ToHandle extends React.Component<PropsType, { raw_img_data: string }> {
       });
   }
 
-  getData(): Promise<DataInputType & { old_encrypted: string | null }> {
+  getData(): DataInputType & { old_encrypted: string | null } {
     const old_encrypted =
       this.props.toHandle === undefined
         ? null
@@ -146,16 +145,7 @@ class ToHandle extends React.Component<PropsType, { raw_img_data: string }> {
     if (data_input.url === "") {
       throw Error("need to have a url");
     }
-    // always fetch screenshot
-    // to validate the payload
-    return encrypt(data_input, this.props.user, old_encrypted).then(
-      (encrypted) =>
-        firebase.pushToHandle(
-          data_input,
-          encrypted,
-          this.props.user.screen_name
-        )
-    );
+    return { old_encrypted, ...data_input };
   }
 }
 
