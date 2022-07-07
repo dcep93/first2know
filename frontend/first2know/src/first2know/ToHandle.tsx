@@ -7,7 +7,7 @@ import {
   UserType,
 } from "./firebase";
 import loading from "./loading.gif";
-import { url } from "./Server";
+import { sfetch, url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
@@ -40,7 +40,7 @@ function ToHandle(props: {
             .then(() => getData(props.toHandle))
             .then((data) => JSON.stringify(data))
             .then((body) =>
-              fetch(`${url}/screenshot`, {
+              sfetch(`${url}/screenshot`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",

@@ -5,7 +5,7 @@ import firebase, {
   ToHandleType,
   UserType,
 } from "./firebase";
-import { url } from "./Server";
+import { sfetch, url } from "./Server";
 import ToHandle from "./ToHandle";
 
 function Edit(props: {
@@ -77,18 +77,13 @@ export function encrypt(
     old_encrypted,
   });
   delete data_input.params!["cookie"];
-  return fetch(`${url}/encrypt`, {
+  return sfetch(`${url}/encrypt`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body,
-  })
-    .then((resp) => Promise.all([Promise.resolve(resp.ok), resp.text()]))
-    .then(([ok, text]) => {
-      if (!ok) throw Error(text);
-      return text;
-    });
+  }).then((resp) => resp.text());
 }
 
 export default Edit;
