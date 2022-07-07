@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import datetime
 import hashlib
@@ -33,17 +34,23 @@ class Response(BaseModel):
 
 # https://playwright.dev/python/docs/intro
 class Screenshot:
+    p: typing.Any
+    browser: typing.Any
+
     def __init__(self):
-        from playwright.sync_api import sync_playwright as p  # type: ignore
+        asyncio.run(self.async_init())
+
+    async def async_init(self):
+        from playwright.async_api import async_playwright as p  # type: ignore # noqa
 
         self.p = p()
 
-        entered = self.p.__enter__()
-        self.browser = entered.chromium.launch()
+        entered = await self.p.__aenter__()
+        self.browser = await entered.chromium.launch()
 
     def close(self):
         self.browser.close()
-        self.p.__exit__()
+        self.p.__aexit__()
 
     def get_chain(
         self,
@@ -82,7 +89,7 @@ class Screenshot:
             ),
         ]
 
-    def get_img(
+    async def get_img(
         self,
         d: typing.Dict[str, typing.Any],
         payload: firebase_wrapper.DataInput,
@@ -96,7 +103,7 @@ class Screenshot:
             to_screenshot = d["page"] \
                 if payload.selector is None \
                 else d["page"].locator(payload.selector)
-            to_screenshot.screenshot(path=dest)
+            await to_screenshot.screenshot(path=dest)
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
@@ -106,7 +113,8 @@ class Screenshot:
     def screenshot(self, request: Request) -> Response:
         s = time.time()
         chain = self.get_chain(request.data_input, request.evaluation)
-        d = self.execute_chain(chain)
+        _d = self.execute_chain(chain)
+        d = asyncio.run(_d)
         encoded: bytes = d["img"]
         img_data = encoded.decode('utf-8')
         md5 = hashlib.md5(encoded).hexdigest()
@@ -141,7 +149,7 @@ class Screenshot:
         img.save(img_byte_arr, format='PNG')
         return img_byte_arr.getvalue()
 
-    def execute_chain(
+    async def execute_chain(
         self,
         chain: typing.List[typing.Tuple[str, typing.Any]],
     ) -> typing.Dict[str, typing.Any]:
@@ -150,7 +158,7 @@ class Screenshot:
             start = time.time()
             j = c(rval)
             if j is not None:
-                rval[i] = j
+                rval[i] = await j
             self.log(f"{i} {time.time() - start}")
         return rval
 
