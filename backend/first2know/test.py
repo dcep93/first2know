@@ -85,7 +85,7 @@ class TestScreenshot(unittest.TestCase):
             data_input,
             420,
         )
-        assert screenshot_response.evaluation == 420
+        assert screenshot_response.evaluation == 421
 
 
 def run_tests():

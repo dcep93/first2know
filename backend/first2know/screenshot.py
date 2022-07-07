@@ -107,7 +107,8 @@ class _Screenshot(abc.ABC):
             binary_data = self.evaluation_to_img_bytes(d.get("evaluation"))
         else:
             dest = d["dest"]
-            binary_data = open(dest, "rb").read()
+            with open(dest, "rb") as fh:
+                binary_data = fh.read()
             os.remove(dest)
         img_data = base64.b64encode(binary_data).decode('utf-8')
         self.log(' '.join([
@@ -122,7 +123,7 @@ class _Screenshot(abc.ABC):
         )
 
     def log(self, s: str):
-        if True or secrets.Vars.is_local:
+        if secrets.Vars.is_local:
             print(s)
 
     def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:

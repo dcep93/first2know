@@ -13,6 +13,13 @@ dockerruncron:
 		$(local_image_tag) \
 		make runcron
 
+dockertest:
+	docker run \
+		--rm \
+		--name $(service_name) \
+		$(local_image_tag) \
+		make test
+
 dockerrunserver:
 	docker run \
 		-it \
@@ -33,6 +40,9 @@ regenauth:
 
 modaldeploy:
 	modal app deploy --name first2know first2know.modal_app:modal_app
+
+test:
+	python3 -m unittest first2know.test
 
 list:  # Meta target to list other targets.
 	@$(MAKE) -pRrq -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
