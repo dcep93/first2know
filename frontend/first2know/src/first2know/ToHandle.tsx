@@ -104,7 +104,7 @@ class ToHandle extends React.Component<PropsType, { raw_img_data: string }> {
           </div>
           <input type="submit" value="Check Screenshot" />
         </form>
-        <ImgRenderer img_data={this.state.raw_img_data} />
+        <ImgRenderer img_data={this.state?.raw_img_data} />
         <SubmitableButton
           onSubmit={(navigate) => this.onSubmit(this.props.submit, navigate)}
         />

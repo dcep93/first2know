@@ -28,11 +28,7 @@ function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
       </div>
       <img
         hidden={hidden}
-        src={
-          props.toHandle.data_output.img_data === undefined
-            ? ""
-            : `data:image/png;base64,${props.toHandle.data_output.img_data}`
-        }
+        src={props.toHandle.data_output.screenshot_data?.img_url}
         alt=""
       ></img>
       <div>
