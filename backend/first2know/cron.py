@@ -34,7 +34,6 @@ def init():
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
-    init()
     start = time.time()
     end = start + period_seconds + grace_period_seconds
     loops = 0
