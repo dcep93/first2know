@@ -8,7 +8,7 @@ from . import screenshot
 from . import twitter_wrapper
 
 # update version to clear errors
-VERSION = '1.0'
+VERSION = '1.1'
 
 NUM_SCREENSHOTTERS = 8
 
