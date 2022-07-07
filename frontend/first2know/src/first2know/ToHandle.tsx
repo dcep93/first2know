@@ -33,6 +33,9 @@ function ToHandle(props: {
   const defaultParamsValue = props.toHandle?.data_input.params;
   return (
     <div>
+      <button onClick={() => onSubmit(props.toHandle, props.submit, navigate)}>
+        Submit
+      </button>
       <form
         onSubmit={(e) =>
           Promise.resolve(e.preventDefault())
@@ -48,6 +51,8 @@ function ToHandle(props: {
                 body,
               })
             )
+            .then((resp) => resp.json())
+            .then((json) => update(json.img_data))
             .catch((err) => {
               update(undefined);
               alert(err);
@@ -123,9 +128,6 @@ function ToHandle(props: {
         }
         alt=""
       ></img>
-      <button onClick={() => onSubmit(props.toHandle, props.submit, navigate)}>
-        Submit
-      </button>
     </div>
   );
 }

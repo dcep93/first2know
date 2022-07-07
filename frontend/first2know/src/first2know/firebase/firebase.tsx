@@ -1,5 +1,3 @@
-// https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
-
 import { initializeApp } from "firebase/app"; // no compat for new SDK
 import {
   Database,

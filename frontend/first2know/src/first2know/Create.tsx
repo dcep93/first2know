@@ -44,9 +44,7 @@ function submitNew(
 ): Promise<string> {
   const p = new Promise((resolve, reject) => updateP({ resolve, reject }));
   return encrypt(data_input, user, null)
-    .then((encrypted) =>
-      firebase.pushToHandle(data_input, encrypted, user!.screen_name)
-    )
+    .then((encrypted) => firebase.pushToHandle(data_input, encrypted, user))
     .then((k) => {
       updateK(k);
       return p.then(() => k);

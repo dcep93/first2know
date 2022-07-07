@@ -1,3 +1,5 @@
+// https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
+
 import React from "react";
 import firebase from "./firebase";
 
@@ -42,13 +44,13 @@ export type ToHandleType = {
 function pushToHandle(
   data_input: DataInputType,
   encrypted: string,
-  user_name: string
+  user: UserType
 ): Promise<string> {
-  const toHandle = {
+  const toHandle: ToHandleType = {
     data_input,
     data_output: { times: [Date.now() / 1000] },
     encrypted,
-    user_name,
+    user,
   };
   return firebase._push(`/to_handle/`, toHandle);
 }
