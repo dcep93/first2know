@@ -12,36 +12,64 @@ class Manager(typing.Generic[T, U, V]):
         self,
         f: typing.Callable[[], T],
         g: typing.Callable[[T, U], V],
-        num_runners: int,
+        num: int,
     ):
-        self.request_queue = queue.Queue(num_runners)
-        self.response_queues = queue.Queue(num_runners)
-        init_registers = [queue.Queue(1) for _ in range(num_runners)]
-        for register in init_registers:
+        self.num = num
+        self.request_queue = queue.Queue(self.num)
+        self.response_queues = queue.Queue(self.num)
+        for _ in range(self.num):
             threading.Thread(target=lambda: self.init_runner(
-                f, g, self.request_queue, register), ).start()
-        for register in init_registers:
-            register.get()
-            self.response_queues.put_nowait(register)
+                f,
+                g,
+                self.request_queue,
+                self.response_queues,
+            )).start()
+        for _ in range(self.num):
+            err = self.response_queues.get()
+            if err is not None:
+                raise err
+
+    def close(self):
+        for _ in range(self.num):
+            self.request_queue.put_nowait(_CLOSING_REQUEST)
 
     @staticmethod
     def init_runner(
         f: typing.Callable[[], T],
         g: typing.Callable[[T, U], V],
         request_queue: queue.Queue,
-        init_register: queue.Queue,
+        response_queues: queue.Queue,
     ):
-        runner: T = f()
-        init_register.put(None)
+        try:
+            runner = f()
+        except Exception as e:
+            response_queues.put(e)
+            return
+        response_queues.put(None)
         while True:
             _request, register = request_queue.get()
+            if _request is _CLOSING_REQUEST:
+                break
             request: U = _request
-            response: V = g(runner, request)
-            register.put(response)
+            try:
+                response: V = g(runner, request)
+            except Exception as e:
+                register.put((e, False))
+                break
+            register.put((response, True))
 
     def run(self, request: U) -> V:
         register = self.response_queues.get()
         self.request_queue.put_nowait((request, register))
-        response = register.get()
+        (response, is_successful) = register.get()
+        if not is_successful:
+            raise response
         self.response_queues.put_nowait(register)
         return response
+
+
+class _ClosingRequest:
+    pass
+
+
+_CLOSING_REQUEST = _ClosingRequest()

@@ -36,8 +36,14 @@ class Screenshot:
     def __init__(self):
         from playwright.sync_api import sync_playwright as p  # type: ignore
 
-        entered = p().__enter__()
+        self.p = p()
+
+        entered = self.p.__enter__()
         self.browser = entered.chromium.launch()
+
+    def close(self):
+        self.browser.close()
+        self.p.__exit__()
 
     def get_chain(
         self,
@@ -150,14 +156,11 @@ class Screenshot:
 
 
 class Manager:
-    _m: manager.Manager[Screenshot, Request, Response]
+    m: manager.Manager[Screenshot, Request, Response]
 
     def __init__(self, num_screenshotters: int):
-        self._m = manager.Manager(
+        self.m = manager.Manager(
             Screenshot,
             lambda screenshotter, request: screenshotter.screenshot(request),
             num_screenshotters,
         )
-
-    def run(self, request: Request):
-        return self._m.run(request)
