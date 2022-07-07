@@ -33,7 +33,18 @@ function ToHandle(props: {
   const defaultParamsValue = props.toHandle?.data_input.params;
   return (
     <div>
-      <button onClick={() => onSubmit(props.toHandle, props.submit, navigate)}>
+      <button
+        onClick={() =>
+          Promise.resolve()
+            .then(() => getData(props.toHandle))
+            .then((data_input) => props.submit(data_input))
+            .then((key) => navigate(key))
+            .catch((err) => {
+              alert(err);
+              throw err;
+            })
+        }
+      >
         Submit
       </button>
       <form
@@ -130,21 +141,6 @@ function ToHandle(props: {
       ></img>
     </div>
   );
-}
-
-function onSubmit(
-  toHandle: ToHandleType | undefined,
-  submit: SubmitType,
-  navigate: (key: string) => void
-) {
-  Promise.resolve()
-    .then(() => getData(toHandle))
-    .then((data_input) => submit(data_input))
-    .then((key) => navigate(key))
-    .catch((err) => {
-      alert(err);
-      throw err;
-    });
 }
 
 function getData(
