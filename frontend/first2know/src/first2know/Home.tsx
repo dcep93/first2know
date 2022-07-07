@@ -1,7 +1,6 @@
 import Create from "./Create";
-import { AllToHandleType } from "./firebase";
+import { AllToHandleType, UserType } from "./firebase";
 import Show from "./Show";
-import { UserType } from "./User";
 
 function Home(props: { user: UserType; allToHandle: AllToHandleType }) {
   return (
