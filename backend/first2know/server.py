@@ -60,7 +60,7 @@ class InputWithOldEncrypted(firebase_wrapper.DataInput):
 def post_screenshot_img(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.run(
+        screenshot_response = Vars._screenshot_manager.m.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=None,
@@ -76,7 +76,7 @@ def post_screenshot_img(payload: InputWithOldEncrypted):
 def post_screenshot_len(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.run(
+        screenshot_response = Vars._screenshot_manager.m.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=None,
@@ -92,7 +92,7 @@ def post_screenshot_len(payload: InputWithOldEncrypted):
 def post_screenshot(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.run(
+        screenshot_response = Vars._screenshot_manager.m.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=None,
