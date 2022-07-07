@@ -14,7 +14,6 @@ from pydantic import BaseModel
 from PIL import Image, ImageDraw
 
 from . import firebase_wrapper
-from . import manager
 from . import secrets
 
 import nest_asyncio
@@ -114,7 +113,7 @@ class Screenshot:
         encoded = base64.b64encode(binary_data)
         return encoded
 
-    def screenshot(self, request: Request) -> Response:
+    def __call__(self, request: Request) -> Response:
         s = time.time()
         chain = self.get_chain(request.data_input, request.evaluation)
         _d = self.execute_chain(chain)
@@ -165,14 +164,3 @@ class Screenshot:
                 rval[i] = await j
             self.log(f"{i} {time.time() - start}")
         return rval
-
-
-class Manager:
-    m: manager.Manager[Screenshot, Request, Response]
-
-    def __init__(self, num_screenshotters: int):
-        self.m = manager.Manager(
-            Screenshot,
-            lambda screenshotter, request: screenshotter.screenshot(request),
-            num_screenshotters,
-        )

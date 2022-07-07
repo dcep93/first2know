@@ -11,6 +11,7 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 
 from . import cron
 from . import firebase_wrapper
+from . import manager
 from . import proxy
 from . import recorded_sha
 from . import screenshot
@@ -21,11 +22,14 @@ NUM_SCREENSHOTTERS = 4
 
 
 class Vars:
-    _screenshot_manager: screenshot.Manager
+    _screenshot_manager: manager.Manager
 
 
 def init():
-    Vars._screenshot_manager = screenshot.Manager(NUM_SCREENSHOTTERS)
+    Vars._screenshot_manager = manager.Manager(
+        screenshot.Screenshot,
+        NUM_SCREENSHOTTERS,
+    )
 
 
 if os.environ.get("LOCAL"):
@@ -63,7 +67,7 @@ class InputWithOldEncrypted(firebase_wrapper.DataInput):
 def post_screenshot_img(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.m.run(
+        screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=None,
@@ -79,7 +83,7 @@ def post_screenshot_img(payload: InputWithOldEncrypted):
 def post_screenshot_len(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.m.run(
+        screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=None,
@@ -95,7 +99,7 @@ def post_screenshot_len(payload: InputWithOldEncrypted):
 def post_screenshot(payload: InputWithOldEncrypted):
     payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.m.run(
+        screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=None,

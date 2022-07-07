@@ -2,8 +2,9 @@ import concurrent.futures
 import time
 import unittest
 
-from . import screenshot
 from . import firebase_wrapper
+from . import manager
+from . import screenshot
 
 
 class TestScreenshot(unittest.TestCase):
@@ -15,11 +16,10 @@ class TestScreenshot(unittest.TestCase):
             evaluate=None,
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.Screenshot().screenshot(
-            screenshot.Request(
-                data_input=data_input,
-                evaluation=None,
-            ))
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input,
+            evaluation=None,
+        ))
         self.assertEqual(
             screenshot_response.md5,
             "c5ab4b20641f3de2ca9bdb0ed6a88f9a",
@@ -34,7 +34,7 @@ class TestScreenshot(unittest.TestCase):
             evaluation_to_img=False,
         )
         num_to_run = 2
-        manager = screenshot.Manager(num_to_run)
+        m = manager.Manager(screenshot.Screenshot, num_to_run)
         r = screenshot.Request(
             data_input=data_input,
             evaluation=None,
@@ -42,12 +42,12 @@ class TestScreenshot(unittest.TestCase):
         with concurrent.futures.ThreadPoolExecutor(num_to_run) as executor:
             s = time.time()
             _responses = executor.map(
-                manager.m.run,
+                m.run,
                 [r for _ in range(num_to_run)],
             )
             responses = list(_responses)
             e = time.time()
-        manager.m.close()
+        m.close()
         elapsed = e - s
         total = sum([i.elapsed for i in responses])
         self.assertLess(elapsed, total)
@@ -60,11 +60,10 @@ class TestScreenshot(unittest.TestCase):
             evaluate=None,
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.Screenshot().screenshot(
-            screenshot.Request(
-                data_input=data_input,
-                evaluation=None,
-            ))
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input,
+            evaluation=None,
+        ))
         self.assertEqual(
             screenshot_response.md5,
             "814ff58bd2a6352eb89e8deffbf03510",
@@ -78,11 +77,10 @@ class TestScreenshot(unittest.TestCase):
             evaluate="document.body.innerHTML.substring(0, 20)",
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.Screenshot().screenshot(
-            screenshot.Request(
-                data_input=data_input,
-                evaluation=None,
-            ))
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input,
+            evaluation=None,
+        ))
         self.assertEqual(
             screenshot_response.evaluation,
             '\n<div>\n    <h1>Examp',
@@ -96,11 +94,10 @@ class TestScreenshot(unittest.TestCase):
             evaluate="document.body.innerHTML",
             evaluation_to_img=True,
         )
-        screenshot_response = screenshot.Screenshot().screenshot(
-            screenshot.Request(
-                data_input=data_input,
-                evaluation=None,
-            ))
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input,
+            evaluation=None,
+        ))
         self.assertEqual(
             screenshot_response.md5,
             "ceb5b009d8f6cd71b72b0ec35a0f8896",
@@ -114,11 +111,10 @@ class TestScreenshot(unittest.TestCase):
             evaluate="(prev) => prev + 1",
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.Screenshot().screenshot(
-            screenshot.Request(
-                data_input=data_input,
-                evaluation=420,
-            ))
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input,
+            evaluation=420,
+        ))
         self.assertEqual(
             screenshot_response.evaluation,
             421,
