@@ -49,7 +49,7 @@ function RoutedEdit(props: {
               .updateToHandle(props.k, {
                 data_input,
                 encrypted,
-                data_output: props.toHandle.data_output,
+                data_output: { times: [Date.now() / 1000] },
                 user: props.user,
               })
               .then(() => props.k)
