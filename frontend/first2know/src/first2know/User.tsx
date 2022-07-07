@@ -1,13 +1,8 @@
 import TwitterLogin from "./TwitterLogin";
 
 import React from "react";
+import { UserType } from "./firebase";
 import { url } from "./Server";
-
-export type UserType = {
-  screen_name: string;
-  user_id: string;
-  encrypted: string;
-};
 
 type PropsType = {
   user: UserType | null;

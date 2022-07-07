@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { encrypt } from "./Edit";
-import firebase, { AllToHandleType, ScreenshotType } from "./firebase";
+import firebase, { AllToHandleType, DataInputType, UserType } from "./firebase";
 import Listener, { PromiseC } from "./Listener";
 
 import ToHandle from "./ToHandle";
-import { UserType } from "./User";
 
 type ListenerPropsType = {
   k: string | undefined;
@@ -38,7 +37,7 @@ function Create(props: {
 }
 
 function submitNew(
-  data_input: ScreenshotType,
+  data_input: DataInputType,
   user: UserType,
   updateP: (p: PromiseC) => void,
   updateK: (k: string) => void

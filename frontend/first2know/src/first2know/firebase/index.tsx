@@ -5,32 +5,42 @@ export type AllToHandleType = {
   [key: string]: ToHandleType;
 };
 
-export type DataType = {
-  img_data: string;
+export type ImgDataType = {
+  img_url: string;
+  md5: string;
+  evaluation: any;
+};
+
+export type DataOutputType = {
   times: number[];
+  img_data?: ImgDataType;
   evaluation?: any;
   error?: { version: string; time: number; message: string };
 };
 
-export type ToHandleType = {
-  data_input: ScreenshotType;
-  data_output: DataType;
-  user_name: string;
+export type UserType = {
+  screen_name: string;
+  user_id: number;
   encrypted: string;
 };
 
-export type ScreenshotType = {
+export type DataInputType = {
   url: string;
-  params: { [s: string]: any } | null;
+  params: { [s: string]: any };
   selector: string | null;
   evaluate: string | null;
   evaluation_to_img: boolean;
+};
 
-  no_tweet?: boolean;
+export type ToHandleType = {
+  data_input: DataInputType;
+  data_output: DataOutputType;
+  user: UserType;
+  encrypted: string;
 };
 
 function pushToHandle(
-  data_input: ScreenshotType,
+  data_input: DataInputType,
   encrypted: string,
   user_name: string
 ): Promise<string> {

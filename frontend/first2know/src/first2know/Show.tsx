@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { AllToHandleType, ToHandleType } from "./firebase";
+import { AllToHandleType, ToHandleType, UserType } from "./firebase";
 import styles from "./index.module.css";
-import { isAdmin, UserType } from "./User";
 
 function Show(props: {
   user: UserType;
@@ -10,14 +9,9 @@ function Show(props: {
 }): JSX.Element {
   return (
     <div>
-      {Object.entries(props.allToHandle)
-        .filter(
-          ([k, toHandle]) =>
-            !toHandle.data_input.no_tweet || isAdmin(props.user)
-        )
-        .map(([k, toHandle]) => (
-          <RenderToHandle key={k} k={k} toHandle={toHandle} />
-        ))}
+      {Object.entries(props.allToHandle).map(([k, toHandle]) => (
+        <RenderToHandle key={k} k={k} toHandle={toHandle} />
+      ))}
     </div>
   );
 }

@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { encrypt } from "./Edit";
 import firebase, {
   AllToHandleType,
-  ScreenshotType,
+  DataInputType,
   ToHandleType,
+  UserType,
 } from "./firebase";
 import ScreenshotFetcher from "./ScreenshotFetcher";
-import { UserType } from "./User";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
@@ -18,7 +18,7 @@ const cssSelectorRef = createRef<HTMLInputElement>();
 const reuseCookieRef = createRef<HTMLInputElement>();
 
 type SubmitType = (
-  data_input: ScreenshotType & { old_encrypted: string | null }
+  data_input: DataInputType & { old_encrypted: string | null }
 ) => Promise<string>;
 
 type PropsType = {
@@ -135,7 +135,7 @@ class ToHandle extends React.Component<
       });
   }
 
-  getData(): Promise<ScreenshotType & { old_encrypted: string | null }> {
+  getData(): Promise<DataInputType & { old_encrypted: string | null }> {
     const old_encrypted =
       this.props.toHandle === undefined
         ? null
@@ -153,7 +153,6 @@ class ToHandle extends React.Component<
       evaluation: null,
       evaluate: evaluateRef.current!.value || null,
       evaluation_to_img: evaluationToImgRef.current!.checked,
-      no_tweet: true,
     };
     if (data_input.url === "") {
       throw Error("need to have a url");

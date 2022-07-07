@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import firebase, {
   AllToHandleType,
-  ScreenshotType,
+  DataInputType,
   ToHandleType,
+  UserType,
 } from "./firebase";
 import { url } from "./Server";
 import ToHandle from "./ToHandle";
-import { UserType } from "./User";
 
 function Edit(props: {
   k: string;
@@ -67,7 +67,7 @@ function RoutedEdit(props: {
 }
 
 export function encrypt(
-  data_input: ScreenshotType,
+  data_input: DataInputType,
   user: UserType,
   old_encrypted: string | null
 ): Promise<string> {
