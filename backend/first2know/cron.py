@@ -112,6 +112,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         return
 
     img_url = twitter_wrapper.tweet(
+        to_handle.key,
         to_handle.user.screen_name,
         screenshot_response.img_data,
     )

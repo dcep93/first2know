@@ -11,9 +11,10 @@ def message(user_id: int, img_data: str):
     return _send_message(user_id, "", media_id)
 
 
-def tweet(user_name: str, img_data: str) -> str:
+def tweet(key: str, user_name: str, img_data: str) -> str:
+    text = f"@{user_name} https://first2know.web.app/{key}"
     media_id = _post_image(img_data)
-    tweet_id = _post_tweet(user_name, media_id)
+    tweet_id = _post_tweet(text, media_id)
     resp = _read_tweets(
         [tweet_id], {
             "expansions": "attachments.media_keys",
@@ -64,9 +65,9 @@ def _post_image(img_data: str) -> int:
     return r["media_id"]
 
 
-def _post_tweet(user_name: str, media_id: int) -> int:
+def _post_tweet(text: str, media_id: int) -> int:
     message_obj = {
-        "text": f"@{user_name}",
+        "text": text,
         "media": {
             "media_ids": [str(media_id)]
         },
