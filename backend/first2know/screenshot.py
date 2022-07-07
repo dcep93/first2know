@@ -28,6 +28,7 @@ class Response(BaseModel):
     img_data: str
     evaluation: typing.Any
     md5: str
+    elapsed: float
 
 
 # https://playwright.dev/python/docs/intro
@@ -103,8 +104,10 @@ class Screenshot:
         encoded: bytes = d["img"]
         img_data = encoded.decode('utf-8')
         md5 = hashlib.md5(encoded).hexdigest()
+        e = time.time()
+        elapsed = e - s
         self.log(' '.join([
-            f"{time.time() - s:.3f}s",
+            f"{elapsed:.3f}s",
             f"{len(img_data)/1000}kb",
             datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))
@@ -112,6 +115,7 @@ class Screenshot:
             img_data=img_data,
             evaluation=d.get("evaluation"),
             md5=md5,
+            elapsed=elapsed,
         )
 
     def log(self, s: str):

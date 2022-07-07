@@ -1,3 +1,5 @@
+import concurrent.futures
+import time
 import unittest
 
 from . import screenshot
@@ -5,6 +7,32 @@ from . import firebase_wrapper
 
 
 class TestScreenshot(unittest.TestCase):
+    def test_manager(self):
+        data_input = firebase_wrapper.DataInput(
+            url="https://example.org",
+            params={},
+            selector=None,
+            evaluate=None,
+            evaluation_to_img=False,
+        )
+        num_to_run = 2
+        manager = screenshot.Manager(num_to_run)
+        r = screenshot.Request(
+            data_input=data_input,
+            evaluation=None,
+        )
+        with concurrent.futures.ThreadPoolExecutor(num_to_run) as executor:
+            s = time.time()
+            _responses = executor.map(
+                manager.run,
+                [r for _ in range(num_to_run)],
+            )
+            responses = list(_responses)
+            e = time.time()
+        elapsed = e - s
+        total = sum([i.elapsed for i in responses])
+        self.assertLess(elapsed, total)
+
     def test_screenshot(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
