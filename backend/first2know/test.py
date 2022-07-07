@@ -19,7 +19,7 @@ class TestScreenshot(unittest.TestCase):
             None,
         )
         h = hash(screenshot_response.img_data)
-        assert h == 0
+        assert h == -1412852289605926037
         assert screenshot_response.evaluation is None
 
     def test_async_screenshot(self):
@@ -36,7 +36,7 @@ class TestScreenshot(unittest.TestCase):
             None,
         )
         h = hash(screenshot_response.img_data)
-        assert h == 0
+        assert h == -1412852289605926037
         assert screenshot_response.evaluation is None
 
     def test_evaluate(self):
