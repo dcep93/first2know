@@ -1,59 +1,44 @@
 import TwitterLogin from "./TwitterLogin";
 
-import React from "react";
 import { UserType } from "./firebase";
 import { url } from "./Server";
 
-type PropsType = {
+function User(props: {
   user: UserType | null;
   update: (user: UserType | null) => void;
-};
-
-class User extends React.Component<PropsType> {
-  render() {
-    return this.props.user ? (
+}) {
+  return props.user ? (
+    <div>
       <div>
-        <div>
-          {this.props.user.screen_name}
-          <span> </span>
-          <button
-            disabled={window.location.hostname === "localhost"}
-            onClick={this.logout.bind(this)}
-            className="button"
-          >
-            Log out
-          </button>
-          {isAdmin(this.props.user) ? <span> admin</span> : null}
-        </div>
+        {props.user.screen_name}
+        <span> </span>
+        <button
+          disabled={window.location.hostname === "localhost"}
+          onClick={() => {
+            localStorage.removeItem("login");
+            props.update(null);
+          }}
+          className="button"
+        >
+          Log out
+        </button>
+        {isAdmin(props.user) ? <span> admin</span> : null}
       </div>
-    ) : (
-      <TwitterLogin
-        // @ts-ignore
-        loginUrl={`${url}/twitter/access_token`}
-        onFailure={this.onFailed}
-        onSuccess={this.onSuccess.bind(this)}
-        requestTokenUrl={`${url}/twitter/request_token`}
-      />
-    );
-  }
-
-  login(user: UserType) {
-    localStorage.setItem("login", JSON.stringify(user));
-    this.props.update(user);
-  }
-
-  logout() {
-    localStorage.removeItem("login");
-    this.props.update(null);
-  }
-
-  onSuccess(response: any) {
-    response.json().then((user: UserType) => this.login(user));
-  }
-
-  onFailed(error: string) {
-    alert(error);
-  }
+    </div>
+  ) : (
+    <TwitterLogin
+      // @ts-ignore
+      loginUrl={`${url}/twitter/access_token`}
+      onFailure={(error: string) => alert(error)}
+      onSuccess={(response: any) =>
+        response.json().then((user: UserType) => {
+          localStorage.setItem("login", JSON.stringify(user));
+          props.update(user);
+        })
+      }
+      requestTokenUrl={`${url}/twitter/request_token`}
+    />
+  );
 }
 
 export function isAdmin(user: UserType): boolean {
