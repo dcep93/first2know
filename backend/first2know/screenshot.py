@@ -52,9 +52,9 @@ class Screenshot:
         entered = await self.p.__aenter__()
         self.browser = await entered.chromium.launch()
 
-    def close(self):
-        self.browser.close()
-        self.p.__aexit__()
+    async def close(self):
+        await self.browser.close()
+        await self.p.__aexit__()
 
     def get_chain(
         self,

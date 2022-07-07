@@ -81,7 +81,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     )
 
     try:
-        screenshot_response = Vars._screenshot_manager.run(request)
+        screenshot_response = Vars._screenshot_manager.m.run(request)
     except Exception as e:
         to_write = to_handle.data_output
         to_write.times.append(time.time())

@@ -18,8 +18,8 @@ class Vars:
     is_local = False
 
 
-if Vars.secrets is None:
-    if os.environ.get("LOCAL"):
+if os.environ.get("LOCAL"):
+    if Vars.secrets is None:
         Vars.is_local = True
         client_secret_path = os.path.join(
             os.path.dirname(__file__),

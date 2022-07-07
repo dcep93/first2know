@@ -1,6 +1,7 @@
 import base64
-import json
 import io
+import json
+import os
 import traceback
 import typing
 
@@ -20,9 +21,15 @@ NUM_SCREENSHOTTERS = 4
 
 
 class Vars:
-    _token: str
     _screenshot_manager: screenshot.Manager
 
+
+def init():
+    Vars._screenshot_manager = screenshot.Manager(NUM_SCREENSHOTTERS)
+
+
+if os.environ.get("LOCAL"):
+    init()
 
 web_app = FastAPI()
 web_app.add_middleware(
@@ -32,10 +39,6 @@ web_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def init():
-    Vars._screenshot_manager = screenshot.Manager(NUM_SCREENSHOTTERS)
 
 
 @web_app.get("/")
