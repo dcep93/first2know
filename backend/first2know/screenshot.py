@@ -34,7 +34,6 @@ class Response(BaseModel):
 # https://playwright.dev/python/docs/intro
 class Screenshot:
     def __init__(self):
-        return
         from playwright.sync_api import sync_playwright as p  # type: ignore
 
         self.p = p()
@@ -105,7 +104,6 @@ class Screenshot:
         return encoded
 
     def screenshot(self, request: Request) -> Response:
-        return
         s = time.time()
         chain = self.get_chain(request.data_input, request.evaluation)
         d = self.execute_chain(chain)

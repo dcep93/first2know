@@ -28,6 +28,8 @@ class Manager(typing.Generic[T, U, V]):
             err = self.response_queues.get()
             if err is not None:
                 raise err
+        for _ in range(self.num):
+            self.response_queues.put_nowait(queue.Queue(1))
 
     def close(self):
         for _ in range(self.num):
