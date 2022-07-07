@@ -33,7 +33,6 @@ def init():
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    Vars._token = refresh_access_token()
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
@@ -56,6 +55,7 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
             run_cron()
         return False
 
+    Vars._token = refresh_access_token()
     rval = helper()
     Vars._screenshot_manager.close()
     return rval
