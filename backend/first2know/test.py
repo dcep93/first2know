@@ -13,11 +13,11 @@ class TestScreenshot(unittest.TestCase):
             evaluate=None,
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.AsyncScreenshot().screenshot(
-            "",
-            data_input,
-            None,
-        )
+        screenshot_response = screenshot.Screenshot().screenshot(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            ))
         self.assertEqual(
             screenshot_response.md5,
             "c5ab4b20641f3de2ca9bdb0ed6a88f9a",
@@ -31,11 +31,11 @@ class TestScreenshot(unittest.TestCase):
             evaluate=None,
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.SyncScreenshot().screenshot(
-            "",
-            data_input,
-            None,
-        )
+        screenshot_response = screenshot.Screenshot().screenshot(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            ))
         self.assertEqual(
             screenshot_response.md5,
             "814ff58bd2a6352eb89e8deffbf03510",
@@ -49,11 +49,11 @@ class TestScreenshot(unittest.TestCase):
             evaluate="document.body.innerHTML.substring(0, 20)",
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.SyncScreenshot().screenshot(
-            "",
-            data_input,
-            None,
-        )
+        screenshot_response = screenshot.Screenshot().screenshot(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            ))
         self.assertEqual(
             screenshot_response.evaluation,
             '\n<div>\n    <h1>Examp',
@@ -67,11 +67,11 @@ class TestScreenshot(unittest.TestCase):
             evaluate="document.body.innerHTML",
             evaluation_to_img=True,
         )
-        screenshot_response = screenshot.SyncScreenshot().screenshot(
-            "",
-            data_input,
-            None,
-        )
+        screenshot_response = screenshot.Screenshot().screenshot(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            ))
         self.assertEqual(
             screenshot_response.md5,
             "ceb5b009d8f6cd71b72b0ec35a0f8896",
@@ -85,11 +85,11 @@ class TestScreenshot(unittest.TestCase):
             evaluate="(prev) => prev + 1",
             evaluation_to_img=False,
         )
-        screenshot_response = screenshot.SyncScreenshot().screenshot(
-            "",
-            data_input,
-            420,
-        )
+        screenshot_response = screenshot.Screenshot().screenshot(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=420,
+            ))
         self.assertEqual(
             screenshot_response.evaluation,
             421,

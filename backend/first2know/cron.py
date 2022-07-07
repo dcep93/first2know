@@ -1,5 +1,7 @@
 import time
 
+import concurrent.futures
+
 from . import firebase_wrapper
 from . import screenshot
 from . import twitter_wrapper
@@ -7,10 +9,12 @@ from . import twitter_wrapper
 # update version to clear errors
 VERSION = '1.0'
 
+NUM_SCREENSHOTTERS = 8
+
 
 class Vars:
     _token: str
-    _screenshot: screenshot._Screenshot
+    _screenshot_manager: screenshot.Manager
 
 
 def main():
@@ -21,7 +25,7 @@ def main():
 
 def init():
     firebase_wrapper.init()
-    Vars._screenshot = screenshot.SyncScreenshot()
+    Vars._screenshot_manager = screenshot.Manager(NUM_SCREENSHOTTERS)
     Vars._token = refresh_access_token()
 
 
@@ -35,10 +39,14 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
         loops += 1
         if loops % 10 == 0:
             print(loops, "loops", f"{loops_per:.2f}/s")
-        should_continue = run_cron()
-        if not should_continue:
+
+        # exit if another process has spun up to take over
+        new_token = firebase_wrapper.get_token()
+        if new_token != Vars._token:
             print("exiting cron", loops)
             return True
+
+        run_cron()
     return False
 
 
@@ -52,18 +60,10 @@ def refresh_access_token() -> str:
     return new_token
 
 
-def run_cron() -> bool:
-    # if another process has spun up to take over, exit early
-    new_token = firebase_wrapper.get_token()
-    if new_token != Vars._token:
-        return False
-
+def run_cron():
     to_handle_arr = firebase_wrapper.get_to_handle()
-
-    # TODO dcep93 queue
-    [i for i in map(handle, to_handle_arr)]
-
-    return True
+    with concurrent.futures.ThreadPoolExecutor(NUM_SCREENSHOTTERS) as executor:
+        executor.map(handle, to_handle_arr)
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
@@ -75,12 +75,13 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         if to_handle.data_output.img_data is None \
         else to_handle.data_output.img_data.evaluation
 
+    request = screenshot.Request(
+        data_input=to_handle.data_input,
+        evaluation=evaluation,
+    )
+
     try:
-        screenshot_response = Vars._screenshot.screenshot(
-            to_handle.key,
-            to_handle.data_input,
-            evaluation,
-        )
+        screenshot_response = Vars._screenshot_manager.screenshot(request)
     except Exception as e:
         to_write = to_handle.data_output
         to_write.times.append(time.time())

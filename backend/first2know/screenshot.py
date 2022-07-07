@@ -1,15 +1,15 @@
-import asyncio
 import base64
-import collections
 import datetime
 import hashlib
 import json
 import io
 import os
+import queue
+import random
+import string
+import threading
 import time
 import typing
-
-import abc
 
 from pydantic import BaseModel
 
@@ -21,28 +21,57 @@ from . import secrets
 TIMEOUT_SECONDS = 10.0
 
 
+class Request(BaseModel):
+    data_input: firebase_wrapper.DataInput
+    evaluation: typing.Any
+
+
 class Response(BaseModel):
     img_data: str
     evaluation: typing.Any
     md5: str
 
 
-# https://playwright.dev/python/docs/intro
-class _Screenshot(abc.ABC):
-    @abc.abstractmethod
-    def get_context(self, key: typing.Optional[str]):
-        raise Exception("should be overridden")
+class Manager:
+    def __init__(self, num_screenshotters):
+        self.queue_in = queue.Queue(num_screenshotters)
+        self.queues_out = queue.Queue(num_screenshotters)
+        init_registers = [queue.Queue(1) for _ in range(num_screenshotters)]
+        for register in init_registers:
+            threading.Thread(
+                target=lambda: self.run_screenshotter(self.queue_in, register),
+            ).start()
+        for register in init_registers:
+            register.get()
+            self.queues_out.put_nowait(register)
 
-    @abc.abstractmethod
-    def execute_chain(
-        self,
-        chain: typing.List[typing.Tuple[str, typing.Any]],
-    ):
-        raise Exception("should be overridden")
+    @staticmethod
+    def run_screenshotter(queue_in: queue.Queue, init_register: queue.Queue):
+        screenshotter = Screenshot()
+        init_register.put(None)
+        while True:
+            request, register = queue_in.get()
+            response: Response = screenshotter.screenshot(request)
+            register.put(response)
+
+    def screenshot(self, request: Request) -> Response:
+        register = self.queues_out.get()
+        self.queue_in.put_nowait((request, register))
+        response = register.get()
+        self.queues_out.put_nowait(register)
+        return response
+
+
+# https://playwright.dev/python/docs/intro
+class Screenshot:
+    def __init__(self):
+        from playwright.sync_api import sync_playwright as p  # type: ignore
+
+        entered = p().__enter__()
+        self.browser = entered.chromium.launch()
 
     def get_chain(
         self,
-        key: str,
         payload: firebase_wrapper.DataInput,
         previous_evaluation: typing.Any,
     ):
@@ -52,7 +81,7 @@ class _Screenshot(abc.ABC):
         return [
             (
                 "context",
-                lambda d: self.get_context(key),
+                lambda d: self.browser.new_context(),
             ),
             (
                 "page",
@@ -73,53 +102,42 @@ class _Screenshot(abc.ABC):
                     payload.evaluate, previous_evaluation),
             ),
             (
-                "to_screenshot",
-                lambda d: self.get_to_screenshot(d, key, payload),
-            ),
-            (
-                "screenshot",
-                lambda d: None if d["to_screenshot"] is None else d[
-                    "to_screenshot"].screenshot(path=d["dest"]),
+                "img",
+                lambda d: self.get_img(d, payload),
             ),
         ]
 
-    def get_to_screenshot(
+    def get_img(
         self,
         d: typing.Dict[str, typing.Any],
-        key: str,
         payload: firebase_wrapper.DataInput,
-    ):
+    ) -> bytes:
         if payload.evaluation_to_img:
-            d["to_screenshot"] = None
-            return None
+            evaluation = d.get("evaluation")
+            binary_data = self.evaluation_to_img_bytes(evaluation)
         else:
-            d["dest"] = f"screenshot_{key}.png"
-            d["to_screenshot"] = d["page"] \
+            key = ''.join(
+                random.choice(string.ascii_lowercase) for _ in range(10))
+            dest = f"screenshot_{key}.png"
+            to_screenshot = d["page"] \
                 if payload.selector is None \
                 else d["page"].locator(payload.selector)
-
-    def screenshot(
-        self,
-        key: str,
-        payload: firebase_wrapper.DataInput,
-        previous_evaluation: typing.Any,
-    ) -> Response:
-        s = time.time()
-        chain = self.get_chain(key, payload, previous_evaluation)
-        d = self.execute_chain(chain)
-        if payload.evaluation_to_img:
-            binary_data = self.evaluation_to_img_bytes(d.get("evaluation"))
-        else:
-            dest = d["dest"]
+            to_screenshot.screenshot(path=dest)
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
         encoded = base64.b64encode(binary_data)
+        return encoded
+
+    def screenshot(self, request: Request) -> Response:
+        s = time.time()
+        chain = self.get_chain(request.data_input, request.evaluation)
+        d = self.execute_chain(chain)
+        encoded: bytes = d["img"]
         img_data = encoded.decode('utf-8')
         md5 = hashlib.md5(encoded).hexdigest()
         self.log(' '.join([
             f"{time.time() - s:.3f}s",
-            str(key),
             f"{len(img_data)/1000}kb",
             datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))
@@ -145,59 +163,6 @@ class _Screenshot(abc.ABC):
         img_byte_arr = io.BytesIO()
         img.save(img_byte_arr, format='PNG')
         return img_byte_arr.getvalue()
-
-
-class AsyncScreenshot(_Screenshot):
-    async def get_context(self, key: typing.Optional[str]):
-        from playwright.async_api import async_playwright as p  # type: ignore
-
-        self.p = p()
-
-        entered = await self.p.__aenter__()
-        self.browser = await entered.chromium.launch()
-        self.context = await self.browser.new_context()
-        return self.context
-
-    async def close(self):
-        await self.context.close()
-        await self.browser.close()
-        await self.p.__aexit__()
-
-    def execute_chain(
-        self,
-        chain: typing.List[typing.Tuple[str, typing.Any]],
-    ) -> typing.Dict[str, typing.Any]:
-        async def helper():
-            rval = {}
-            for i, c in chain:
-                start = time.time()
-                j = c(rval)
-                if j is not None:
-                    rval[i] = await asyncio.wait_for(j, TIMEOUT_SECONDS)
-                self.log(f"{i} {time.time() - start}")
-            await self.close()
-            return rval
-
-        return asyncio.run(helper())
-
-
-class SyncScreenshot(_Screenshot):
-    browser: typing.Any
-    contexts: collections.defaultdict
-
-    def __init__(self):
-        super().__init__()
-        from playwright.sync_api import sync_playwright as p  # type: ignore
-
-        entered = p().__enter__()
-        self.browser = entered.chromium.launch()
-        self.contexts = collections.defaultdict(self._make_context)
-
-    def _make_context(self):
-        return self.browser.new_context()
-
-    def get_context(self, key: str):
-        return self.contexts[key]
 
     def execute_chain(
         self,
