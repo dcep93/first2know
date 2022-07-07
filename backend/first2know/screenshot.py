@@ -17,6 +17,10 @@ from . import firebase_wrapper
 from . import manager
 from . import secrets
 
+import nest_asyncio
+
+nest_asyncio.apply()
+
 TIMEOUT_SECONDS = 10.0
 
 

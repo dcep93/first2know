@@ -7,6 +7,24 @@ from . import firebase_wrapper
 
 
 class TestScreenshot(unittest.TestCase):
+    def test_screenshot(self):
+        data_input = firebase_wrapper.DataInput(
+            url="https://example.org",
+            params={},
+            selector=None,
+            evaluate=None,
+            evaluation_to_img=False,
+        )
+        screenshot_response = screenshot.Screenshot().screenshot(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            ))
+        self.assertEqual(
+            screenshot_response.md5,
+            "c5ab4b20641f3de2ca9bdb0ed6a88f9a",
+        )
+
     def test_manager(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
@@ -33,24 +51,6 @@ class TestScreenshot(unittest.TestCase):
         elapsed = e - s
         total = sum([i.elapsed for i in responses])
         self.assertLess(elapsed, total)
-
-    def test_screenshot(self):
-        data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
-            params={},
-            selector=None,
-            evaluate=None,
-            evaluation_to_img=False,
-        )
-        screenshot_response = screenshot.Screenshot().screenshot(
-            screenshot.Request(
-                data_input=data_input,
-                evaluation=None,
-            ))
-        self.assertEqual(
-            screenshot_response.md5,
-            "c5ab4b20641f3de2ca9bdb0ed6a88f9a",
-        )
 
     def test_selector(self):
         data_input = firebase_wrapper.DataInput(

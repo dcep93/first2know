@@ -11,7 +11,6 @@ if not modal.is_local():
     from . import recorded_sha
     from . import secrets
     from . import server
-    from . import test
 
 image = modal.DebianSlim().run_commands([
     "apt-get install -y software-properties-common",
@@ -32,6 +31,7 @@ image = modal.DebianSlim().run_commands([
     'requests_oauthlib',
     'pillow',
     'firebase-admin',
+    'nest-asyncio',
 ])
 modal_app = modal.Stub(image=image)
 

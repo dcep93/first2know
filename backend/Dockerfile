@@ -38,6 +38,8 @@ RUN pip3 install pillow
 
 RUN pip3 install firebase-admin
 
+RUN pip3 install nest-asyncio
+
 EXPOSE 8000
 
 COPY . ./
