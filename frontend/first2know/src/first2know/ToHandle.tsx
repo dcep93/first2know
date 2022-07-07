@@ -115,7 +115,9 @@ function ToHandle(props: {
               (cssSelectorRef.current!.disabled =
                 evaluationToImgRef.current!.checked)
             }
-            defaultChecked={props.toHandle?.data_input.evaluation_to_img}
+            defaultChecked={
+              props.toHandle?.data_input.evaluation_to_img || false
+            }
             ref={evaluationToImgRef}
             type="checkbox"
           />
@@ -162,7 +164,7 @@ function getData(
     selector: cssSelectorRef.current!.value || null,
     evaluation: null,
     evaluate: evaluateRef.current!.value || null,
-    evaluation_to_img: evaluationToImgRef.current!.checked,
+    evaluation_to_img: evaluationToImgRef.current!.checked || null,
   };
   if (data_input.url === "") {
     throw Error("need to have a url");

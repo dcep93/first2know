@@ -31,7 +31,7 @@ export type DataInputType = {
   params: { [s: string]: any };
   selector: string | null;
   evaluate: string | null;
-  evaluation_to_img: boolean;
+  evaluation_to_img: boolean | null;
 };
 
 export type ToHandleType = {

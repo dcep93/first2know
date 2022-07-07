@@ -37,10 +37,10 @@ class DataOutput(BaseModel):
 
 class DataInput(BaseModel):
     url: str
-    params: typing.Dict[str, typing.Any]
+    params: typing.Optional[typing.Dict[str, typing.Any]]
     selector: typing.Optional[str]
     evaluate: typing.Optional[str]
-    evaluation_to_img: bool
+    evaluation_to_img: typing.Optional[bool]
 
 
 class User(BaseModel):
