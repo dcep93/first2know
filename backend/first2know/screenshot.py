@@ -1,13 +1,11 @@
 import base64
 import datetime
 import hashlib
-import json
 import io
+import json
 import os
-import queue
 import random
 import string
-import threading
 import time
 import typing
 
@@ -30,36 +28,6 @@ class Response(BaseModel):
     img_data: str
     evaluation: typing.Any
     md5: str
-
-
-class Manager:
-    def __init__(self, num_screenshotters):
-        self.queue_in = queue.Queue(num_screenshotters)
-        self.queues_out = queue.Queue(num_screenshotters)
-        init_registers = [queue.Queue(1) for _ in range(num_screenshotters)]
-        for register in init_registers:
-            threading.Thread(
-                target=lambda: self.run_screenshotter(self.queue_in, register),
-            ).start()
-        for register in init_registers:
-            register.get()
-            self.queues_out.put_nowait(register)
-
-    @staticmethod
-    def run_screenshotter(queue_in: queue.Queue, init_register: queue.Queue):
-        screenshotter = Screenshot()
-        init_register.put(None)
-        while True:
-            request, register = queue_in.get()
-            response: Response = screenshotter.screenshot(request)
-            register.put(response)
-
-    def screenshot(self, request: Request) -> Response:
-        register = self.queues_out.get()
-        self.queue_in.put_nowait((request, register))
-        response = register.get()
-        self.queues_out.put_nowait(register)
-        return response
 
 
 # https://playwright.dev/python/docs/intro
