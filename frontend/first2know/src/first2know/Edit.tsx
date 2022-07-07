@@ -6,6 +6,7 @@ import firebase, {
   UserType,
 } from "./firebase";
 import { sfetch, url } from "./Server";
+import { RenderToHandle } from "./Show";
 import ToHandle from "./ToHandle";
 
 function Edit(props: {
@@ -65,7 +66,7 @@ function RoutedEdit(props: {
         Delete {props.k}
       </button>
       <div>
-        <img src={props.toHandle.data_output.screenshot_data?.img_url} alt="" />
+        <RenderToHandle k={props.k} toHandle={props.toHandle} />
       </div>
     </>
   );

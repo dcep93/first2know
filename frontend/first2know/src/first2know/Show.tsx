@@ -10,13 +10,18 @@ function Show(props: {
   return (
     <div>
       {Object.entries(props.allToHandle).map(([k, toHandle]) => (
-        <RenderToHandle key={k} k={k} toHandle={toHandle} />
+        <>
+          <RenderToHandle key={k} k={k} toHandle={toHandle} />
+          <div>
+            <Link to={`/${k}`}>Edit {k}</Link>
+          </div>
+        </>
       ))}
     </div>
   );
 }
 
-function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
+export function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
   const [hidden, update] = useState(true);
   return (
     <div>
@@ -24,15 +29,18 @@ function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
         {JSON.stringify(props.toHandle, null, 2)}
       </pre>
       <div>
-        <button onClick={() => update(!hidden)}>Toggle Image</button>
+        <button onClick={() => update(!hidden)}>Toggle Output</button>
       </div>
-      <img
-        hidden={hidden}
-        src={props.toHandle.data_output.screenshot_data?.img_url}
-        alt=""
-      ></img>
-      <div>
-        <Link to={`/${props.k}`}>Edit {props.k}</Link>
+      <div hidden={hidden}>
+        {props.toHandle.data_output.screenshot_data && (
+          <img
+            src={props.toHandle.data_output.screenshot_data!.img_url}
+            alt=""
+          ></img>
+        )}
+        {props.toHandle.data_output.error && (
+          <pre>{JSON.stringify(props.toHandle.data_output.error, null, 2)}</pre>
+        )}
       </div>
     </div>
   );
