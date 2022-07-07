@@ -38,7 +38,7 @@ function ToHandle(props: {
           Promise.resolve()
             .then(() => getData(props.toHandle))
             .then((data_input) => props.submit(data_input))
-            .then((key) => navigate(key))
+            .then((key) => navigate(`/${key}`))
             .catch((err) => {
               alert(err);
               throw err;

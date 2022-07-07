@@ -59,7 +59,7 @@ function deleteToHandle(key: string): Promise<void> {
   return firebase._delete(`/to_handle/${key}`);
 }
 
-function updateToHandle(key: string, toHandle: {}): Promise<void> {
+function updateToHandle(key: string, toHandle: ToHandleType): Promise<void> {
   return firebase._set(`/to_handle/${key}`, toHandle);
 }
 

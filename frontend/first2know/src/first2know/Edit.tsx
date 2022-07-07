@@ -48,6 +48,8 @@ function RoutedEdit(props: {
               .updateToHandle(props.k, {
                 data_input,
                 encrypted,
+                data_output: props.toHandle.data_output,
+                user: props.user,
               })
               .then(() => props.k)
           )
@@ -62,6 +64,9 @@ function RoutedEdit(props: {
       >
         Delete {props.k}
       </button>
+      <div>
+        <img src={props.toHandle.data_output.screenshot_data?.img_url} alt="" />
+      </div>
     </>
   );
 }
