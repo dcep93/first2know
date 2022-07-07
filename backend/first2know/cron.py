@@ -76,8 +76,8 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         return
 
     evaluation = None \
-        if to_handle.data_output.img_data is None \
-        else to_handle.data_output.img_data.evaluation
+        if to_handle.data_output.screenshot_data is None \
+        else to_handle.data_output.screenshot_data.evaluation
 
     request = screenshot.Request(
         data_input=to_handle.data_input,
@@ -98,8 +98,8 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         raise e
 
     old_md5 = None \
-        if to_handle.data_output.img_data is None \
-        else to_handle.data_output.img_data.md5
+        if to_handle.data_output.screenshot_data is None \
+        else to_handle.data_output.screenshot_data.md5
     if screenshot_response.md5 == old_md5:
         return
 
@@ -109,7 +109,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     )
 
     to_write = firebase_wrapper.DataOutput(
-        img_data=firebase_wrapper.ImgData(
+        screenshot_data=firebase_wrapper.ScreenshotData(
             img_url=img_url,
             md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,

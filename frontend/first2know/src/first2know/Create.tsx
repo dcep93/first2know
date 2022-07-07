@@ -58,7 +58,7 @@ function listenerF(props: ListenerPropsType, p: PromiseC) {
   if (data_output) {
     if (data_output.error) {
       p.reject!(data_output.error!.message);
-    } else if (data_output.img_data) {
+    } else if (data_output.screenshot_data) {
       p.resolve!();
     }
   }

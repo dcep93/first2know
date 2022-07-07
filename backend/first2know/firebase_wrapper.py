@@ -23,7 +23,7 @@ class ErrorType(BaseModel):
     message: str
 
 
-class ImgData(BaseModel):
+class ScreenshotData(BaseModel):
     img_url: str
     md5: str
     evaluation: typing.Any
@@ -31,7 +31,7 @@ class ImgData(BaseModel):
 
 class DataOutput(BaseModel):
     times: typing.List[float]
-    img_data: typing.Optional[ImgData] = None
+    screenshot_data: typing.Optional[ScreenshotData] = None
     error: typing.Optional[ErrorType] = None
 
 

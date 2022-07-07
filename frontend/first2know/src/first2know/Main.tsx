@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Edit from "./Edit";
-import { AllToHandleType, FirebaseWrapper } from "./firebase";
+import { AllToHandleType, FirebaseWrapper, UserType } from "./firebase";
 import Home from "./Home";
 import { recorded_sha } from "./recorded_sha";
-import User, { isAdmin, UserType } from "./User";
+import User, { isAdmin } from "./User";
 
 console.log(recorded_sha);
 
@@ -35,7 +35,8 @@ function Helper(props: { allToHandle: AllToHandleType }) {
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
       ([_, toHandle]) =>
-        toHandle.user_name === user?.screen_name || (user && isAdmin(user))
+        toHandle.user.screen_name === user?.screen_name ||
+        (user && isAdmin(user))
     )
   );
   return (

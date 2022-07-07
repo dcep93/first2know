@@ -5,7 +5,7 @@ export type AllToHandleType = {
   [key: string]: ToHandleType;
 };
 
-export type ImgDataType = {
+export type ScreenshotDataType = {
   img_url: string;
   md5: string;
   evaluation: any;
@@ -13,7 +13,7 @@ export type ImgDataType = {
 
 export type DataOutputType = {
   times: number[];
-  img_data?: ImgDataType;
+  screenshot_data?: ScreenshotDataType;
   evaluation?: any;
   error?: { version: string; time: number; message: string };
 };
