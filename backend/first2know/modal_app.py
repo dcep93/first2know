@@ -48,7 +48,6 @@ def init(s: str):
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
-    test.run_tests()
     # TODO dcep93 restore
     return
     init("cron")

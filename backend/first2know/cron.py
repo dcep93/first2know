@@ -92,11 +92,10 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
 
-    img_hash = hash(screenshot_response.img_data)
-    old_img_hash = None \
+    old_md5 = None \
         if to_handle.data_output.img_data is None \
-        else to_handle.data_output.img_data.img_hash
-    if img_hash == old_img_hash:
+        else to_handle.data_output.img_data.md5
+    if screenshot_response.md5 == old_md5:
         return
 
     img_url = twitter_wrapper.tweet(
@@ -107,7 +106,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     to_write = firebase_wrapper.DataOutput(
         img_data=firebase_wrapper.ImgData(
             img_url=img_url,
-            img_hash=img_hash,
+            md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,
         ),
         times=to_handle.data_output.times + [time.time()],

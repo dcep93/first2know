@@ -2,6 +2,7 @@ import asyncio
 import base64
 import collections
 import datetime
+import hashlib
 import json
 import io
 import os
@@ -17,10 +18,13 @@ from PIL import Image, ImageDraw
 from . import firebase_wrapper
 from . import secrets
 
+TIMEOUT_SECONDS = 10.0
+
 
 class Response(BaseModel):
     img_data: str
     evaluation: typing.Any
+    md5: str
 
 
 # https://playwright.dev/python/docs/intro
@@ -110,7 +114,9 @@ class _Screenshot(abc.ABC):
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
-        img_data = base64.b64encode(binary_data).decode('utf-8')
+        encoded = base64.b64encode(binary_data)
+        img_data = encoded.decode('utf-8')
+        md5 = hashlib.md5(encoded).hexdigest()
         self.log(' '.join([
             f"{time.time() - s:.3f}s",
             str(key),
@@ -120,6 +126,7 @@ class _Screenshot(abc.ABC):
         return Response(
             img_data=img_data,
             evaluation=d.get("evaluation"),
+            md5=md5,
         )
 
     def log(self, s: str):
@@ -166,7 +173,7 @@ class AsyncScreenshot(_Screenshot):
                 start = time.time()
                 j = c(rval)
                 if j is not None:
-                    rval[i] = await j
+                    rval[i] = await asyncio.wait_for(j, TIMEOUT_SECONDS)
                 self.log(f"{i} {time.time() - start}")
             await self.close()
             return rval

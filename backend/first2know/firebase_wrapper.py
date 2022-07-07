@@ -25,7 +25,7 @@ class ErrorType(BaseModel):
 
 class ImgData(BaseModel):
     img_url: str
-    img_hash: int
+    md5: str
     evaluation: typing.Any
 
 
