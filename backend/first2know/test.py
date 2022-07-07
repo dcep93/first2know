@@ -51,7 +51,7 @@ class TestScreenshot(unittest.TestCase):
             evaluate=None,
             evaluation_to_img=False,
         )
-        num_to_run = 2
+        num_to_run = 1
         manager = screenshot.Manager(num_to_run)
         r = screenshot.Request(
             data_input=data_input,
@@ -62,9 +62,11 @@ class TestScreenshot(unittest.TestCase):
             _responses = executor.map(
                 manager.m.run,
                 [r for _ in range(num_to_run)],
+                timeout=1,
             )
             responses = list(_responses)
             e = time.time()
+        manager.m.close()
         elapsed = e - s
         total = sum([i.elapsed for i in responses])
         self.assertLess(elapsed, total)

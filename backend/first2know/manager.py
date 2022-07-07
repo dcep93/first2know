@@ -31,7 +31,7 @@ class Manager(typing.Generic[T, U, V]):
 
     def close(self):
         for _ in range(self.num):
-            self.request_queue.put_nowait(_CLOSING_REQUEST)
+            self.request_queue.put_nowait((None, None))
 
     @staticmethod
     def init_runner(
@@ -48,7 +48,7 @@ class Manager(typing.Generic[T, U, V]):
         response_queues.put(None)
         while True:
             _request, register = request_queue.get()
-            if _request is _CLOSING_REQUEST:
+            if register is None:
                 break
             request: U = _request
             try:
@@ -66,10 +66,3 @@ class Manager(typing.Generic[T, U, V]):
             raise response
         self.response_queues.put_nowait(register)
         return response
-
-
-class _ClosingRequest:
-    pass
-
-
-_CLOSING_REQUEST = _ClosingRequest()
