@@ -86,13 +86,13 @@ class _Screenshot(abc.ABC):
         payload: firebase_wrapper.DataInput,
     ):
         if payload.evaluation_to_img:
+            d["to_screenshot"] = None
             return None
         else:
             d["dest"] = f"screenshot_{key}.png"
-            selector = "body" \
+            d["to_screenshot"] = d["page"] \
                 if payload.selector is None \
-                else payload.selector
-            d["to_screenshot"] = d["page"].locator(selector)
+                else d["page"].locator(payload.selector)
 
     def screenshot(
         self,
