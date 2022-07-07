@@ -4,13 +4,12 @@ import typing
 
 T = typing.TypeVar('T')
 U = typing.TypeVar('U')
-V = typing.TypeVar('V')
 
 
-class Manager(typing.Generic[T, U, V]):
+class Manager(typing.Generic[T, U]):
     def __init__(
         self,
-        f: typing.Callable[[], typing.Callable[[U], V]],
+        f: typing.Callable[[], typing.Callable[[T], U]],
         num: int,
     ):
         self.f = f
@@ -41,15 +40,15 @@ class Manager(typing.Generic[T, U, V]):
             _request, register = self.request_queue.get()
             if register is None:
                 break
-            request: U = _request
+            request: T = _request
             try:
-                response: V = runner(request)
+                response: U = runner(request)
             except Exception as e:
                 register.put((e, False))
                 break
             register.put((response, True))
 
-    def run(self, request: U) -> V:
+    def run(self, request: T) -> U:
         register = self.response_queues.get()
         self.request_queue.put_nowait((request, register))
         (response, is_successful) = register.get()

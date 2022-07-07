@@ -55,6 +55,32 @@ class Screenshot:
         await self.browser.close()
         await self.p.__aexit__()
 
+    def __call__(self, request: Request) -> Response:
+        s = time.time()
+        chain = self.get_chain(request.data_input, request.evaluation)
+        _d = self.execute_chain(chain)
+        d = asyncio.run(_d)
+        encoded: bytes = d["img"]
+        img_data = encoded.decode('utf-8')
+        md5 = hashlib.md5(encoded).hexdigest()
+        e = time.time()
+        elapsed = e - s
+        self.log(' '.join([
+            f"{elapsed:.3f}s",
+            f"{len(img_data)/1000}kb",
+            datetime.datetime.now().strftime("%H:%M:%S.%f"),
+        ]))
+        return Response(
+            img_data=img_data,
+            evaluation=d.get("evaluation"),
+            md5=md5,
+            elapsed=elapsed,
+        )
+
+    def log(self, s: str):
+        if secrets.Vars.is_local:
+            print(s)
+
     def get_chain(
         self,
         payload: firebase_wrapper.DataInput,
@@ -92,6 +118,19 @@ class Screenshot:
             ),
         ]
 
+    async def execute_chain(
+        self,
+        chain: typing.List[typing.Tuple[str, typing.Any]],
+    ) -> typing.Dict[str, typing.Any]:
+        rval = {}
+        for i, c in chain:
+            start = time.time()
+            j = c(rval)
+            if j is not None:
+                rval[i] = await j
+            self.log(f"{i} {time.time() - start}")
+        return rval
+
     async def get_img(
         self,
         d: typing.Dict[str, typing.Any],
@@ -113,32 +152,6 @@ class Screenshot:
         encoded = base64.b64encode(binary_data)
         return encoded
 
-    def __call__(self, request: Request) -> Response:
-        s = time.time()
-        chain = self.get_chain(request.data_input, request.evaluation)
-        _d = self.execute_chain(chain)
-        d = asyncio.run(_d)
-        encoded: bytes = d["img"]
-        img_data = encoded.decode('utf-8')
-        md5 = hashlib.md5(encoded).hexdigest()
-        e = time.time()
-        elapsed = e - s
-        self.log(' '.join([
-            f"{elapsed:.3f}s",
-            f"{len(img_data)/1000}kb",
-            datetime.datetime.now().strftime("%H:%M:%S.%f"),
-        ]))
-        return Response(
-            img_data=img_data,
-            evaluation=d.get("evaluation"),
-            md5=md5,
-            elapsed=elapsed,
-        )
-
-    def log(self, s: str):
-        if secrets.Vars.is_local:
-            print(s)
-
     def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:
         text = evaluation \
             if type(evaluation) is str \
@@ -151,16 +164,3 @@ class Screenshot:
         img_byte_arr = io.BytesIO()
         img.save(img_byte_arr, format='PNG')
         return img_byte_arr.getvalue()
-
-    async def execute_chain(
-        self,
-        chain: typing.List[typing.Tuple[str, typing.Any]],
-    ) -> typing.Dict[str, typing.Any]:
-        rval = {}
-        for i, c in chain:
-            start = time.time()
-            j = c(rval)
-            if j is not None:
-                rval[i] = await j
-            self.log(f"{i} {time.time() - start}")
-        return rval
