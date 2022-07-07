@@ -20,7 +20,10 @@ class Vars:
 
 def main():
     init()
-    run_cron()
+    try:
+        run_cron()
+    finally:
+        Vars._screenshot_manager.close()
     print("success")
 
 
@@ -34,23 +37,28 @@ def init():
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
-    start = time.time()
-    end = start + period_seconds + grace_period_seconds
-    loops = 0
-    while time.time() < end:
-        loops_per = loops / (time.time() - start)
-        loops += 1
-        if loops % 10 == 0:
-            print(loops, "loops", f"{loops_per:.2f}/s")
+    def helper():
+        start = time.time()
+        end = start + period_seconds + grace_period_seconds
+        loops = 0
+        while time.time() < end:
+            loops_per = loops / (time.time() - start)
+            loops += 1
+            if loops % 10 == 0:
+                print(loops, "loops", f"{loops_per:.2f}/s")
 
-        # exit if another process has spun up to take over
-        new_token = firebase_wrapper.get_token()
-        if new_token != Vars._token:
-            print("exiting cron", loops)
-            return True
+            # exit if another process has spun up to take over
+            new_token = firebase_wrapper.get_token()
+            if new_token != Vars._token:
+                print("exiting cron", loops)
+                return True
 
-        run_cron()
-    return False
+            run_cron()
+        return False
+
+    rval = helper()
+    Vars._screenshot_manager.close()
+    return rval
 
 
 # refresh token is not actually used to auth anymore

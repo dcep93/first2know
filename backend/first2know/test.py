@@ -34,20 +34,22 @@ class TestScreenshot(unittest.TestCase):
             evaluation_to_img=False,
         )
         num_to_run = 2
-        m = manager.Manager(screenshot.Screenshot, num_to_run)
         r = screenshot.Request(
             data_input=data_input,
             evaluation=None,
         )
-        with concurrent.futures.ThreadPoolExecutor(num_to_run) as executor:
-            s = time.time()
-            _responses = executor.map(
-                m.run,
-                [r for _ in range(num_to_run)],
-            )
-            responses = list(_responses)
-            e = time.time()
-        m.close()
+        m = manager.Manager(screenshot.Screenshot, num_to_run)
+        try:
+            with concurrent.futures.ThreadPoolExecutor(num_to_run) as executor:
+                s = time.time()
+                _responses = executor.map(
+                    m.run,
+                    [r for _ in range(num_to_run)],
+                )
+                responses = list(_responses)
+                e = time.time()
+        finally:
+            m.close()
         elapsed = e - s
         total = sum([i.elapsed for i in responses])
         self.assertLess(elapsed, total)

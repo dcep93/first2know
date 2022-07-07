@@ -105,9 +105,11 @@ def _decrypt_to_handle(
     encrypted: str,
     data_output: DataOutput,
 ) -> typing.Optional[ToHandle]:
-    data_input_d = json.loads(decrypt(encrypted))
+    decrypted = decrypt(encrypted)
+    data_input_d = json.loads(decrypted)
     encrypted_user = data_input_d.pop("user")["encrypted"]
-    user = User(**json.loads(decrypt(encrypted_user)))
+    decrypted_user = decrypt(encrypted_user)
+    user = User(**json.loads(decrypted_user))
     if user.encrypted != secrets.Vars.secrets.client_secret:
         return None
     to_handle = ToHandle(
