@@ -7,7 +7,7 @@ import firebase, {
   ToHandleType,
   UserType,
 } from "./firebase";
-import ScreenshotFetcher from "./ScreenshotFetcher";
+import ImgRenderer from "./ImgRenderer";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
@@ -28,14 +28,7 @@ type PropsType = {
   allToHandle: AllToHandleType;
 };
 
-class ToHandle extends React.Component<
-  PropsType,
-  {
-    k?: string;
-    resolve?: () => void;
-    reject?: (s: string) => void;
-  }
-> {
+class ToHandle extends React.Component<PropsType, { raw_img_data: string }> {
   render() {
     const defaultParamsValue = this.props.toHandle?.data_input.params;
     return (
@@ -112,11 +105,7 @@ class ToHandle extends React.Component<
           </div>
           <input type="submit" value="Check Screenshot" />
         </form>
-        <ScreenshotFetcher
-          allToHandle={this.props.allToHandle}
-          img_data={this.props.toHandle?.data_output.img_data}
-          listenerF={this.listenerF.bind(this)}
-        />
+        <ImgRenderer img_data={this.state.raw_img_data} />
         <SubmitableButton
           onSubmit={(navigate) => this.onSubmit(this.props.submit, navigate)}
         />
@@ -159,59 +148,14 @@ class ToHandle extends React.Component<
     }
     // always fetch screenshot
     // to validate the payload
-    const p = new Promise<void>((resolve, reject) => {
-      this.setState({ resolve, reject });
-    });
-    return encrypt(data_input, this.props.user, old_encrypted)
-      .then((encrypted) =>
+    return encrypt(data_input, this.props.user, old_encrypted).then(
+      (encrypted) =>
         firebase.pushToHandle(
           data_input,
           encrypted,
           this.props.user.screen_name
         )
-      )
-      .then((k) => this.setState({ k }))
-      .then(() => p)
-      .catch((err) => {
-        this.setState({
-          resolve: undefined,
-          reject: undefined,
-          k: undefined,
-        });
-        throw err;
-      })
-      .then(() => {
-        this.setState({
-          resolve: undefined,
-          reject: undefined,
-          k: undefined,
-        });
-        return data_input;
-      })
-      .then(({ no_tweet, ...data_input }) => ({
-        old_encrypted,
-        ...data_input,
-      }));
-  }
-
-  listenerF(): Promise<string | null | undefined> | null {
-    const data_output = this.props.allToHandle[this.state.k!]?.data_output;
-    if (data_output) {
-      if (data_output.error) {
-        return firebase
-          .deleteToHandle(this.state.k!)
-          .then(() => this.state.reject!(data_output.error!.message))
-          .then(() => undefined);
-      } else if (data_output.img_data) {
-        return firebase
-          .deleteToHandle(this.state.k!)
-          .then(() => this.state.resolve!())
-          .then(() => data_output.img_data);
-      } else {
-        return Promise.resolve(null);
-      }
-    }
-    return null;
+    );
   }
 }
 
