@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from PIL import Image, ImageDraw
 
 from . import firebase_wrapper
+from . import proxy
 from . import secrets
 
 import nest_asyncio
@@ -60,7 +61,8 @@ class Screenshot:
         chain = self.get_chain(request.data_input, request.evaluation)
         _d = self.execute_chain(chain)
         d = asyncio.run(_d)
-        encoded: bytes = d["img"]
+        binary_data: bytes = d["img"]
+        encoded = base64.b64encode(binary_data)
         img_data = encoded.decode('utf-8')
         md5 = hashlib.md5(encoded).hexdigest()
         e = time.time()
@@ -89,6 +91,20 @@ class Screenshot:
         params = None \
             if payload.params is None \
             else dict(payload.params)
+        if payload.raw_proxy:
+            return [
+                (
+                    "proxy_result",
+                    lambda d: d.update({
+                        "proxy_result":
+                        proxy.proxy(proxy.Request(url=payload.url, params={}))
+                    }),
+                ),
+                (
+                    "img",
+                    lambda d: self.obj_to_img_bytes(d["proxy_result"]),
+                ),
+            ]
         return [
             (
                 "context",
@@ -138,7 +154,7 @@ class Screenshot:
     ) -> bytes:
         if payload.evaluation_to_img:
             evaluation = d.get("evaluation")
-            binary_data = self.evaluation_to_img_bytes(evaluation)
+            binary_data = self.obj_to_img_bytes(evaluation)
         else:
             key = str(uuid.uuid1())
             dest = f"screenshot_{key}.png"
@@ -149,10 +165,9 @@ class Screenshot:
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
-        encoded = base64.b64encode(binary_data)
-        return encoded
+        return binary_data
 
-    def evaluation_to_img_bytes(self, evaluation: typing.Any) -> bytes:
+    def obj_to_img_bytes(self, evaluation: typing.Any) -> bytes:
         text = evaluation \
             if type(evaluation) is str \
             else json.dumps(evaluation, indent=1)

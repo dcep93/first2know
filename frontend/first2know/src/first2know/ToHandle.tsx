@@ -66,7 +66,8 @@ function ToHandle(props: {
             .then((json) => update(json.img_data))
             .catch((err) => {
               update(undefined);
-              alert(err);
+              const e = `${err}`;
+              alert(e.slice(e.length - 1000));
               throw err;
             })
         }
@@ -165,6 +166,7 @@ function getData(
     evaluation: null,
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || null,
+    raw_proxy: null,
   };
   if (data_input.url === "") {
     throw Error("need to have a url");

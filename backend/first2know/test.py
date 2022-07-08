@@ -15,6 +15,7 @@ class TestScreenshot(unittest.TestCase):
             selector=None,
             evaluate=None,
             evaluation_to_img=False,
+            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -32,6 +33,7 @@ class TestScreenshot(unittest.TestCase):
             selector=None,
             evaluate=None,
             evaluation_to_img=False,
+            raw_proxy=False,
         )
         num_to_run = 2
         r = screenshot.Request(
@@ -61,6 +63,7 @@ class TestScreenshot(unittest.TestCase):
             selector="h1 >> nth=0",
             evaluate=None,
             evaluation_to_img=False,
+            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -78,6 +81,7 @@ class TestScreenshot(unittest.TestCase):
             selector=None,
             evaluate="document.body.innerHTML.substring(0, 20)",
             evaluation_to_img=False,
+            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -95,6 +99,7 @@ class TestScreenshot(unittest.TestCase):
             selector=None,
             evaluate="document.body.innerHTML",
             evaluation_to_img=True,
+            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -112,6 +117,7 @@ class TestScreenshot(unittest.TestCase):
             selector=None,
             evaluate="(prev) => prev + 1",
             evaluation_to_img=False,
+            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,

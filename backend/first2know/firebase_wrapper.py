@@ -41,6 +41,7 @@ class DataInput(BaseModel):
     selector: typing.Optional[str]
     evaluate: typing.Optional[str]
     evaluation_to_img: typing.Optional[bool]
+    raw_proxy: typing.Optional[bool]
 
 
 class User(BaseModel):
@@ -95,7 +96,8 @@ def get_to_handle() -> typing.List[ToHandle]:
     return [
         i for i in [
             _decrypt_to_handle(k, v["encrypted"], v["data_output"])
-            for k, v in Vars._raw_all_to_handle.items() if "encrypted" in v
+            for k, v in Vars._raw_all_to_handle.items()
+            if "encrypted" in v and "data_output" in v
         ] if i
     ]
 
