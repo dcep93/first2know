@@ -41,7 +41,7 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
         end = start + period_seconds + grace_period_seconds
         loops = 0
         s = start
-        print_freq = 50
+        print_freq = 10
         while time.time() < end:
             now = time.time()
             loops += 1
@@ -77,7 +77,8 @@ def refresh_access_token() -> str:
 def run_cron():
     to_handle_arr = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(NUM_SCREENSHOTTERS) as executor:
-        executor.map(handle, to_handle_arr)
+        _results = executor.map(handle, to_handle_arr)
+        list(_results)
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
