@@ -23,6 +23,8 @@ nest_asyncio.apply()
 
 TIMEOUT_SECONDS = 10.0
 
+GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"  # noqa
+
 
 class Request(BaseModel):
     data_input: firebase_wrapper.DataInput
@@ -88,16 +90,21 @@ class Screenshot:
         payload: firebase_wrapper.DataInput,
         previous_evaluation: typing.Any,
     ):
-        params = None \
+        params = {} \
             if payload.params is None \
             else dict(payload.params)
+
+        if payload.add_user_agent:
+            params["user-agent"] = GOOD_USER_AGENT
+
         if payload.raw_proxy:
             return [
                 (
                     "proxy_result",
                     lambda d: d.update({
                         "proxy_result":
-                        proxy.proxy(proxy.Request(url=payload.url, params={}))
+                        proxy.proxy(
+                            proxy.Request(url=payload.url, params=params))
                     }),
                 ),
                 (

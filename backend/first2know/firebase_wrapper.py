@@ -37,11 +37,12 @@ class DataOutput(BaseModel):
 
 class DataInput(BaseModel):
     url: str
-    params: typing.Optional[typing.Dict[str, typing.Any]]
-    selector: typing.Optional[str]
-    evaluate: typing.Optional[str]
-    evaluation_to_img: typing.Optional[bool]
-    raw_proxy: typing.Optional[bool]
+    params: typing.Optional[typing.Dict[str, typing.Any]] = None
+    selector: typing.Optional[str] = None
+    evaluate: typing.Optional[str] = None
+    evaluation_to_img: typing.Optional[bool] = False
+    raw_proxy: typing.Optional[bool] = False
+    add_user_agent: typing.Optional[bool] = False
 
 
 class User(BaseModel):

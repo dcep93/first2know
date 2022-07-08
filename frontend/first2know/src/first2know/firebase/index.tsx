@@ -32,6 +32,7 @@ export type DataInputType = {
   evaluate: string | null;
   evaluation_to_img: boolean | null;
   raw_proxy: boolean | null;
+  add_user_agent: boolean | null;
 };
 
 export type ToHandleType = {

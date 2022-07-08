@@ -9,14 +9,7 @@ from . import screenshot
 
 class TestScreenshot(unittest.TestCase):
     def test_screenshot(self):
-        data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
-            params={},
-            selector=None,
-            evaluate=None,
-            evaluation_to_img=False,
-            raw_proxy=False,
-        )
+        data_input = firebase_wrapper.DataInput(url="https://example.org")
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
             evaluation=None,
@@ -27,14 +20,7 @@ class TestScreenshot(unittest.TestCase):
         )
 
     def test_manager(self):
-        data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
-            params={},
-            selector=None,
-            evaluate=None,
-            evaluation_to_img=False,
-            raw_proxy=False,
-        )
+        data_input = firebase_wrapper.DataInput(url="https://example.org")
         num_to_run = 2
         r = screenshot.Request(
             data_input=data_input,
@@ -59,11 +45,7 @@ class TestScreenshot(unittest.TestCase):
     def test_selector(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
-            params={},
             selector="h1 >> nth=0",
-            evaluate=None,
-            evaluation_to_img=False,
-            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -77,11 +59,7 @@ class TestScreenshot(unittest.TestCase):
     def test_evaluate(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
-            params={},
-            selector=None,
             evaluate="document.body.innerHTML.substring(0, 20)",
-            evaluation_to_img=False,
-            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -95,11 +73,8 @@ class TestScreenshot(unittest.TestCase):
     def test_evaluation_to_img(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
-            params={},
-            selector=None,
             evaluate="document.body.innerHTML",
             evaluation_to_img=True,
-            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
@@ -113,11 +88,7 @@ class TestScreenshot(unittest.TestCase):
     def test_chain_evaluation(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
-            params={},
-            selector=None,
             evaluate="(prev) => prev + 1",
-            evaluation_to_img=False,
-            raw_proxy=False,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input,
