@@ -166,6 +166,8 @@ function getData(
     evaluation: null,
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || null,
+    // TODO dcep93 specify
+    add_user_agent: null,
     raw_proxy: null,
   };
   if (data_input.url === "") {

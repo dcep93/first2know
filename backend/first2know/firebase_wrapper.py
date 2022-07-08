@@ -54,6 +54,7 @@ class User(BaseModel):
 class ToHandle(BaseModel):
     data_input: DataInput
     data_output: DataOutput
+    # TODO dcep93 multiple users
     user: User
     key: str
 
