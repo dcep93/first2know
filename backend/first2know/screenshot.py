@@ -21,8 +21,6 @@ import nest_asyncio
 
 nest_asyncio.apply()
 
-TIMEOUT_SECONDS = 10.0
-
 GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"  # noqa
 
 
@@ -165,10 +163,9 @@ class Screenshot:
         else:
             key = str(uuid.uuid1())
             dest = f"screenshot_{key}.png"
-            to_screenshot = d["page"] \
-                if payload.selector is None \
-                else d["page"].locator(payload.selector)
-            await to_screenshot.screenshot(path=dest)
+            if payload.selector is not None:
+                await d["page"].query_selector(payload.selector)
+            await d["page"].screenshot(path=dest, timeout=1000)
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)

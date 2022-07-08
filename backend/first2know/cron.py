@@ -5,6 +5,7 @@ import concurrent.futures
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
+from . import secrets
 from . import twitter_wrapper
 
 # update version to clear errors
@@ -21,10 +22,10 @@ class Vars:
 def main():
     init()
     try:
-        run_cron()
+        count = run_cron()
     finally:
         Vars._screenshot_manager.close()
-    print("success")
+    print("success", count)
 
 
 def init():
@@ -74,17 +75,19 @@ def refresh_access_token() -> str:
     return new_token
 
 
-def run_cron():
+def run_cron() -> int:
     to_handle_arr = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(NUM_SCREENSHOTTERS) as executor:
         _results = executor.map(handle, to_handle_arr)
-        list(_results)
+        results = list(_results)
+    return len(results)
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     previous_error = to_handle.data_output.error
-    if previous_error is not None and previous_error.version == VERSION:
-        return
+    if not secrets.Vars.is_local:
+        if previous_error is not None and previous_error.version == VERSION:
+            return
 
     evaluation = None \
         if to_handle.data_output.screenshot_data is None \
