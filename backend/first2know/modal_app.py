@@ -3,7 +3,7 @@ import os
 
 import modal
 
-PERIOD_SECONDS = 60 * 15
+PERIOD_SECONDS = 60 * 5
 GRACE_PERIOD_SECONDS = 60
 
 if not modal.is_local():
