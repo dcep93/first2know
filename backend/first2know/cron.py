@@ -115,6 +115,8 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if screenshot_response.md5 == old_md5:
         return
 
+    times = to_handle.data_output.times + [time.time()]
+
     img_url = twitter_wrapper.tweet(
         to_handle.key,
         to_handle.user.screen_name,
@@ -128,7 +130,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
             evaluation=screenshot_response.evaluation,
         ),
         error=None,
-        times=to_handle.data_output.times + [time.time()],
+        times=times,
     )
 
     firebase_wrapper.write_data(to_handle.key, to_write)
