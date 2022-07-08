@@ -41,6 +41,7 @@ class DataInput(BaseModel):
     selector: typing.Optional[str] = None
     evaluate: typing.Optional[str] = None
     evaluation_to_img: typing.Optional[bool] = False
+    # TODO dcep93 evaluate to sleepuntil
     raw_proxy: typing.Optional[bool] = False
     user_agent_hack: typing.Optional[bool] = False
 
