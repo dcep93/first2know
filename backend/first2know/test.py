@@ -98,3 +98,16 @@ class TestScreenshot(unittest.TestCase):
             screenshot_response.evaluation,
             421,
         )
+
+    def test_user_agent_hack(self):
+        data_input = firebase_wrapper.DataInput(
+            url="https://streeteasy.com/",
+            evaluate="document.body.innerHTML",
+            user_agent_hack=True,
+        )
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input, ))
+        self.assertEqual(
+            screenshot_response.evaluation,
+            421,
+        )

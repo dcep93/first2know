@@ -26,7 +26,7 @@ GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 
 class Request(BaseModel):
     data_input: firebase_wrapper.DataInput
-    evaluation: typing.Any
+    evaluation: typing.Any = None
 
 
 class Response(BaseModel):
