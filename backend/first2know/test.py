@@ -102,12 +102,24 @@ class TestScreenshot(unittest.TestCase):
     def test_user_agent_hack(self):
         data_input = firebase_wrapper.DataInput(
             url="https://streeteasy.com/",
-            evaluate="document.body.innerHTML",
+            evaluate="document.body.getElementsByTagName('p')[0].innerHTML",
             user_agent_hack=True,
+        )
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input, ))
+        self.assertNotEqual(
+            screenshot_response.evaluation,
+            'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
+        )
+
+    def test_user_agent_hack_is_valid(self):
+        data_input = firebase_wrapper.DataInput(
+            url="https://streeteasy.com/",
+            evaluate="document.body.getElementsByTagName('p')[0].innerHTML",
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
         self.assertEqual(
             screenshot_response.evaluation,
-            421,
+            'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
         )
