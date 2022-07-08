@@ -94,7 +94,7 @@ class Screenshot:
             if payload.params is None \
             else dict(payload.params)
 
-        if payload.add_user_agent:
+        if payload.user_agent_hack:
             params["user-agent"] = GOOD_USER_AGENT
 
         if payload.raw_proxy:

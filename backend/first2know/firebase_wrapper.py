@@ -42,7 +42,7 @@ class DataInput(BaseModel):
     evaluate: typing.Optional[str] = None
     evaluation_to_img: typing.Optional[bool] = False
     raw_proxy: typing.Optional[bool] = False
-    add_user_agent: typing.Optional[bool] = False
+    user_agent_hack: typing.Optional[bool] = False
 
 
 class User(BaseModel):

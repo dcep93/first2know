@@ -11,6 +11,7 @@ import { sfetch, url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
+const userAgentRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
@@ -90,6 +91,14 @@ function ToHandle(props: {
           </div>
         )}
         <div>
+          user agent hack:{" "}
+          <input
+            ref={userAgentRef}
+            defaultChecked={props.toHandle?.data_input.user_agent_hack || false}
+            type="checkbox"
+          />
+        </div>
+        <div>
           params:{" "}
           <input
             ref={paramsRef}
@@ -166,8 +175,8 @@ function getData(
     evaluation: null,
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || null,
+    user_agent_hack: userAgentRef.current!.checked || null,
     // TODO dcep93 specify
-    add_user_agent: null,
     raw_proxy: null,
   };
   if (data_input.url === "") {
