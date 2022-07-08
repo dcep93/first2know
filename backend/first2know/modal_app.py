@@ -1,7 +1,7 @@
 import json
 import os
 
-import modal
+import modal  # type: ignore
 
 PERIOD_SECONDS = 60 * 5
 GRACE_PERIOD_SECONDS = 60
