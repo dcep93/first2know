@@ -19,7 +19,11 @@ export function sfetch(url: string, options?: any) {
     });
 }
 
+function iter() {
+  sfetch(url).then(() => setTimeout(iter, FETCH_INTERVAL_MS));
+}
+
 sfetch(url)
   .then((resp) => resp.text())
   .then((text) => console.log(text))
-  .then(() => setInterval(() => sfetch(url), FETCH_INTERVAL_MS));
+  .then(iter);
