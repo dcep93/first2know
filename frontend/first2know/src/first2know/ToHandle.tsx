@@ -16,7 +16,7 @@ const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
-const reuseCookieRef = createRef<HTMLInputElement>();
+const deleteOldCookieRef = createRef<HTMLInputElement>();
 
 type SubmitType = (
   data_input: DataInputType & { old_encrypted: string | null }
@@ -86,8 +86,8 @@ function ToHandle(props: {
         </div>
         {props.toHandle && (
           <div>
-            reuse saved cookie?<span> </span>
-            <input ref={reuseCookieRef} defaultChecked type="checkbox" />
+            delete old cookie?<span> </span>
+            <input ref={deleteOldCookieRef} type="checkbox" />
           </div>
         )}
         <div>
@@ -161,9 +161,9 @@ function getData(
   const old_encrypted =
     toHandle === undefined
       ? null
-      : reuseCookieRef.current?.checked
-      ? toHandle.encrypted
-      : null;
+      : deleteOldCookieRef.current?.checked
+      ? null
+      : toHandle.encrypted;
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
   const cookie = cookieRef.current!.value || null;

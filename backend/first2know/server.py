@@ -57,10 +57,16 @@ class InputWithOldEncrypted(firebase_wrapper.DataInput):
         if self.old_encrypted is not None:
             decrypted = firebase_wrapper.decrypt(self.old_encrypted)
             data_input = firebase_wrapper.DataInput(**json.loads(decrypted))
-            decrypted_params = data_input.params
+            decrypted_params = {} \
+                if data_input.params is None \
+                else data_input.params
             cookie = decrypted_params.get("cookie")
             if cookie is not None:
-                self.params["cookie"] = cookie
+                params = {} \
+                    if self.params is None \
+                    else self.params
+                params["cookie"] = cookie
+                self.params = params
 
 
 @web_app.post("/screenshot_img")
