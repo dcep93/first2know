@@ -56,7 +56,9 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
                 print("exiting cron", loops)
                 return True
 
-            run_cron()
+            count = run_cron()
+            if count == 0:
+                time.sleep(1)
         return False
 
     Vars._token = refresh_access_token()
