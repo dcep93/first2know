@@ -163,9 +163,12 @@ class Screenshot:
         else:
             key = str(uuid.uuid1())
             dest = f"screenshot_{key}.png"
-            if payload.selector is not None:
-                await d["page"].query_selector(payload.selector)
-            await d["page"].screenshot(path=dest, timeout=1000)
+            if payload.selector is None:
+                to_screenshot = d["page"]
+            else:
+                d["page"].set_default_timeout(1000)
+                to_screenshot = d["page"].locator(payload.selector)
+            await to_screenshot.screenshot(path=dest)
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
