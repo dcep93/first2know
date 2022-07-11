@@ -32,6 +32,7 @@ image = modal.DebianSlim().run_commands([
     'pillow',
     'firebase-admin',
     'nest-asyncio',
+    'beautifulsoup4',
 ])
 modal_app = modal.Stub(image=image)
 

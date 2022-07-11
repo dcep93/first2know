@@ -40,6 +40,8 @@ RUN pip3 install firebase-admin
 
 RUN pip3 install nest-asyncio
 
+RUN pip3 install beautifulsoup4
+
 EXPOSE 8000
 
 COPY . ./

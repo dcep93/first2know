@@ -59,6 +59,8 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
             count = run_cron()
             if count == 0:
                 time.sleep(1)
+            # TODO dcep93 sleep properly
+            time.sleep(1)
         return False
 
     Vars._token = refresh_access_token()

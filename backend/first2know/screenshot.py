@@ -101,7 +101,10 @@ class Screenshot:
                     lambda d: d.update({
                         "proxy_result":
                         proxy.proxy(
-                            proxy.Request(url=payload.url, params=params))
+                            proxy.Request(
+                                url=payload.url,
+                                params=proxy.Params(**params),
+                            ))
                     }),
                 ),
                 (
