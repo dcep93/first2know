@@ -164,7 +164,7 @@ class Screenshot:
             if payload.selector is None:
                 to_screenshot = d["page"]
             else:
-                d["page"].set_default_timeout(1000)
+                d["page"].set_default_timeout(1001)
                 to_screenshot = d["page"].locator(payload.selector)
             await to_screenshot.screenshot(path=dest)
             with open(dest, "rb") as fh:

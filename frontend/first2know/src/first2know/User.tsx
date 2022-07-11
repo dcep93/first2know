@@ -11,7 +11,6 @@ function User(props: {
     <div>
       <div>
         {props.user.screen_name}
-        <span> </span>
         <button
           disabled={window.location.hostname === "localhost"}
           onClick={() => {

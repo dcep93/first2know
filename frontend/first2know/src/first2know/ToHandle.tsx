@@ -10,6 +10,7 @@ import loading from "./loading.gif";
 import { sfetch, url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
+const rawProxyRef = createRef<HTMLInputElement>();
 const cookieRef = createRef<HTMLInputElement>();
 const userAgentRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
@@ -81,12 +82,20 @@ function ToHandle(props: {
             type="text"
           />
         </div>
+        <div>
+          raw proxy ?
+          <input
+            ref={rawProxyRef}
+            defaultChecked={props.toHandle?.data_input.raw_proxy || false}
+            type="checkbox"
+          />
+        </div>
         <div title={"will be encrypted"}>
           cookie: <input ref={cookieRef} type="text" />
         </div>
         {props.toHandle && (
           <div>
-            delete old cookie?<span> </span>
+            delete old cookie?
             <input ref={deleteOldCookieRef} type="checkbox" />
           </div>
         )}
@@ -176,8 +185,7 @@ function getData(
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || null,
     user_agent_hack: userAgentRef.current!.checked || null,
-    // TODO dcep93 specify
-    raw_proxy: null,
+    raw_proxy: rawProxyRef.current!.checked || null,
   };
   if (data_input.url === "") {
     throw Error("need to have a url");
