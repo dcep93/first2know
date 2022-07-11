@@ -11,6 +11,7 @@ class Params(BaseModel):
     data: typing.Any = None
     find: typing.Optional[typing.List[str]] = None
     user_agent: typing.Optional[str] = Field(None, alias="user-agent")
+    cookie: typing.Optional[str] = None
 
 
 class Request(BaseModel):
@@ -22,6 +23,8 @@ def proxy(payload: Request) -> str:
     headers = dict(payload.params.headers)
     if payload.params.user_agent:
         headers["user-agent"] = payload.params.user_agent
+    if payload.params.cookie:
+        headers["cookie"] = payload.params.cookie
 
     resp = requests.get(
         payload.url,
