@@ -18,16 +18,14 @@ class Request(BaseModel):
 
 
 def proxy(payload: Request) -> str:
-    headers = payload.params.headers
-    data = payload.params.data
     resp = requests.get(
         payload.url,
-        headers=headers,
-        data=data,
+        headers=payload.params.headers,
+        data=payload.params.data,
     )
     if payload.params.find:
         soup = BeautifulSoup(resp.text, "html.parser")
-        found = soup.find(payload.params.find)
+        found = soup.select_one(payload.params.find)
         if not found:
             raise Exception("could not find in html")
         return found.prettify()  # type: ignore

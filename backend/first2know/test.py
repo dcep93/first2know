@@ -123,3 +123,23 @@ class TestScreenshot(unittest.TestCase):
             screenshot_response.evaluation,
             'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
         )
+
+    def test_raw_proxy(self):
+        data_input = firebase_wrapper.DataInput(
+            url="https://streeteasy.com/building/170-amsterdam/05o",
+            raw_proxy=True,
+            params={
+                "find": ".main-info",
+                "headers": {
+                    "user-agent": screenshot.GOOD_USER_AGENT,
+                }
+            },
+            evaluate='document.body.innerHTML',
+        )
+        screenshot_response = screenshot.Screenshot()(screenshot.Request(
+            data_input=data_input, ))
+        print(screenshot_response.evaluation)
+        self.assertEqual(
+            screenshot_response.evaluation,
+            'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
+        )
