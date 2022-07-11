@@ -69,7 +69,7 @@ function ToHandle(props: {
             .catch((err) => {
               update(undefined);
               const e = `${err}`;
-              alert(e.slice(e.length - 1000));
+              alert(e.slice(Math.max(0, e.length - 1000)));
               throw err;
             })
         }

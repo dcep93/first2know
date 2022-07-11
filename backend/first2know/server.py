@@ -44,11 +44,10 @@ web_app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# known issue: RuntimeError: Event loop is closed
-@web_app.on_event("shutdown")
-def shutdown():
-    Vars._screenshot_manager.close()
+# # known issue: RuntimeError: Event loop is closed
+# @web_app.on_event("shutdown")
+# def shutdown():
+#     Vars._screenshot_manager.close()
 
 
 @web_app.get("/")

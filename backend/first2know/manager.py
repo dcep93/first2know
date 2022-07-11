@@ -53,6 +53,7 @@ class Manager(typing.Generic[T, U]):
         self.request_queue.put_nowait((request, register))
         (response, is_successful) = register.get()
         if not is_successful:
+            print(f"raising {response}")
             raise response
         self.response_queues.put_nowait(register)
         return response
