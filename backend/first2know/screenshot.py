@@ -158,7 +158,7 @@ class Screenshot:
     ) -> bytes:
         if payload.evaluation_to_img:
             evaluation = d.get("evaluation")
-            binary_data = self.obj_to_img_bytes(evaluation)
+            binary_data = await self.obj_to_img_bytes(evaluation)
         else:
             dest = f"screenshot_{self.id}.png"
             if payload.selector is None:
@@ -172,7 +172,7 @@ class Screenshot:
             os.remove(dest)
         return binary_data
 
-    def obj_to_img_bytes(self, evaluation: typing.Any) -> bytes:
+    async def obj_to_img_bytes(self, evaluation: typing.Any) -> bytes:
         text = evaluation \
             if type(evaluation) is str \
             else json.dumps(evaluation, indent=1)
