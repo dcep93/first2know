@@ -45,6 +45,12 @@ web_app.add_middleware(
 )
 
 
+# known issue: RuntimeError: Event loop is closed
+@web_app.on_event("shutdown")
+def shutdown():
+    Vars._screenshot_manager.close()
+
+
 @web_app.get("/")
 def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
