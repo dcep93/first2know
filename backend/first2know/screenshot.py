@@ -97,8 +97,8 @@ class Screenshot:
             text = evaluation \
                 if type(evaluation) is str \
                 else json.dumps(evaluation, indent=1)
-            width = 100
-            height = 100
+            width = 1000
+            height = 1000
             img = Image.new('1', (width, height))
             draw = ImageDraw.Draw(img)
             draw.text((0, 0), text, fill=255)
