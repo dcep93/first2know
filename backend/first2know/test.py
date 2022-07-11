@@ -128,7 +128,7 @@ class TestScreenshot(unittest.TestCase):
         data_input = firebase_wrapper.DataInput(
             url="https://streeteasy.com/building/170-amsterdam/05o",
             raw_proxy=True,
-            params={"find": ".main-info"},
+            params={"find": ["link[rel='stylesheet']", ".main-info"]},
             user_agent_hack=True,
             evaluate='document.body.innerHTML',
         )

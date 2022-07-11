@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 class Params(BaseModel):
     headers: typing.Dict[str, typing.Any] = {}
     data: typing.Any = None
-    find: typing.Optional[str] = None
+    find: typing.Optional[typing.List[str]] = None
     user_agent: typing.Optional[str] = Field(None, alias="user-agent")
 
 
@@ -30,9 +30,9 @@ def proxy(payload: Request) -> str:
     )
     if payload.params.find:
         soup = BeautifulSoup(resp.text, "html.parser")
-        found = soup.select_one(payload.params.find)
-        if not found:
-            raise Exception("could not find in html")
-        return found.prettify()  # type: ignore
+
+        return "".join([
+            i.prettify() for j in payload.params.find for i in soup.select(j)
+        ])
 
     return resp.text
