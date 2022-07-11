@@ -1,4 +1,4 @@
-const IS_LOCAL = false;
+const IS_LOCAL = true;
 const FETCH_INTERVAL_MS = 10 * 1000;
 
 export const url = IS_LOCAL

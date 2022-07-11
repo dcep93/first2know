@@ -38,19 +38,18 @@ class Response(BaseModel):
 
 # https://playwright.dev/python/docs/intro
 class Screenshot:
-    p: typing.Any
-    browser: typing.Any
-
     def __init__(self):
-        asyncio.run(self.async_init())
+        self.id = str(uuid.uuid1())
+        self.p, self.browser = asyncio.run(self.async_init())
 
-    async def async_init(self):
-        from playwright.async_api import async_playwright as p  # type: ignore # noqa
+    async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
+        from playwright.async_api import async_playwright as _p  # type: ignore # noqa
 
-        self.p = p()
+        p = _p()
 
-        entered = await self.p.__aenter__()
-        self.browser = await entered.chromium.launch()
+        entered = await p.__aenter__()
+        browser = await entered.chromium.launch()
+        return p, browser
 
     async def close(self):
         await self.browser.close()
@@ -81,7 +80,7 @@ class Screenshot:
 
     def log(self, s: str):
         if secrets.Vars.is_local:
-            print(s)
+            print(self.id, s)
 
     def get_chain(
         self,
@@ -161,8 +160,7 @@ class Screenshot:
             evaluation = d.get("evaluation")
             binary_data = self.obj_to_img_bytes(evaluation)
         else:
-            key = str(uuid.uuid1())
-            dest = f"screenshot_{key}.png"
+            dest = f"screenshot_{self.id}.png"
             if payload.selector is None:
                 to_screenshot = d["page"]
             else:
