@@ -130,11 +130,11 @@ class TestScreenshot(unittest.TestCase):
             raw_proxy=True,
             params={"find": ["link[rel='stylesheet']", ".main-info"]},
             user_agent_hack=True,
-            evaluate='document.body.innerHTML',
+            evaluate='document.head.innerHTML + document.body.innerHTML',
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
-        starting_text = '<section class="main-info">\n'
+        starting_text = '<link href="//cdn-assets-s3.streeteasy.com/assets/'
         self.assertEqual(
             screenshot_response.evaluation[:len(starting_text)],
             starting_text,
