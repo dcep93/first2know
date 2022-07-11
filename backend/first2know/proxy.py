@@ -1,7 +1,7 @@
 import requests
 import typing
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from bs4 import BeautifulSoup
 
@@ -10,17 +10,22 @@ class Params(BaseModel):
     headers: typing.Dict[str, typing.Any] = {}
     data: typing.Any = None
     find: typing.Optional[str] = None
+    user_agent: typing.Optional[str] = Field(None, alias="user-agent")
 
 
 class Request(BaseModel):
     url: str
-    params: Params = Params()
+    params: Params = Params()  # type: ignore
 
 
 def proxy(payload: Request) -> str:
+    headers = dict(payload.params.headers)
+    if payload.params.user_agent:
+        headers["user-agent"] = payload.params.user_agent
+
     resp = requests.get(
         payload.url,
-        headers=payload.params.headers,
+        headers=headers,
         data=payload.params.data,
     )
     if payload.params.find:
