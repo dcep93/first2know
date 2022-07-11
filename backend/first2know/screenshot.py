@@ -55,12 +55,68 @@ class Screenshot:
         await self.browser.close()
         await self.p.__aexit__()
 
+    def log(self, s: str):
+        if secrets.Vars.is_local:
+            print(self.id, s)
+
     def __call__(self, request: Request) -> Response:
+        r = asyncio.run(self.__acall__(request))
+        return r
+
+    async def __acall__(
+        self,
+        request: Request,
+    ) -> Response:
         s = time.time()
-        chain = self.get_chain(request.data_input, request.evaluation)
-        _d = self.execute_chain(chain)
-        d = asyncio.run(_d)
-        binary_data: bytes = d["img"]
+
+        params = dict(request.data_input.params)
+
+        if request.data_input.user_agent_hack:
+            params["user-agent"] = GOOD_USER_AGENT
+
+        context = await self.browser.new_context()
+        page = await context.new_page()
+
+        if request.data_input.raw_proxy:
+            proxy_result = proxy.proxy(
+                proxy.Request(
+                    url=request.data_input.url,
+                    params=proxy.Params(**params),
+                ))
+            await page.set_content(proxy_result)
+        else:
+            await page.set_extra_http_headers(params)
+            await page.goto(request.data_input.url)
+        evaluation = None \
+            if request.data_input.evaluate is None \
+            else await page.evaluate(
+                request.data_input.evaluate,
+                request.evaluation,
+            )
+        if request.data_input.evaluation_to_img:
+            text = evaluation \
+                if type(evaluation) is str \
+                else json.dumps(evaluation, indent=1)
+            width = 100
+            height = 100
+            img = Image.new('1', (width, height))
+            draw = ImageDraw.Draw(img)
+            draw.text((0, 0), text, fill=255)
+            img_byte_arr = io.BytesIO()
+            img.save(img_byte_arr, format='PNG')
+            binary_data = img_byte_arr.getvalue()
+        else:
+            dest = f"screenshot_{self.id}.png"
+            if request.data_input.selector is None:
+                to_screenshot = page
+            else:
+                page.set_default_timeout(1001)
+                to_screenshot = page.locator(request.data_input.selector)
+            await to_screenshot.screenshot(path=dest)
+            with open(dest, "rb") as fh:
+                binary_data = fh.read()
+            os.remove(dest)
+
         encoded = base64.b64encode(binary_data)
         img_data = encoded.decode('utf-8')
         md5 = hashlib.md5(encoded).hexdigest()
@@ -73,117 +129,7 @@ class Screenshot:
         ]))
         return Response(
             img_data=img_data,
-            evaluation=d.get("evaluation"),
+            evaluation=evaluation,
             md5=md5,
             elapsed=elapsed,
         )
-
-    def log(self, s: str):
-        if secrets.Vars.is_local:
-            print(self.id, s)
-
-    def get_chain(
-        self,
-        payload: firebase_wrapper.DataInput,
-        previous_evaluation: typing.Any,
-    ):
-        params = {} \
-            if payload.params is None \
-            else dict(payload.params)
-
-        if payload.user_agent_hack:
-            params["user-agent"] = GOOD_USER_AGENT
-
-        if payload.raw_proxy:
-            return [
-                (
-                    "proxy_result",
-                    lambda d: d.update({
-                        "proxy_result":
-                        proxy.proxy(
-                            proxy.Request(
-                                url=payload.url,
-                                params=proxy.Params(**params),
-                            ))
-                    }),
-                ),
-                (
-                    "img",
-                    lambda d: self.obj_to_img_bytes(d["proxy_result"]),
-                ),
-            ]
-        return [
-            (
-                "context",
-                lambda d: self.browser.new_context(),
-            ),
-            (
-                "page",
-                lambda d: d["context"].new_page(),
-            ),
-            (
-                "set_extra_http_headers",
-                lambda d: d["page"].set_extra_http_headers(params),
-            ),
-            (
-                "goto",
-                lambda d: d["page"].goto(payload.url),
-            ),
-            (
-                "evaluation",
-                lambda d: None
-                if payload.evaluate is None else d["page"].evaluate(
-                    payload.evaluate, previous_evaluation),
-            ),
-            (
-                "img",
-                lambda d: self.get_img(d, payload),
-            ),
-        ]
-
-    async def execute_chain(
-        self,
-        chain: typing.List[typing.Tuple[str, typing.Any]],
-    ) -> typing.Dict[str, typing.Any]:
-        rval = {}
-        for i, c in chain:
-            start = time.time()
-            j = c(rval)
-            if j is not None:
-                rval[i] = await j
-            self.log(f"{i} {time.time() - start}")
-        return rval
-
-    async def get_img(
-        self,
-        d: typing.Dict[str, typing.Any],
-        payload: firebase_wrapper.DataInput,
-    ) -> bytes:
-        if payload.evaluation_to_img:
-            evaluation = d.get("evaluation")
-            binary_data = await self.obj_to_img_bytes(evaluation)
-        else:
-            dest = f"screenshot_{self.id}.png"
-            if payload.selector is None:
-                to_screenshot = d["page"]
-            else:
-                d["page"].set_default_timeout(1001)
-                to_screenshot = d["page"].locator(payload.selector)
-            await to_screenshot.screenshot(path=dest)
-            with open(dest, "rb") as fh:
-                binary_data = fh.read()
-            os.remove(dest)
-        return binary_data
-
-    async def obj_to_img_bytes(self, evaluation: typing.Any) -> bytes:
-        text = evaluation \
-            if type(evaluation) is str \
-            else json.dumps(evaluation, indent=1)
-        width = 100
-        height = 100
-        img = Image.new('1', (width, height))
-        draw = ImageDraw.Draw(img)
-        draw.text((0, 0), text, fill=255)
-        img_byte_arr = io.BytesIO()
-        img.save(img_byte_arr, format='PNG')
-        return img_byte_arr.getvalue()

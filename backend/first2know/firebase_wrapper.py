@@ -37,7 +37,7 @@ class DataOutput(BaseModel):
 
 class DataInput(BaseModel):
     url: str
-    params: typing.Optional[typing.Dict[str, typing.Any]] = None
+    params: typing.Dict[str, typing.Any] = {}
     selector: typing.Optional[str] = None
     evaluate: typing.Optional[str] = None
     evaluation_to_img: typing.Optional[bool] = False

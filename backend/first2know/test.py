@@ -134,7 +134,12 @@ class TestScreenshot(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
+        starting_text = '<section class="main-info">\n'
         self.assertEqual(
-            screenshot_response.evaluation,
-            'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
+            screenshot_response.evaluation[:len(starting_text)],
+            starting_text,
+        )
+        self.assertEqual(
+            screenshot_response.md5,
+            '81e7d2419ef16e535e3112b0090f7d3e',
         )
