@@ -11,8 +11,7 @@ def message(user_id: int, img_data: str):
     return _send_message(user_id, "", media_id)
 
 
-def tweet(key: str, user_name: str, img_data: str) -> str:
-    text = f"@{user_name} https://first2know.web.app/{key}"
+def tweet(text: str, img_data: str) -> str:
     media_id = _post_image(img_data)
     tweet_id = _post_tweet(text, media_id)
     resp = _read_tweets(

@@ -124,9 +124,14 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
 
     times = to_handle.data_output.times + [time.time()]
 
+    text = "\n".join([
+        f"@{to_handle.user.screen_name}",
+        to_handle.data_input.url,
+        f"https://first2know.web.app/{to_handle.key}",
+    ])
+
     img_url = twitter_wrapper.tweet(
-        to_handle.key,
-        to_handle.user.screen_name,
+        text,
         screenshot_response.img_data,
     )
 
