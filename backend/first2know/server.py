@@ -143,7 +143,7 @@ def post_proxy(payload: proxy.Request):
         return HTMLResponse(err, 500)
 
 
-@web_app.get("/proxy/{url}")
+@web_app.get("/proxy/{url:path}")
 def get_proxy(url: str):
     payload = proxy.Request(url=url)
     try:
