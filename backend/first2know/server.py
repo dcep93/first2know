@@ -143,6 +143,17 @@ def post_proxy(payload: proxy.Request):
         return HTMLResponse(err, 500)
 
 
+@web_app.get("/proxy/{url}")
+def get_proxy(url: str):
+    payload = proxy.Request(url=url)
+    try:
+        resp = proxy.proxy(payload)
+        return HTMLResponse(resp)
+    except Exception:
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)
+
+
 # TwitterLogin.requestTokenUrl auth/twitter/reverse
 @web_app.post("/twitter/request_token")
 def post_twitter_request_token():
