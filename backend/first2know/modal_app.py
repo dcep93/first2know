@@ -43,14 +43,11 @@ def init(s: str):
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
 
 
-# TODO dcep93 restore
 # TODO akshat - would be nice if logs were bucketed
-# @modal_app.function(
-#     schedule=modal.Period(seconds=PERIOD_SECONDS),
-#     secret=modal.ref("first2know_s"),
-# )
-
-
+@modal_app.function(
+    schedule=modal.Period(seconds=PERIOD_SECONDS),
+    secret=modal.ref("first2know_s"),
+)
 def modal_cron():
     init("cron")
     cron.init()
