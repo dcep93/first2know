@@ -49,6 +49,8 @@ def init(s: str):
 #     schedule=modal.Period(seconds=PERIOD_SECONDS),
 #     secret=modal.ref("first2know_s"),
 # )
+
+
 def modal_cron():
     init("cron")
     cron.init()
