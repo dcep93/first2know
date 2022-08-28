@@ -59,12 +59,12 @@ class ToHandle(BaseModel):
 
 
 class Vars:
-    _raw_all_to_handle: typing.Optional[typing.Dict[str,
-                                                    typing.Dict[str,
-                                                                typing.Any]]]
+    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Dict[
+        str, typing.Any]]] = None
 
 
 class Creds(firebase_creds.ApplicationDefault):
+
     def get_credential(self):
         return auth_creds.AnonymousCredentials()
 
