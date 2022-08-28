@@ -13,6 +13,6 @@ modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 
 cd ../../backend
 # TODO akshat set secret
-echo modal secret set "first2know" "client_secret" "$TWITTER_KEY"
+echo modal secret set "first2know" "first2know_s" "$TWITTER_KEY"
 
 make modaldeploy || make modaldeploy || make modaldeploy

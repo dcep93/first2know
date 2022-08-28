@@ -38,6 +38,7 @@ class Response(BaseModel):
 
 # https://playwright.dev/python/docs/intro
 class Screenshot:
+
     def __init__(self):
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
@@ -97,11 +98,16 @@ class Screenshot:
             text = evaluation \
                 if type(evaluation) is str \
                 else json.dumps(evaluation, indent=1)
-            width = 1000
-            height = 1000
+            lines = text.split("\n")
+            padding_pixels = 50
+            pixels_per_row = 16
+            pixels_per_column = 7
+            width = 2 * padding_pixels + (pixels_per_column *
+                                          max([len(i) for i in lines]))
+            height = 2 * padding_pixels + (pixels_per_row * len(lines))
             img = Image.new('1', (width, height))
             draw = ImageDraw.Draw(img)
-            draw.text((0, 0), text, fill=255)
+            draw.text((padding_pixels, padding_pixels), text, fill=255)
             img_byte_arr = io.BytesIO()
             img.save(img_byte_arr, format='PNG')
             binary_data = img_byte_arr.getvalue()
