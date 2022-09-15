@@ -37,6 +37,7 @@ def init():
 
 
 def loop(period_seconds: int, grace_period_seconds: int) -> bool:
+
     def helper():
         start = time.time()
         end = start + period_seconds + grace_period_seconds
@@ -88,6 +89,7 @@ def run_cron() -> int:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+    print("handle", to_handle.json())
     previous_error = to_handle.data_output.error
     if not secrets.Vars.is_local:
         if previous_error is not None and previous_error.version == VERSION:
