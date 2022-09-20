@@ -3,6 +3,7 @@
 import base64
 import json
 import threading
+import time
 import typing
 
 from pydantic import BaseModel
@@ -90,6 +91,14 @@ def init():
         target=lambda: db.reference("/to_handle").listen(listenF),
         daemon=True,
     ).start()
+
+
+def wait_1s_for_data():
+    now = time.time()
+    while time.time() - now <= 1:
+        if Vars._raw_all_to_handle is not None:
+            return
+        time.sleep(0.001)
 
 
 def get_to_handle() -> typing.List[ToHandle]:

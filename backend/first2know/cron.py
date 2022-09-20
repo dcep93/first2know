@@ -21,6 +21,7 @@ class Vars:
 
 def main():
     init()
+    firebase_wrapper.wait_1s_for_data()
     try:
         count = run_cron()
     finally:
@@ -127,9 +128,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         else to_handle.data_output.screenshot_data.md5
     if screenshot_response.md5 == old_md5:
         return
-
-    print(evaluation, screenshot_response.evaluation)
-    return
 
     text = "\n".join([
         f"@{to_handle.user.screen_name}",
