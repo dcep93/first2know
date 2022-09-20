@@ -128,6 +128,9 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if screenshot_response.md5 == old_md5:
         return
 
+    print(evaluation, screenshot_response.evaluation)
+    return
+
     text = "\n".join([
         f"@{to_handle.user.screen_name}",
         to_handle.data_input.url,
