@@ -9,7 +9,7 @@ from . import secrets
 from . import twitter_wrapper
 
 # update version to clear errors
-VERSION = '1.0'
+VERSION = '1.1'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -113,7 +113,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
             time=time.time(),
-            message=str(e),
+            message=f'{type(e)}: {e}',
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
