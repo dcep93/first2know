@@ -104,15 +104,19 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         evaluation=evaluation,
     )
 
+    now = time.time()
+
     try:
+        recents = [t for t in to_handle.data_output.times if now - t < 60]
+        if len(recents) > 3:
+            raise Exception("too many recents")
         screenshot_response = Vars._screenshot_manager.run(request)
     except Exception as e:
         to_write = to_handle.data_output
-        to_write.screenshot_data = None
-        to_write.times.append(time.time())
+        to_write.times.append(now)
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
-            time=time.time(),
+            time=now,
             message=f'{type(e)}: {e}',
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
@@ -123,8 +127,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         else to_handle.data_output.screenshot_data.md5
     if screenshot_response.md5 == old_md5:
         return
-
-    times = to_handle.data_output.times + [time.time()]
 
     text = "\n".join([
         f"@{to_handle.user.screen_name}",
@@ -144,7 +146,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
             evaluation=screenshot_response.evaluation,
         ),
         error=None,
-        times=times,
+        times=to_handle.data_output.times + [now],
     )
 
     firebase_wrapper.write_data(to_handle.key, to_write)
