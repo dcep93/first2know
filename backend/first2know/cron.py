@@ -150,6 +150,9 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         times=to_handle.data_output.times + [now],
     )
 
+    if secrets.Vars.is_local:
+        print(to_handle.key, to_write)
+
     firebase_wrapper.write_data(to_handle.key, to_write)
 
 
