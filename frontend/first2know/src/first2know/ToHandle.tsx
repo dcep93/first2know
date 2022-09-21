@@ -181,7 +181,7 @@ function getData(
     url: urlRef.current!.value,
     params,
     selector: cssSelectorRef.current!.value || null,
-    evaluation: null,
+    evaluation: toHandle?.data_output?.screenshot_data?.evaluation || null,
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || null,
     user_agent_hack: userAgentRef.current!.checked || null,
