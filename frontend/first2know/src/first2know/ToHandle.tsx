@@ -58,6 +58,11 @@ function ToHandle(props: {
           Promise.resolve(e.preventDefault())
             .then(() => update(null))
             .then(() => getData(props.toHandle))
+            .then((data_input) => ({
+              evaluation:
+                toHandle?.data_output?.screenshot_data?.evaluation || null,
+              ...data_input,
+            }))
             .then((data) => JSON.stringify(data))
             .then((body) =>
               sfetch(`${url}/screenshot`, {
@@ -185,7 +190,6 @@ function getData(
     url: urlRef.current!.value,
     params,
     selector: cssSelectorRef.current!.value || null,
-    evaluation: toHandle?.data_output?.screenshot_data?.evaluation || null,
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || null,
     user_agent_hack: userAgentRef.current!.checked || null,
