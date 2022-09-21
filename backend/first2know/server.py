@@ -55,8 +55,9 @@ def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-class InputWithOldEncrypted(firebase_wrapper.DataInput):
+class PostInputPayload(firebase_wrapper.DataInput):
     old_encrypted: typing.Optional[str]
+    evaluation: typing.Any
 
     def reencrypt_cookie(self):
         if self.old_encrypted is not None:
@@ -75,13 +76,13 @@ class InputWithOldEncrypted(firebase_wrapper.DataInput):
 
 
 @web_app.post("/screenshot_img")
-def post_screenshot_img(payload: InputWithOldEncrypted):
+def post_screenshot_img(payload: PostInputPayload):
     payload.reencrypt_cookie()
     try:
         screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
-                evaluation=None,
+                evaluation=payload.evaluation,
             ))
         bytes = base64.b64decode(screenshot_response.img_data)
         return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
@@ -91,13 +92,13 @@ def post_screenshot_img(payload: InputWithOldEncrypted):
 
 
 @web_app.post("/screenshot_len")
-def post_screenshot_len(payload: InputWithOldEncrypted):
+def post_screenshot_len(payload: PostInputPayload):
     payload.reencrypt_cookie()
     try:
         screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
-                evaluation=None,
+                evaluation=payload.evaluation,
             ))
         screenshot_response.img_data = str(len(screenshot_response.img_data))
         return HTMLResponse(screenshot_response.json())
@@ -107,13 +108,13 @@ def post_screenshot_len(payload: InputWithOldEncrypted):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: InputWithOldEncrypted):
+def post_screenshot(payload: PostInputPayload):
     payload.reencrypt_cookie()
     try:
         screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
-                evaluation=None,
+                evaluation=payload.evaluation,
             ))
         return HTMLResponse(screenshot_response.json())
     except Exception:
@@ -121,12 +122,12 @@ def post_screenshot(payload: InputWithOldEncrypted):
         return HTMLResponse(err, 500)
 
 
-class InputWithOldEncryptedAndUser(InputWithOldEncrypted):
+class PostInputPayloadWithUser(PostInputPayload):
     user: firebase_wrapper.User
 
 
 @web_app.post("/encrypt")
-def post_encrypt(payload: InputWithOldEncryptedAndUser):
+def post_encrypt(payload: PostInputPayloadWithUser):
     payload.reencrypt_cookie()
     json_str = payload.json()
     encrypted = firebase_wrapper.encrypt(json_str)
