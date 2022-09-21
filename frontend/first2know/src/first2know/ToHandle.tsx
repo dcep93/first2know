@@ -29,7 +29,9 @@ function ToHandle(props: {
   submit: SubmitType;
   allToHandle: AllToHandleType;
 }) {
-  const [img_data, update] = useState<string | null | undefined>(undefined);
+  const [img_data, update] = useState<string | null | undefined>(
+    props.toHandle?.data_output.screenshot_data?.img_url || undefined
+  );
   const navigate = useNavigate();
 
   const defaultParamsValue = props.toHandle?.data_input.params;
@@ -65,7 +67,7 @@ function ToHandle(props: {
               })
             )
             .then((resp) => resp.json())
-            .then((json) => update(json.img_data))
+            .then((json) => update(`data:image/png;base64,${json.img_data}`))
             .catch((err) => {
               update(undefined);
               const e = `${err}`;
@@ -156,7 +158,7 @@ function ToHandle(props: {
             ? undefined
             : img_data === null
             ? loading
-            : `data:image/png;base64,${img_data}`
+            : img_data
         }
         alt=""
       ></img>

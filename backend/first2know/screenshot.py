@@ -114,7 +114,7 @@ class Screenshot:
                 else json.dumps(evaluation, indent=1)
             lines = text.split("\n")
             padding_pixels = 50
-            pixels_per_row = 16
+            pixels_per_row = 15.5
             pixels_per_column = 7
             width = 2 * padding_pixels + (pixels_per_column *
                                           max([len(i) for i in lines]))
