@@ -118,7 +118,7 @@ class Screenshot:
             pixels_per_column = 7
             width = 2 * padding_pixels + (pixels_per_column *
                                           max([len(i) for i in lines]))
-            height = 2 * padding_pixels + (pixels_per_row * len(lines))
+            height = int(2 * padding_pixels + (pixels_per_row * len(lines)))
             img = Image.new('1', (width, height))
             draw = ImageDraw.Draw(img)
             draw.text((padding_pixels, padding_pixels), text, fill=255)
