@@ -151,7 +151,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     )
 
     print("debug s")
-    print(to_handle.data_output.screenshot_data.evaluation)
+    print(evaluation)
     print(screenshot_response.evaluation)
     print("debug e")
 
