@@ -97,9 +97,9 @@ def init():
     ).start()
 
 
-def wait_1s_for_data():
+def wait_10s_for_data():
     now = time.time()
-    while time.time() - now <= 1:
+    while time.time() - now <= 10:
         if Vars._raw_all_to_handle is not None:
             return
         time.sleep(0.001)

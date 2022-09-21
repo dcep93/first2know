@@ -23,7 +23,7 @@ class Vars:
 
 def main():
     init()
-    firebase_wrapper.wait_1s_for_data()
+    firebase_wrapper.wait_10s_for_data()
     try:
         count = run_cron()
     finally:
