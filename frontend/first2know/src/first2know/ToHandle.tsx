@@ -60,7 +60,8 @@ function ToHandle(props: {
             .then(() => getData(props.toHandle))
             .then((data_input) => ({
               evaluation:
-                toHandle?.data_output?.screenshot_data?.evaluation || null,
+                props.toHandle?.data_output?.screenshot_data?.evaluation ||
+                null,
               ...data_input,
             }))
             .then((data) => JSON.stringify(data))

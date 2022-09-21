@@ -127,6 +127,9 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         raise e
 
     if screenshot_response.evaluation == IGNORE:
+        to_write = to_handle.data_output
+        to_write.times.append(-now)
+        firebase_wrapper.write_data(to_handle.key, to_write)
         return
 
     old_md5 = None \
