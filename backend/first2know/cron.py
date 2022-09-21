@@ -150,6 +150,11 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         times=to_handle.data_output.times + [now],
     )
 
+    print("debug s")
+    print(to_handle.data_output.screenshot_data.evaluation)
+    print(screenshot_response.evaluation)
+    print("debug e")
+
     if secrets.Vars.is_local:
         print(to_handle.key, to_write)
 
