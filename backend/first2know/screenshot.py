@@ -69,15 +69,16 @@ class Screenshot:
         request: Request,
     ) -> Response:
 
+        s = time.time()
+
         class C:
             _c = 0
 
             @classmethod
             def c(cls):
                 cls._c += 1
-                print(cls._c, time.time())
+                print(cls._c, time.time() - s)
 
-        s = time.time()
         C.c()
 
         params = dict(request.data_input.params)
