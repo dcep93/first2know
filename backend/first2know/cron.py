@@ -8,6 +8,8 @@ from . import screenshot
 from . import secrets
 from . import twitter_wrapper
 
+IGNORE = "first2know_ignore"
+
 # update version to clear errors
 VERSION = '1.1.0'
 
@@ -123,6 +125,9 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
 
+    if screenshot_response.evaluation == IGNORE:
+        return
+
     old_md5 = None \
         if to_handle.data_output.screenshot_data is None \
         else to_handle.data_output.screenshot_data.md5
@@ -134,11 +139,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         to_handle.data_input.url,
         f"https://first2know.web.app/{to_handle.key}",
     ])
-
-    print("debug s")
-    print(evaluation)
-    print(screenshot_response.evaluation)
-    print("debug e")
 
     img_url = twitter_wrapper.tweet(
         text,
