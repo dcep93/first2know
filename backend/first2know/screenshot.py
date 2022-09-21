@@ -85,7 +85,7 @@ class Screenshot:
                     params=proxy.Params(**params),
                 ))
             await page.set_content(proxy_result)
-        else:
+        elif request.data_input.url:
             await page.set_extra_http_headers(params)
             await page.goto(request.data_input.url)
         evaluation = None \
