@@ -187,9 +187,6 @@ function getData(
     user_agent_hack: userAgentRef.current!.checked || null,
     raw_proxy: rawProxyRef.current!.checked || null,
   };
-  if (data_input.url === "") {
-    throw Error("need to have a url");
-  }
   return { old_encrypted, ...data_input };
 }
 
