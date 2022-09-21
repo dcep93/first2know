@@ -109,6 +109,7 @@ def post_screenshot_len(payload: PostInputPayload):
 
 @web_app.post("/screenshot")
 def post_screenshot(payload: PostInputPayload):
+    print("received screenshot request")
     payload.reencrypt_cookie()
     try:
         screenshot_response = Vars._screenshot_manager.run(
