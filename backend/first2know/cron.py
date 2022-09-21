@@ -9,7 +9,7 @@ from . import secrets
 from . import twitter_wrapper
 
 # update version to clear errors
-VERSION = '1.1'
+VERSION = '1.1.0'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -90,7 +90,7 @@ def run_cron() -> int:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    print("handle", to_handle.json())
+    # print("handle", to_handle.json())
     previous_error = to_handle.data_output.error
     if not secrets.Vars.is_local:
         if previous_error is not None and previous_error.version == VERSION:
@@ -134,6 +134,11 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         to_handle.data_input.url,
         f"https://first2know.web.app/{to_handle.key}",
     ])
+
+    print("debug s")
+    print(evaluation)
+    print(screenshot_response.evaluation)
+    print("debug e")
 
     img_url = twitter_wrapper.tweet(
         text,
