@@ -47,13 +47,14 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
         loops = 0
         s = start
         print_freq = 10
+        count = -1
         while time.time() < end:
             now = time.time()
             loops += 1
             if loops % print_freq == 0:
                 loops_per = print_freq / (now - s)
                 s = now
-                print(loops, "loops", f"{loops_per:.2f}/s")
+                print(loops, "loops", f"{loops_per:.2f}/s", count)
             # exit if another process has spun up to take over
             new_token = firebase_wrapper.get_token()
             if new_token != Vars._token:
