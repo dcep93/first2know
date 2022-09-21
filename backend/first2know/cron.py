@@ -125,6 +125,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         raise e
 
     if screenshot_response.evaluation == IGNORE:
+        print("ignoring")
         to_write = to_handle.data_output
         to_write.times.append(-now)
         firebase_wrapper.write_data(to_handle.key, to_write)
@@ -163,11 +164,11 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     firebase_wrapper.write_data(to_handle.key, to_write)
 
 
-def validate(to_handle: firebase_wrapper.ToHandle, now: float) -> None:
-    ignores = [t for t in to_handle.data_output.times if now + t < 60]
+def validate(data_output: firebase_wrapper.DataOutput, now: float) -> None:
+    ignores = [t for t in data_output.times if now + t < 60]
     if len(ignores) > 3:
         raise Exception("too many ignores")
-    recents = [t for t in to_handle.data_output.times if now - t < 60]
+    recents = [t for t in data_output.times if now - t < 60]
     if len(recents) > 3:
         raise Exception("too many recents")
 
