@@ -111,9 +111,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     now = time.time()
 
     try:
-        recents = [t for t in to_handle.data_output.times if now - t < 60]
-        if len(recents) > 3:
-            raise Exception("too many recents")
+        validate(to_handle.data_output, now)
         screenshot_response = Vars._screenshot_manager.run(request)
     except Exception as e:
         to_write = to_handle.data_output
@@ -163,6 +161,15 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         print(to_handle.key, to_write.json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)
+
+
+def validate(to_handle: firebase_wrapper.ToHandle, now: float) -> None:
+    ignores = [t for t in to_handle.data_output.times if now + t < 60]
+    if len(ignores) > 3:
+        raise Exception("too many ignores")
+    recents = [t for t in to_handle.data_output.times if now - t < 60]
+    if len(recents) > 3:
+        raise Exception("too many recents")
 
 
 if __name__ == "__main__":
