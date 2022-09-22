@@ -10,8 +10,8 @@ from pydantic import BaseModel
 
 from cryptography.fernet import Fernet
 
-import firebase_admin
 from google.auth import credentials as auth_creds
+import firebase_admin
 from firebase_admin import credentials as firebase_creds
 from firebase_admin import db
 
