@@ -43,7 +43,7 @@ def _read_tweets(
     return json.loads(resp.text)
 
 
-def _post_image(img_data: str) -> int:
+def _post_image(img_data: str) -> str:
     oauth = OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,
@@ -61,14 +61,22 @@ def _post_image(img_data: str) -> int:
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    return r["media_id"]
+    print(r)
+    return r["media_id_string"]
 
 
-def _post_tweet(text: str, media_id: int) -> int:
+def _post_tweet(text: str, media_id: str) -> int:
+    media_id = "1573041745906081802"
+    print([
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    ])
     message_obj = {
         "text": text,
         "media": {
-            "media_ids": [str(media_id)]
+            "media_ids": [media_id]
         },
     }
     oauth = OAuth1Session(
