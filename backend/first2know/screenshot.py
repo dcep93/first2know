@@ -125,7 +125,7 @@ class Screenshot:
 
         encoded = base64.b64encode(binary_data)
         img_data = encoded.decode('utf-8')
-        md5 = firebase_wrapper.str_to_md5(img_data)
+        md5 = firebase_wrapper.str_to_md5(encoded)
         e = time.time()
         elapsed = e - s
         self.log(' '.join([
