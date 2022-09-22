@@ -48,7 +48,6 @@ def init(s: str):
     secret=modal.ref("first2know_s"),
 )
 def modal_cron():
-    return
     init("cron")
     cron.init()
     was_successful = cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
