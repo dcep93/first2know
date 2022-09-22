@@ -10,8 +10,8 @@ from pydantic import BaseModel
 
 from cryptography.fernet import Fernet
 
-from google.auth import credentials as auth_creds
-import firebase_admin
+from google.auth import credentials as auth_creds  # type: ignore
+import firebase_admin  # type: ignore
 from firebase_admin import credentials as firebase_creds
 from firebase_admin import db
 
@@ -61,8 +61,8 @@ class ToHandle(BaseModel):
 
 
 class Vars:
-    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Dict[
-        str, typing.Any]]] = None
+    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Union[
+        str, typing.Dict[str, typing.Any]]]] = None
 
 
 class Creds(firebase_creds.ApplicationDefault):
@@ -118,21 +118,21 @@ def get_to_handle() -> typing.List[ToHandle]:
 
 def _extract_to_handle(
     key: str,
-    v: typing.Union[str, ToHandle],
+    v: typing.Union[str, typing.Dict[str, typing.Any]],
 ) -> typing.Optional[ToHandle]:
-    to_handle = v \
-        if type(to_handle) is not str \
-        else ToHandle(**json.loads(decrypt(to_handle)))
-    to_md5 = {"data_input": to_handle.data_inpu}
+    to_handle = ToHandle(**v) \
+        if type(v) is dict \
+        else ToHandle(**json.loads(decrypt(str(v))))
+    to_md5 = {"data_input": to_handle.data_input}
     return ToHandle(
         key=key,
-        **to_handle,
+        **to_handle.dict(),
     )
-    encrypted_user = data_input_d.pop("user")["encrypted"]
-    decrypted_user = decrypt(encrypted_user)
-    user = User(**json.loads(decrypted_user))
-    if user.encrypted != secrets.Vars.secrets.client_secret:
-        return None
+    # encrypted_user = data_input_d.pop("user")["encrypted"]
+    # decrypted_user = decrypt(encrypted_user)
+    # user = User(**json.loads(decrypted_user))
+    # if user.encrypted != secrets.Vars.secrets.client_secret:
+    #     return None
 
 
 def write_data(key: str, data_output: DataOutput) -> None:
