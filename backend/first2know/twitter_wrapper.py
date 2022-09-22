@@ -61,18 +61,10 @@ def _post_image(img_data: str) -> str:
         print(resp)
         raise Exception(resp.text)
     r = json.loads(resp.text)
-    print(r)
     return r["media_id_string"]
 
 
 def _post_tweet(text: str, media_id: str) -> int:
-    media_id = "1573041745906081802"
-    print([
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    ])
     message_obj = {
         "text": text,
         "media": {
