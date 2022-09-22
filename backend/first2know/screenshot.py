@@ -100,10 +100,10 @@ class Screenshot:
                 else json.dumps(evaluation, indent=1)
             lines = text.split("\n")
             padding_pixels = 50
-            pixels_per_row = 15.5
-            pixels_per_column = 7
-            width = 2 * padding_pixels + (pixels_per_column *
-                                          max([len(i) for i in lines]))
+            pixels_per_row = 15.2
+            pixels_per_column = 6.6
+            width = int(2 * padding_pixels +
+                        (pixels_per_column * max([len(i) for i in lines])))
             height = int(2 * padding_pixels + (pixels_per_row * len(lines)))
             img = Image.new('1', (width, height))
             draw = ImageDraw.Draw(img)

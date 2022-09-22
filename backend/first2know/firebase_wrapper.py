@@ -162,7 +162,6 @@ def str_to_md5(s: bytes) -> str:
 
 def write_data(key: str, data_output: DataOutput) -> None:
     # print("write_data", key, data_output.dict())
-    Vars._raw_all_to_handle = None
     db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
 
 
