@@ -43,8 +43,8 @@ class DataInput(BaseModel):
     selector: typing.Optional[str] = None
     evaluate: typing.Optional[str] = None
     evaluation_to_img: typing.Optional[bool] = False
-    raw_proxy: typing.Optional[bool] = False
-    user_agent_hack: typing.Optional[bool] = False
+    user_agent_hack: typing.Optional[bool] = None
+    raw_proxy: typing.Optional[bool] = None
 
 
 class User(BaseModel):
@@ -137,11 +137,14 @@ def _extract_to_handle(
     decrypted_user = decrypt(encrypted_user)
     user = User(**json.loads(decrypted_user))
 
-    to_md5 = json.dumps([
-        to_handle.data_input.json(),
-        encrypted_user,
-    ]).encode('utf-8')
-    if str_to_md5(to_md5) != to_handle.md5:
+    to_md5 = json.dumps(
+        [
+            dict(to_handle.data_input),
+            encrypted_user,
+        ],
+        separators=(',', ':'),
+    )
+    if str_to_md5(to_md5.encode('utf-8')) != to_handle.md5:
         print("bad md5")
         return None
 
