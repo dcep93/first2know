@@ -91,6 +91,7 @@ def post_screenshot(payload: PostInputPayload):
 
 @web_app.post("/encrypt")
 def post_encrypt(payload: firebase_wrapper.DataInput):
+    print("received encrypt request")
     d = dict(payload)
     json_str = json.dumps(d)
     encrypted = firebase_wrapper.encrypt(json_str)
