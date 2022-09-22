@@ -94,6 +94,8 @@ class Screenshot:
                 request.data_input.evaluate,
                 request.evaluation,
             )
+        if evaluation == "first2know_ignore":
+            print("ignored", request.evaluation)
         if request.data_input.evaluation_to_img:
             text = evaluation \
                 if type(evaluation) is str \

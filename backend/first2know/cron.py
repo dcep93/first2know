@@ -125,7 +125,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         raise e
 
     if screenshot_response.evaluation == IGNORE:
-        print("ignore", evaluation)
         return
 
     old_md5 = None \
