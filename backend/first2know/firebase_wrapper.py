@@ -1,6 +1,7 @@
 # https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
 import base64
+import hashlib
 import json
 import threading
 import time
@@ -123,16 +124,29 @@ def _extract_to_handle(
     to_handle = ToHandle(**v) \
         if type(v) is dict \
         else ToHandle(**json.loads(decrypt(str(v))))
-    to_md5 = {"data_input": to_handle.data_input}
+
+    if get_md5(to_handle.data_input) != to_handle.md5:
+        return None
+
+    encrypted_user = to_handle.user.encrypted
+    decrypted_user = decrypt(encrypted_user)
+    user = User(**json.loads(decrypted_user))
+    if user.encrypted != secrets.Vars.secrets.client_secret:
+        return None
+
     return ToHandle(
         key=key,
         **to_handle.dict(),
     )
-    # encrypted_user = data_input_d.pop("user")["encrypted"]
-    # decrypted_user = decrypt(encrypted_user)
-    # user = User(**json.loads(decrypted_user))
-    # if user.encrypted != secrets.Vars.secrets.client_secret:
-    #     return None
+
+
+def get_md5(data_input: DataInput) -> str:
+    s = json.dumps([data_input.json(), secrets.Vars.secrets.client_secret])
+    return str_to_md5(s)
+
+
+def str_to_md5(s: str) -> str:
+    return hashlib.md5(s).hexdigest()
 
 
 def write_data(key: str, data_output: DataOutput) -> None:

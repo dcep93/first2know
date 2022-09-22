@@ -1,7 +1,6 @@
 import asyncio
 import base64
 import datetime
-import hashlib
 import io
 import json
 import os
@@ -126,7 +125,7 @@ class Screenshot:
 
         encoded = base64.b64encode(binary_data)
         img_data = encoded.decode('utf-8')
-        md5 = hashlib.md5(encoded).hexdigest()
+        md5 = firebase_wrapper.get_md5(img_data)
         e = time.time()
         elapsed = e - s
         self.log(' '.join([
