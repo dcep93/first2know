@@ -38,7 +38,7 @@ export type DataInputType = {
 
 export type ToHandleType = {
   data_input: DataInputType;
-  data_output?: DataOutputType;
+  data_output: DataOutputType | null;
   user: UserType;
 };
 
@@ -63,6 +63,7 @@ function pushToHandle(
 ): Promise<string> {
   const toHandle: ToHandleType = {
     data_input,
+    data_output: null,
     user,
   };
   return firebase._push(`/to_handle/`, _FBToHandle(toHandle));
