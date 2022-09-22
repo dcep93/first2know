@@ -53,30 +53,34 @@ def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
 
 
-class PostInputPayload(firebase_wrapper.DataInput):
-    old_encrypted: typing.Optional[str]
-    evaluation: typing.Any
+# class PostInputPayload(firebase_wrapper.DataInput):
+#     old_encrypted: typing.Optional[str]
+#     evaluation: typing.Any
 
-    def reencrypt_cookie(self):
-        if self.old_encrypted is not None:
-            decrypted = firebase_wrapper.decrypt(self.old_encrypted)
-            data_input = firebase_wrapper.DataInput(**json.loads(decrypted))
-            decrypted_params = {} \
-                if data_input.params is None \
-                else data_input.params
-            cookie = decrypted_params.get("cookie")
-            if cookie is not None:
-                params = {} \
-                    if self.params is None \
-                    else self.params
-                params["cookie"] = cookie
-                self.params = params
+#     def reencrypt_cookie(self):
+#         if self.old_encrypted is not None:
+#             decrypted = firebase_wrapper.decrypt(self.old_encrypted)
+#             data_input = firebase_wrapper.DataInput(**json.loads(decrypted))
+#             decrypted_params = {} \
+#                 if data_input.params is None \
+#                 else data_input.params
+#             cookie = decrypted_params.get("cookie")
+#             if cookie is not None:
+#                 params = {} \
+#                     if self.params is None \
+#                     else self.params
+#                 params["cookie"] = cookie
+#                 self.params = params
+
+
+class ScreenshotPayload(firebase_wrapper.DataInput):
+    evaluation: typing.Any
 
 
 @web_app.post("/screenshot")
 def post_screenshot(payload: PostInputPayload):
     print("received screenshot request")
-    payload.reencrypt_cookie()
+    # payload.reencrypt_cookie()
     try:
         screenshot_response = Vars._screenshot_manager.run(
             screenshot.Request(

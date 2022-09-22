@@ -11,17 +11,15 @@ import { sfetch, url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const rawProxyRef = createRef<HTMLInputElement>();
-const cookieRef = createRef<HTMLInputElement>();
+// const cookieRef = createRef<HTMLInputElement>();
 const userAgentRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
-const deleteOldCookieRef = createRef<HTMLInputElement>();
+// const deleteOldCookieRef = createRef<HTMLInputElement>();
 
-type SubmitType = (
-  data_input: DataInputType & { old_encrypted: string | null }
-) => Promise<string>;
+type SubmitType = (data_input: DataInputType) => Promise<string>;
 
 function ToHandle(props: {
   user: UserType;
@@ -40,7 +38,7 @@ function ToHandle(props: {
       <button
         onClick={() =>
           Promise.resolve()
-            .then(() => getData(props.toHandle))
+            .then(() => getData())
             .then((data_input) => props.submit(data_input))
             .then((key) =>
               props.toHandle ? alert("success") : navigate(`/${key}`)
@@ -57,7 +55,7 @@ function ToHandle(props: {
         onSubmit={(e) =>
           Promise.resolve(e.preventDefault())
             .then(() => update(null))
-            .then(() => getData(props.toHandle))
+            .then(() => getData())
             .then((data_input) => ({
               evaluation:
                 props.toHandle?.data_output?.screenshot_data?.evaluation ||
@@ -100,7 +98,7 @@ function ToHandle(props: {
             type="checkbox"
           />
         </div>
-        <div title={"will be encrypted"}>
+        {/* <div title={"will be encrypted"}>
           cookie: <input ref={cookieRef} type="text" />
         </div>
         {props.toHandle && (
@@ -108,7 +106,7 @@ function ToHandle(props: {
             delete old cookie?
             <input ref={deleteOldCookieRef} type="checkbox" />
           </div>
-        )}
+        )} */}
         <div>
           user agent hack:{" "}
           <input
@@ -174,20 +172,12 @@ function ToHandle(props: {
   );
 }
 
-function getData(
-  toHandle: ToHandleType | undefined
-): DataInputType & { old_encrypted: string | null } {
-  const old_encrypted =
-    toHandle === undefined
-      ? null
-      : deleteOldCookieRef.current?.checked
-      ? null
-      : toHandle.encrypted;
+function getData(): DataInputType {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
-  const cookie = cookieRef.current!.value || null;
-  if (cookie) params.cookie = cookie;
-  const data_input = {
+  // const cookie = cookieRef.current!.value || null;
+  // if (cookie) params.cookie = cookie;
+  return {
     url: urlRef.current!.value,
     params,
     selector: cssSelectorRef.current!.value || null,
@@ -196,7 +186,6 @@ function getData(
     user_agent_hack: userAgentRef.current!.checked || null,
     raw_proxy: rawProxyRef.current!.checked || null,
   };
-  return { old_encrypted, ...data_input };
 }
 
 export default ToHandle;

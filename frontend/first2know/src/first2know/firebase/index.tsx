@@ -1,5 +1,6 @@
 // https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
+import to_md5_f from "md5";
 import React from "react";
 import firebase from "./firebase";
 
@@ -39,19 +40,28 @@ export type ToHandleType = {
   data_input: DataInputType;
   data_output: DataOutputType;
   user: UserType;
-  encrypted: string;
+  md5: string;
+  encrypted?: string;
 };
+
+function get_md5(data_input: DataInputType, user_encrypted: string): string {
+  const to_md5 = JSON.stringify([data_input, user_encrypted]);
+  return to_md5_f(to_md5);
+}
 
 function pushToHandle(
   data_input: DataInputType,
-  encrypted: string,
-  user: UserType
+  user_encrypted: string,
+  user: UserType,
+  encrypted: string | undefined
 ): Promise<string> {
+  const md5 = get_md5(data_input, user_encrypted);
   const toHandle: ToHandleType = {
+    md5,
     data_input,
     data_output: { times: [Date.now() / 1000] },
-    encrypted,
     user,
+    encrypted,
   };
   return firebase._push(`/to_handle/`, toHandle);
 }

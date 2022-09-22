@@ -1,11 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import firebase, {
-  AllToHandleType,
-  DataInputType,
-  ToHandleType,
-  UserType,
-} from "./firebase";
-import { sfetch, url } from "./Server";
+import firebase, { AllToHandleType, ToHandleType, UserType } from "./firebase";
 import { RenderToHandle } from "./Show";
 import ToHandle from "./ToHandle";
 
@@ -43,17 +37,14 @@ function RoutedEdit(props: {
       <ToHandle
         user={props.user}
         toHandle={props.toHandle}
-        submit={({ old_encrypted, ...data_input }) =>
-          encrypt(data_input, props.user, old_encrypted).then((encrypted) =>
-            firebase
-              .updateToHandle(props.k, {
-                data_input,
-                encrypted,
-                data_output: props.toHandle.data_output,
-                user: props.user,
-              })
-              .then(() => props.k)
-          )
+        submit={(data_input) =>
+          firebase
+            .updateToHandle(props.k, {
+              data_input,
+              data_output: props.toHandle.data_output,
+              user: props.user,
+            })
+            .then(() => props.k)
         }
         allToHandle={props.allToHandle}
       />
@@ -72,24 +63,24 @@ function RoutedEdit(props: {
   );
 }
 
-export function encrypt(
-  data_input: DataInputType,
-  user: UserType,
-  old_encrypted: string | null
-): Promise<string> {
-  const body = JSON.stringify({
-    ...data_input,
-    user,
-    old_encrypted,
-  });
-  delete data_input.params!["cookie"];
-  return sfetch(`${url}/encrypt`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body,
-  }).then((resp) => resp.text());
-}
+// export function encrypt(
+//   data_input: DataInputType,
+//   user: UserType,
+//   old_encrypted: string | null
+// ): Promise<string> {
+//   const body = JSON.stringify({
+//     ...data_input,
+//     user,
+//     old_encrypted,
+//   });
+//   delete data_input.params!["cookie"];
+//   return sfetch(`${url}/encrypt`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body,
+//   }).then((resp) => resp.text());
+// }
 
 export default Edit;
