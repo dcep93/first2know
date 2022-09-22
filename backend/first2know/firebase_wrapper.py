@@ -134,8 +134,6 @@ def _extract_to_handle(
     )
 
     encrypted_user = decrypt(to_handle.user.encrypted)
-    decrypted_user = decrypt(encrypted_user)
-    user = User(**json.loads(decrypted_user))
 
     to_md5 = json.dumps(
         [
@@ -148,9 +146,10 @@ def _extract_to_handle(
         print("bad md5")
         return None
 
-    user_client_secret = decrypt(user.encrypted)
+    decrypted_user = decrypt(encrypted_user)
+    user = User(**json.loads(decrypted_user))
 
-    if user_client_secret != secrets.Vars.secrets.client_secret:
+    if user.encrypted != secrets.Vars.secrets.client_secret:
         print("bad encrpytion")
         return None
 
