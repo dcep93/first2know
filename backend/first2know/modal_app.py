@@ -43,6 +43,7 @@ def init(s: str):
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
 
 
+# TODO akshat - can the first run always be NOW, not NOW + modal.Period
 @modal_app.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
     secret=modal.ref("first2know_s"),
