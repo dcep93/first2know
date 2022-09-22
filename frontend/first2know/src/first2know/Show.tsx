@@ -32,13 +32,13 @@ export function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
         <button onClick={() => update(!hidden)}>Toggle Output</button>
       </div>
       <div hidden={hidden}>
-        {props.toHandle.data_output.screenshot_data && (
+        {props.toHandle.data_output?.screenshot_data && (
           <img
             src={props.toHandle.data_output.screenshot_data!.img_url}
             alt=""
           ></img>
         )}
-        {props.toHandle.data_output.error && (
+        {props.toHandle.data_output?.error && (
           <pre>{JSON.stringify(props.toHandle.data_output.error, null, 2)}</pre>
         )}
       </div>
