@@ -11,7 +11,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '1.1.0'
+VERSION = '2.0.0'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -95,45 +95,42 @@ def run_cron() -> int:
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if secrets.Vars.is_local:
         print("handle", to_handle.json())
-    previous_error = to_handle.data_output.error
+    data_output = firebase_wrapper.DataOutput() \
+        if to_handle.data_output is None \
+        else to_handle.data_output
+    previous_error = data_output.error
     if not secrets.Vars.is_local:
         if previous_error is not None and previous_error.version == VERSION:
             return
 
     evaluation = None \
-        if to_handle.data_output.screenshot_data is None \
-        else to_handle.data_output.screenshot_data.evaluation
+        if data_output.screenshot_data is None \
+        else data_output.screenshot_data.evaluation
 
     request = screenshot.Request(
         data_input=to_handle.data_input,
         evaluation=evaluation,
     )
 
-    now = time.time()
-
     try:
-        validate(to_handle.data_output, now)
         screenshot_response = Vars._screenshot_manager.run(request)
     except Exception as e:
-        to_write = to_handle.data_output
-        to_write.times.append(now)
+        to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
-            time=now,
+            time=time.time(),
             message=f'{type(e)}: {e}',
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
 
     if screenshot_response.evaluation == IGNORE:
-        to_write = to_handle.data_output
-        to_write.times.append(-now)
-        firebase_wrapper.write_data(to_handle.key, to_write)
+        print("ignore", evaluation)
         return
 
     old_md5 = None \
-        if to_handle.data_output.screenshot_data is None \
-        else to_handle.data_output.screenshot_data.md5
+        if data_output.screenshot_data is None \
+        else data_output.screenshot_data.md5
     if screenshot_response.md5 == old_md5:
         return
 
@@ -155,22 +152,12 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
             evaluation=screenshot_response.evaluation,
         ),
         error=None,
-        times=to_handle.data_output.times + [now],
     )
 
     if secrets.Vars.is_local:
         print(to_handle.key, to_write.json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)
-
-
-def validate(data_output: firebase_wrapper.DataOutput, now: float) -> None:
-    ignores = [t for t in data_output.times if now + t < 60]
-    if len(ignores) > 3:
-        raise Exception("too many ignores")
-    recents = [t for t in data_output.times if now - t < 60]
-    if len(recents) > 3:
-        raise Exception("too many recents")
 
 
 if __name__ == "__main__":

@@ -15,7 +15,6 @@ export type ScreenshotDataType = {
 };
 
 export type DataOutputType = {
-  times: number[];
   screenshot_data?: ScreenshotDataType;
   error?: { version: string; time: number; message: string };
 };
@@ -39,7 +38,7 @@ export type DataInputType = {
 
 export type ToHandleType = {
   data_input: DataInputType;
-  data_output: DataOutputType;
+  data_output?: DataOutputType;
   user: UserType;
 };
 
@@ -64,7 +63,6 @@ function pushToHandle(
 ): Promise<string> {
   const toHandle: ToHandleType = {
     data_input,
-    data_output: { times: [Date.now() / 1000] },
     user,
   };
   return firebase._push(`/to_handle/`, _FBToHandle(toHandle));

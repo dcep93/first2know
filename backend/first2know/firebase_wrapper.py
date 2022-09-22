@@ -32,7 +32,6 @@ class ScreenshotData(BaseModel):
 
 
 class DataOutput(BaseModel):
-    times: typing.List[float]
     screenshot_data: typing.Optional[ScreenshotData] = None
     error: typing.Optional[ErrorType] = None
 
@@ -55,10 +54,10 @@ class User(BaseModel):
 
 class ToHandle(BaseModel):
     data_input: DataInput
-    data_output: DataOutput
     user: User
     md5: str
     key: str
+    data_output: typing.Optional[DataOutput] = None
 
 
 class Vars:
