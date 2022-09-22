@@ -75,38 +75,6 @@ class PostInputPayload(firebase_wrapper.DataInput):
                 self.params = params
 
 
-@web_app.post("/screenshot_img")
-def post_screenshot_img(payload: PostInputPayload):
-    payload.reencrypt_cookie()
-    try:
-        screenshot_response = Vars._screenshot_manager.run(
-            screenshot.Request(
-                data_input=payload,
-                evaluation=payload.evaluation,
-            ))
-        bytes = base64.b64decode(screenshot_response.img_data)
-        return StreamingResponse(io.BytesIO(bytes), media_type="image/png")
-    except Exception:
-        err = traceback.format_exc()
-        return HTMLResponse(err, 500)
-
-
-@web_app.post("/screenshot_len")
-def post_screenshot_len(payload: PostInputPayload):
-    payload.reencrypt_cookie()
-    try:
-        screenshot_response = Vars._screenshot_manager.run(
-            screenshot.Request(
-                data_input=payload,
-                evaluation=payload.evaluation,
-            ))
-        screenshot_response.img_data = str(len(screenshot_response.img_data))
-        return HTMLResponse(screenshot_response.json())
-    except Exception:
-        err = traceback.format_exc()
-        return HTMLResponse(err, 500)
-
-
 @web_app.post("/screenshot")
 def post_screenshot(payload: PostInputPayload):
     print("received screenshot request")

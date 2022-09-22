@@ -93,7 +93,8 @@ def run_cron() -> int:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
-    print("handle", to_handle.json())
+    if secrets.Vars.is_local:
+        print("handle", to_handle.json())
     previous_error = to_handle.data_output.error
     if not secrets.Vars.is_local:
         if previous_error is not None and previous_error.version == VERSION:
@@ -124,12 +125,11 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
 
-    print(screenshot_response.json())
-
-    return
+    if secrets.Vars.is_local:
+        print(screenshot_response.json())
+        return
 
     if screenshot_response.evaluation == IGNORE:
-        print("ignoring")
         to_write = to_handle.data_output
         to_write.times.append(-now)
         firebase_wrapper.write_data(to_handle.key, to_write)
