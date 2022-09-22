@@ -56,6 +56,7 @@ class ToHandle(BaseModel):
     data_input: DataInput
     data_output: DataOutput
     user: User
+    md5: str
     key: str
 
 
@@ -109,37 +110,34 @@ def get_to_handle() -> typing.List[ToHandle]:
     if Vars._raw_all_to_handle is None:
         return []
     return [
-        i for i in [
-            _decrypt_to_handle(k, v["encrypted"], v["data_output"])
-            for k, v in Vars._raw_all_to_handle.items()
-            if "encrypted" in v and "data_output" in v
-        ] if i
+        i for i in
+        [_extract_to_handle(k, v) for k, v in Vars._raw_all_to_handle.items()]
+        if i
     ]
 
 
-def _decrypt_to_handle(
+def _extract_to_handle(
     key: str,
-    encrypted: str,
-    data_output: DataOutput,
+    v: typing.Union[str, ToHandle],
 ) -> typing.Optional[ToHandle]:
-    decrypted = decrypt(encrypted)
-    data_input_d = json.loads(decrypted)
+    to_handle = v \
+        if type(to_handle) is not str \
+        else ToHandle(**json.loads(decrypt(to_handle)))
+    to_md5 = {"data_input": to_handle.data_inpu}
+    return ToHandle(
+        key=key,
+        **to_handle,
+    )
     encrypted_user = data_input_d.pop("user")["encrypted"]
     decrypted_user = decrypt(encrypted_user)
     user = User(**json.loads(decrypted_user))
     if user.encrypted != secrets.Vars.secrets.client_secret:
         return None
-    to_handle = ToHandle(
-        key=key,
-        user=user,
-        data_output=data_output,
-        data_input=DataInput(**data_input_d),
-    )
-    return to_handle
 
 
 def write_data(key: str, data_output: DataOutput) -> None:
     # print("write_data", key, data_output.dict())
+    Vars._raw_all_to_handle = None
     db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
 
 

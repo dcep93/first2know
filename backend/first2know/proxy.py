@@ -1,9 +1,9 @@
-import requests
+import requests  # type: ignore
 import typing
 
 from pydantic import BaseModel, Field
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup  # type: ignore
 
 
 class Params(BaseModel):

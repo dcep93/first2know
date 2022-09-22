@@ -1,4 +1,4 @@
-from requests_oauthlib import OAuth1Session
+from requests_oauthlib import OAuth1Session  # type: ignore
 
 from urllib.parse import parse_qs
 

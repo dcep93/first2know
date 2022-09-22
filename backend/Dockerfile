@@ -42,6 +42,10 @@ RUN pip3 install nest-asyncio
 
 RUN pip3 install beautifulsoup4
 
+RUN pip3 install mypy
+
 EXPOSE 8000
 
 COPY . ./
+
+RUN mypy .

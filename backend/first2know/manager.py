@@ -7,6 +7,7 @@ U = typing.TypeVar('U')
 
 
 class Manager(typing.Generic[T, U]):
+
     def __init__(
         self,
         f: typing.Callable[[], typing.Callable[[T], U]],
@@ -14,8 +15,8 @@ class Manager(typing.Generic[T, U]):
     ):
         self.f = f
         self.num = num
-        self.request_queue = queue.Queue(self.num)
-        self.response_queues = queue.Queue(self.num)
+        self.request_queue = queue.Queue(self.num)  # type: ignore
+        self.response_queues = queue.Queue(self.num)  # type: ignore
         for _ in range(self.num):
             threading.Thread(target=self.init_runner).start()
         for _ in range(self.num):

@@ -11,13 +11,13 @@ import uuid
 
 from pydantic import BaseModel
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw  # type: ignore
 
 from . import firebase_wrapper
 from . import proxy
 from . import secrets
 
-import nest_asyncio
+import nest_asyncio  # type: ignore
 
 nest_asyncio.apply()
 

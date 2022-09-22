@@ -1,7 +1,7 @@
 import json
 import typing
 
-from requests_oauthlib import OAuth1Session
+from requests_oauthlib import OAuth1Session  # type: ignore
 
 from . import secrets
 
