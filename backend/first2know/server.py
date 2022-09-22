@@ -1,5 +1,3 @@
-import base64
-import io
 import json
 import os
 import traceback
@@ -91,14 +89,10 @@ def post_screenshot(payload: PostInputPayload):
         return HTMLResponse(err, 500)
 
 
-class PostInputPayloadWithUser(PostInputPayload):
-    user: firebase_wrapper.User
-
-
 @web_app.post("/encrypt")
-def post_encrypt(payload: PostInputPayloadWithUser):
-    payload.reencrypt_cookie()
-    json_str = payload.json()
+def post_encrypt(payload: firebase_wrapper.DataInput):
+    d = dict(payload)
+    json_str = json.dumps(d)
     encrypted = firebase_wrapper.encrypt(json_str)
     return HTMLResponse(encrypted)
 

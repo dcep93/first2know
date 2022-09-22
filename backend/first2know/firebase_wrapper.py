@@ -62,8 +62,8 @@ class ToHandle(BaseModel):
 
 
 class Vars:
-    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Union[
-        str, typing.Dict[str, typing.Any]]]] = None
+    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Dict[
+        str, typing.Any]]] = None
 
 
 class Creds(firebase_creds.ApplicationDefault):
@@ -119,30 +119,38 @@ def get_to_handle() -> typing.List[ToHandle]:
 
 def _extract_to_handle(
     key: str,
-    v: typing.Union[str, typing.Dict[str, typing.Any]],
+    d: typing.Dict[str, typing.Any],
 ) -> typing.Optional[ToHandle]:
-    to_handle = ToHandle(**v) \
-        if type(v) is dict \
-        else ToHandle(**json.loads(decrypt(str(v))))
+    d = dict(d)
+    encrypted = d.pop("encrypted")
 
-    if get_md5(to_handle.data_input) != to_handle.md5:
-        return None
+    if encrypted:
+        decrypted = decrypt(encrypted)
+        d["data_input"] = json.loads(decrypted)
 
-    encrypted_user = to_handle.user.encrypted
-    decrypted_user = decrypt(encrypted_user)
-    user = User(**json.loads(decrypted_user))
-    if user.encrypted != secrets.Vars.secrets.client_secret:
-        return None
-
-    return ToHandle(
+    to_handle = ToHandle(
         key=key,
-        **to_handle.dict(),
+        **d,
     )
 
+    decrypted_user = decrypt(to_handle.user.encrypted)
+    user = User(**json.loads(decrypted_user))
 
-def get_md5(data_input: DataInput) -> str:
-    s = json.dumps([data_input.json(), secrets.Vars.secrets.client_secret])
-    return str_to_md5(s)
+    to_md5 = json.dumps([
+        to_handle.data_input.json(),
+        user.encrypted,
+    ])
+    if str_to_md5(to_md5) != to_handle.md5:
+        print("bad md5")
+        return None
+
+    user_client_secret = decrypt(user.encrypted)
+
+    if user_client_secret != secrets.Vars.secrets.client_secret:
+        print("bad encrpytion")
+        return None
+
+    return to_handle
 
 
 def str_to_md5(s: str) -> str:
