@@ -78,7 +78,7 @@ class ScreenshotPayload(firebase_wrapper.DataInput):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: PostInputPayload):
+def post_screenshot(payload: ScreenshotPayload):
     print("received screenshot request")
     # payload.reencrypt_cookie()
     try:
