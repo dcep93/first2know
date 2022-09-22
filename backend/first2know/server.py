@@ -144,7 +144,9 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
         encrypted=secrets.Vars.secrets.client_secret,
     )
     user.encrypted = firebase_wrapper.encrypt(user.json())
-    return HTMLResponse(user.json())
+    d = dict(user)
+    d["double_encrypted"] = firebase_wrapper.encrypt(user.json())
+    return HTMLResponse(json.dumps(d))
 
 
 @web_app.get("/cron")

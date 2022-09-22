@@ -1,4 +1,3 @@
-import { encrypt } from "./Edit";
 import firebase, { AllToHandleType, DataInputType, UserType } from "./firebase";
 
 import ToHandle from "./ToHandle";
@@ -19,9 +18,7 @@ function Create(props: {
 }
 
 function submitNew(data_input: DataInputType, user: UserType): Promise<string> {
-  return encrypt(data_input, user, null).then((encrypted) =>
-    firebase.pushToHandle(data_input, encrypted, user)
-  );
+  return firebase.pushToHandle(data_input, user);
 }
 
 export default Create;

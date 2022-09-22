@@ -24,6 +24,7 @@ export type UserType = {
   screen_name: string;
   user_id: number;
   encrypted: string;
+  double_encrypted: string;
 };
 
 export type DataInputType = {
@@ -40,8 +41,6 @@ export type ToHandleType = {
   data_input: DataInputType;
   data_output: DataOutputType;
   user: UserType;
-  md5: string;
-  encrypted?: string;
 };
 
 function get_md5(data_input: DataInputType, user_encrypted: string): string {
@@ -49,21 +48,25 @@ function get_md5(data_input: DataInputType, user_encrypted: string): string {
   return to_md5_f(to_md5);
 }
 
+function _FBToHandle(toHandle: ToHandleType): any {
+  const md5 = get_md5(toHandle.data_input, toHandle.user.encrypted);
+  return {
+    ...toHandle,
+    md5,
+    user: { ...toHandle.user, encrypted: toHandle.user.double_encrypted },
+  };
+}
+
 function pushToHandle(
   data_input: DataInputType,
-  user_encrypted: string,
-  user: UserType,
-  encrypted: string | undefined
+  user: UserType
 ): Promise<string> {
-  const md5 = get_md5(data_input, user_encrypted);
   const toHandle: ToHandleType = {
-    md5,
     data_input,
     data_output: { times: [Date.now() / 1000] },
     user,
-    encrypted,
   };
-  return firebase._push(`/to_handle/`, toHandle);
+  return firebase._push(`/to_handle/`, _FBToHandle(toHandle));
 }
 
 function deleteToHandle(key: string): Promise<void> {
@@ -71,7 +74,7 @@ function deleteToHandle(key: string): Promise<void> {
 }
 
 function updateToHandle(key: string, toHandle: ToHandleType): Promise<void> {
-  return firebase._set(`/to_handle/${key}`, toHandle);
+  return firebase._set(`/to_handle/${key}`, _FBToHandle(toHandle));
 }
 
 export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
