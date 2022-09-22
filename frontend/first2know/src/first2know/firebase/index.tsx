@@ -43,13 +43,9 @@ export type ToHandleType = {
   user: UserType;
 };
 
-function get_md5(data_input: DataInputType, user_encrypted: string): string {
-  const to_md5 = JSON.stringify([data_input, user_encrypted]);
-  return to_md5_f(to_md5);
-}
-
 function _FBToHandle(toHandle: ToHandleType): any {
-  const md5 = get_md5(toHandle.data_input, toHandle.user.encrypted);
+  const to_md5 = JSON.stringify([toHandle.data_input, toHandle.user.encrypted]);
+  const md5 = to_md5_f(to_md5);
   return {
     ...toHandle,
     md5,
