@@ -88,14 +88,13 @@ class Screenshot:
         elif request.data_input.url:
             await page.set_extra_http_headers(params)
             await page.goto(request.data_input.url)
-        evaluation = None \
-            if request.data_input.evaluate is None \
-            else await page.evaluate(
-                request.data_input.evaluate,
-                request.evaluation,
-            )
-        if evaluation == "first2know_ignore":
-            print("ignored", request.evaluation)
+        # evaluation = None \
+        #     if request.data_input.evaluate is None \
+        #     else await page.evaluate(
+        #         request.data_input.evaluate,
+        #         request.evaluation,
+        #     )
+        evaluation = await page.evaluate("data => data", 123)
         if request.data_input.evaluation_to_img:
             text = evaluation \
                 if type(evaluation) is str \

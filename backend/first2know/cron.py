@@ -94,7 +94,7 @@ def run_cron() -> int:
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     if secrets.Vars.is_local:
-        print("handle", to_handle.json())
+        print("\nhandle", to_handle.json(), "\n")
     data_output = firebase_wrapper.DataOutput() \
         if to_handle.data_output is None \
         else to_handle.data_output
@@ -126,6 +126,9 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
 
     if screenshot_response.evaluation == IGNORE:
         return
+
+    print(screenshot_response.evaluation)
+    return
 
     old_md5 = None \
         if data_output.screenshot_data is None \

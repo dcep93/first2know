@@ -89,7 +89,6 @@ def init():
             print("init listenF")
             Vars._raw_all_to_handle = event.data
             return
-        print("listenF", event.data)
         Vars._raw_all_to_handle = db.reference("/to_handle").get()
 
     threading.Thread(
