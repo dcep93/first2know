@@ -25,12 +25,12 @@ GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 
 class Request(BaseModel):
     data_input: firebase_wrapper.DataInput
-    evaluation: typing.Any = None
+    evaluation: typing.Optional[str]
 
 
 class Response(BaseModel):
     img_data: str
-    evaluation: typing.Any
+    evaluation: typing.Optional[str]
     md5: str
     elapsed: float
 
@@ -88,18 +88,14 @@ class Screenshot:
         elif request.data_input.url:
             await page.set_extra_http_headers(params)
             await page.goto(request.data_input.url)
-        # evaluation = None \
-        #     if request.data_input.evaluate is None \
-        #     else await page.evaluate(
-        #         request.data_input.evaluate,
-        #         request.evaluation,
-        #     )
-        evaluation = await page.evaluate("data => data", request.evaluation)
-        print(request.evaluation, evaluation)
+        evaluation = None \
+            if request.data_input.evaluate is None \
+            else await page.evaluate(
+                request.data_input.evaluate,
+                request.evaluation,
+            )
         if request.data_input.evaluation_to_img:
-            text = evaluation \
-                if type(evaluation) is str \
-                else json.dumps(evaluation, indent=1)
+            text = str(evaluation)
             lines = text.split("\n")
             padding_pixels = 50
             pixels_per_row = 15.2

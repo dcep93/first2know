@@ -74,7 +74,7 @@ def get_(request: Request):
 
 
 class ScreenshotPayload(firebase_wrapper.DataInput):
-    evaluation: typing.Any
+    evaluation: typing.Optional[str]
 
 
 @web_app.post("/screenshot")

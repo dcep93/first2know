@@ -8,10 +8,8 @@ from . import screenshot
 from . import secrets
 from . import twitter_wrapper
 
-IGNORE = "first2know_ignore"
-
 # update version to clear errors
-VERSION = '2.0.0'
+VERSION = '2.0.1'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -123,11 +121,6 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
-
-    if screenshot_response.evaluation == IGNORE:
-        return
-
-    return
 
     old_md5 = None \
         if data_output.screenshot_data is None \

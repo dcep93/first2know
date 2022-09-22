@@ -28,7 +28,7 @@ class ErrorType(BaseModel):
 class ScreenshotData(BaseModel):
     img_url: str
     md5: str
-    evaluation: typing.Any
+    evaluation: typing.Optional[str]
 
 
 class DataOutput(BaseModel):
