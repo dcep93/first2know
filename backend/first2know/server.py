@@ -145,7 +145,7 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
     )
     user.encrypted = firebase_wrapper.encrypt(user.json())
     d = dict(user)
-    d["double_encrypted"] = firebase_wrapper.encrypt(user.json())
+    d["double_encrypted"] = firebase_wrapper.encrypt(user.encrypted)
     return HTMLResponse(json.dumps(d))
 
 
