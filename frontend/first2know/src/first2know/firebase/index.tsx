@@ -49,7 +49,11 @@ function _FBToHandle(toHandle: ToHandleType): any {
   return {
     ...toHandle,
     md5,
-    user: { ...toHandle.user, encrypted: toHandle.user.double_encrypted },
+    user: {
+      ...toHandle.user,
+      encrypted: toHandle.user.double_encrypted,
+      double_encrypted: null,
+    },
   };
 }
 
