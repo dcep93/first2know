@@ -45,6 +45,7 @@ export type ToHandleType = {
 
 function _FBToHandle(toHandle: ToHandleType): any {
   const to_md5 = JSON.stringify([toHandle.data_input, toHandle.user.encrypted]);
+  console.log({ to_md5 });
   const md5 = to_md5_f(to_md5);
   return {
     ...toHandle,
