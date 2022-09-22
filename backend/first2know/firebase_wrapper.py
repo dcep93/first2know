@@ -122,7 +122,7 @@ def _extract_to_handle(
     d: typing.Dict[str, typing.Any],
 ) -> typing.Optional[ToHandle]:
     d = dict(d)
-    encrypted = d.pop("encrypted")
+    encrypted = d.pop("encrypted", None)
 
     if encrypted:
         decrypted = decrypt(encrypted)
@@ -133,13 +133,14 @@ def _extract_to_handle(
         **d,
     )
 
-    decrypted_user = decrypt(to_handle.user.encrypted)
+    encrypted_user = decrypt(to_handle.user.encrypted)
+    decrypted_user = decrypt(encrypted_user)
     user = User(**json.loads(decrypted_user))
 
     to_md5 = json.dumps([
         to_handle.data_input.json(),
-        user.encrypted,
-    ])
+        encrypted_user,
+    ]).encode('utf-8')
     if str_to_md5(to_md5) != to_handle.md5:
         print("bad md5")
         return None
@@ -153,7 +154,7 @@ def _extract_to_handle(
     return to_handle
 
 
-def str_to_md5(s: str) -> str:
+def str_to_md5(s: bytes) -> str:
     return hashlib.md5(s).hexdigest()
 
 

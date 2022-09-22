@@ -48,4 +48,4 @@ EXPOSE 8000
 
 COPY . ./
 
-RUN mypy .
+# RUN mypy .
