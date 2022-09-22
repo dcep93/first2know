@@ -95,6 +95,7 @@ class Screenshot:
         #         request.evaluation,
         #     )
         evaluation = await page.evaluate("data => data", request.evaluation)
+        print(request.evaluation, evaluation)
         if request.data_input.evaluation_to_img:
             text = evaluation \
                 if type(evaluation) is str \
