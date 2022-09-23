@@ -9,6 +9,8 @@ from . import screenshot
 from . import secrets
 from . import twitter_wrapper
 
+IGNORE = "first2know_ignore"
+
 # update version to clear errors
 VERSION = '2.0.2'
 
@@ -110,7 +112,8 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
     )
 
     try:
-        screenshot_response = Vars._screenshot_manager.run(request)
+        screenshot_response: screenshot.Response = Vars._screenshot_manager.run(
+            request)
     except Exception as e:
         to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(
@@ -120,6 +123,9 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
         raise e
+
+    if screenshot_response.evaluation == IGNORE:
+        return "ignore"
 
     old_md5 = None \
         if data_output.screenshot_data is None \
