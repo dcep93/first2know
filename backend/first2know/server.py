@@ -87,7 +87,9 @@ def post_screenshot(payload: ScreenshotPayload):
                 data_input=payload,
                 evaluation=payload.evaluation,
             ))
-        return HTMLResponse(screenshot_response.json())
+        resp = screenshot_response.json()
+        print("responding screenshot request")
+        return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)

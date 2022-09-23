@@ -10,7 +10,7 @@ from . import secrets
 from . import twitter_wrapper
 
 # update version to clear errors
-VERSION = '2.0.1'
+VERSION = '2.0.2'
 
 NUM_SCREENSHOTTERS = 8
 
