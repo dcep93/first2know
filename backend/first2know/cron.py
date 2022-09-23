@@ -1,6 +1,7 @@
 import time
 
 import concurrent.futures
+import typing
 
 from . import firebase_wrapper
 from . import manager
@@ -23,10 +24,10 @@ def main():
     init()
     firebase_wrapper.wait_10s_for_data()
     try:
-        count = run_cron()
+        resp = run_cron()
     finally:
         Vars._screenshot_manager.close()
-    print("success", count)
+    print("success", resp)
 
 
 def init():
@@ -45,23 +46,21 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
         loops = 0
         s = start
         print_freq = 10
-        count = -1
+        resp = None
         while time.time() < end:
             now = time.time()
             loops += 1
             if loops % print_freq == 0:
                 loops_per = print_freq / (now - s)
                 s = now
-                print(loops, "loops", f"{loops_per:.2f}/s", count)
+                print(loops, "loops", f"{loops_per:.2f}/s", resp)
             # exit if another process has spun up to take over
             new_token = firebase_wrapper.get_token()
             if new_token != Vars._token:
                 print("exiting cron", loops)
                 return True
 
-            count = run_cron()
-            if count == 0:
-                time.sleep(1)
+            resp = run_cron()
             # TODO dcep93 sleep properly
             time.sleep(1)
         return False
@@ -82,15 +81,15 @@ def refresh_access_token() -> str:
     return new_token
 
 
-def run_cron() -> int:
+def run_cron() -> typing.List[str]:
     to_handle_arr = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(NUM_SCREENSHOTTERS) as executor:
         _results = executor.map(handle, to_handle_arr)
         results = list(_results)
-    return len(results)
+    return results
 
 
-def handle(to_handle: firebase_wrapper.ToHandle) -> None:
+def handle(to_handle: firebase_wrapper.ToHandle) -> str:
     if secrets.Vars.is_local:
         print("\nhandle", to_handle.json(), "\n")
     data_output = firebase_wrapper.DataOutput() \
@@ -99,7 +98,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
     previous_error = data_output.error
     if not secrets.Vars.is_local:
         if previous_error is not None and previous_error.version == VERSION:
-            return
+            return "previous_error"
 
     evaluation = None \
         if data_output.screenshot_data is None \
@@ -126,7 +125,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         if data_output.screenshot_data is None \
         else data_output.screenshot_data.md5
     if screenshot_response.md5 == old_md5:
-        return
+        return "old_md5"
 
     text = "\n".join([
         f"@{to_handle.user.screen_name}",
@@ -152,6 +151,8 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> None:
         print(to_handle.key, to_write.json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)
+
+    return "to_write"
 
 
 if __name__ == "__main__":
