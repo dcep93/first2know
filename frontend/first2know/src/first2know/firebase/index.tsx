@@ -16,7 +16,7 @@ export type ScreenshotDataType = {
 
 export type DataOutputType = {
   screenshot_data?: ScreenshotDataType;
-  error?: { version: string; time: number; message: string };
+  error: { version: string; time: number; message: string } | null;
 };
 
 export type UserType = {

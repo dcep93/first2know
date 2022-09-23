@@ -41,7 +41,10 @@ function RoutedEdit(props: {
           firebase
             .updateToHandle(props.k, {
               data_input,
-              data_output: props.toHandle.data_output || null,
+              data_output:
+                props.toHandle.data_output === null
+                  ? null
+                  : { ...props.toHandle.data_output, error: null },
               user: props.user,
             })
             .then(() => props.k)
