@@ -4,7 +4,7 @@ import os
 import modal  # type: ignore
 
 PERIOD_SECONDS = 60 * 5
-GRACE_PERIOD_SECONDS = 90
+GRACE_PERIOD_SECONDS = 60 * 12
 
 if not modal.is_local():
     from . import cron
