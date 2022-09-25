@@ -1,5 +1,6 @@
 import queue
 import threading
+import traceback
 import typing
 
 T = typing.TypeVar('T')
@@ -55,6 +56,7 @@ class Manager(typing.Generic[T, U]):
         (response, is_successful) = register.get()
         if not is_successful:
             print(f"raising {response}")
+            traceback.print_tb(response.__traceback__)
             raise response
         self.response_queues.put_nowait(register)
         return response
