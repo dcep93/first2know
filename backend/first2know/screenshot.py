@@ -94,7 +94,8 @@ class Screenshot:
                 request.evaluation,
             )
         if request.data_input.evaluation_to_img:
-            text = str(str(evaluation).encode('latin-1', 'ignore'))
+            text = str(evaluation).encode('latin-1',
+                                          'ignore').decode('latin-1')
             lines = text.split("\n")
             padding_pixels = 50
             pixels_per_row = 15.2
