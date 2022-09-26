@@ -33,6 +33,7 @@ class ScreenshotData(BaseModel):
 
 class DataOutput(BaseModel):
     screenshot_data: typing.Optional[ScreenshotData] = None
+    time: typing.Optional[float] = None
     error: typing.Optional[ErrorType] = None
 
 

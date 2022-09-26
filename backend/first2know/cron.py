@@ -97,6 +97,14 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
     data_output = firebase_wrapper.DataOutput() \
         if to_handle.data_output is None \
         else to_handle.data_output
+
+    now = float(time.time())
+    previous_time = data_output.time
+    if not secrets.Vars.is_local:
+        if previous_time is not None:
+            if now - previous_time < 60 * 10:
+                return "previous_time"
+
     previous_error = data_output.error
     if not secrets.Vars.is_local:
         if previous_error is not None and previous_error.version == VERSION:
@@ -150,6 +158,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
             md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,
         ),
+        time=now,
         error=None,
     )
 

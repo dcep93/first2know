@@ -91,7 +91,7 @@ def _post_tweet(text: str, media_id: str) -> int:
     return r["data"]["id"]
 
 
-def _send_message(user_id: int, text: str, media_id: int):
+def _send_message(user_id: int, text: str, media_id: str):
     message_obj = {
         "event": {
             "type": "message_create",
