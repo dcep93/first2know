@@ -19,7 +19,7 @@ class Manager(typing.Generic[T, U]):
         self.request_queue = queue.Queue(self.num)  # type: ignore
         self.response_queues = queue.Queue(self.num)  # type: ignore
         for _ in range(self.num):
-            threading.Thread(target=self.init_runner).start()
+            threading.Thread(target=self.init_runner, daemon=True).start()
         for _ in range(self.num):
             err = self.response_queues.get()
             if err is not None:
