@@ -12,7 +12,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '2.0.2'
+VERSION = '2.0.3'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -102,7 +102,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
     previous_time = data_output.time
     if not secrets.Vars.is_local:
         if previous_time is not None:
-            if now - previous_time < 60 * 10:
+            if now > previous_time:
                 return "previous_time"
 
     previous_error = data_output.error
@@ -158,7 +158,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
             md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,
         ),
-        time=now,
+        time=now + 60 * 10,
         error=None,
     )
 
