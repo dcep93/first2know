@@ -161,7 +161,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
         error=None,
     )
 
-    if secrets.Vars.is_local:
+    if True or secrets.Vars.is_local:
         print(to_handle.key, to_write.json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)

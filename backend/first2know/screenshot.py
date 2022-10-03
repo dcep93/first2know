@@ -76,8 +76,10 @@ class Screenshot:
             def __init__(self):
                 C.c += 1
                 now = time.time()
-                print(C.c, now - C.now)
+                diff = now - C.now
                 C.now = now
+                if diff > 5:
+                    print(C.c, diff)
 
         C()
 
