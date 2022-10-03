@@ -92,23 +92,22 @@ def run_cron() -> typing.List[str]:
 
 
 def handle(to_handle: firebase_wrapper.ToHandle) -> str:
-    if secrets.Vars.is_local:
-        print("\nhandle", to_handle.json(), "\n")
     data_output = firebase_wrapper.DataOutput() \
         if to_handle.data_output is None \
         else to_handle.data_output
 
     now = float(time.time())
     previous_time = data_output.time
-    if not secrets.Vars.is_local:
-        if previous_time is not None:
-            if now > previous_time:
-                return "previous_time"
-
     previous_error = data_output.error
-    if not secrets.Vars.is_local:
+
+    if secrets.Vars.is_local:
+        print("\nhandle", to_handle.json(), "\n")
+    else:
         if previous_error is not None and previous_error.version == VERSION:
             return "previous_error"
+        if previous_time is not None:
+            if previous_time > now:
+                return "previous_time"
 
     evaluation = None \
         if data_output.screenshot_data is None \
