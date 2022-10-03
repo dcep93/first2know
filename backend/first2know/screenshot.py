@@ -69,6 +69,18 @@ class Screenshot:
 
         s = time.time()
 
+        class C:
+            c = 0
+            now = s
+
+            def __init__(self):
+                C.c += 1
+                now = time.time()
+                print(C.c, now - C.now)
+                C.now = now
+
+        C()
+
         params = dict(request.data_input.params)
 
         if request.data_input.user_agent_hack:
@@ -76,6 +88,7 @@ class Screenshot:
 
         context = await self.browser.new_context()
         page = await context.new_page()
+        C()
 
         if request.data_input.raw_proxy:
             proxy_result = proxy.proxy(
@@ -93,6 +106,7 @@ class Screenshot:
                 request.data_input.evaluate,
                 request.evaluation,
             )
+        C()
         if request.data_input.evaluation_to_img:
             text = str(evaluation).encode('latin-1',
                                           'ignore').decode('latin-1')
@@ -120,6 +134,7 @@ class Screenshot:
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
+        C()
 
         encoded = base64.b64encode(binary_data)
         img_data = encoded.decode('utf-8')
@@ -131,6 +146,7 @@ class Screenshot:
             f"{len(img_data)/1000}kb",
             datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))
+        C()
         return Response(
             img_data=img_data,
             evaluation=evaluation,
