@@ -12,7 +12,7 @@ if not modal.is_local():
     from . import secrets
     from . import server
 
-image = modal.DebianSlim().run_commands([
+image = modal.Image.debian_slim().run_commands([
     "apt-get install -y software-properties-common",
     "apt-add-repository non-free",
     "apt-add-repository contrib",
@@ -46,7 +46,7 @@ def init(s: str):
 # TODO akshat - can the first run always be NOW, not NOW + modal.Period
 @modal_app.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
-    secret=modal.ref("first2know_s"),
+    secret=modal.Secret.from_name("first2know_s"),
 )
 def modal_cron():
     init("cron")
@@ -56,7 +56,7 @@ def modal_cron():
         raise Exception("no_exit modal_cron")
 
 
-@modal_app.asgi(secret=modal.ref("first2know_s"), keep_warm=True)
+@modal_app.asgi(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
 def app():
     init("web_app")
     server.init()
