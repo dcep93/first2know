@@ -2,8 +2,6 @@ FROM debian:11
 
 WORKDIR /var/www
 
-# TODO dcep93 modal app from image from dockerfile
-
 
 # RUN apt-add-repository non-free
 # RUN apt-add-repository contrib

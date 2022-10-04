@@ -63,7 +63,6 @@ def loop(period_seconds: int, grace_period_seconds: int) -> bool:
                 return True
 
             resp = run_cron()
-            # TODO dcep93 sleep properly
             time.sleep(1)
         return False
 

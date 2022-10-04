@@ -12,7 +12,7 @@ if not modal.is_local():
     from . import secrets
     from . import server
 
-dockerfile_image = modal.Image.from_dockerfile("../Dockerfile")
+dockerfile_image = modal.Image.from_dockerfile("./Dockerfile")
 modal_app = modal.Stub(image=dockerfile_image)
 
 
