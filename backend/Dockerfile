@@ -15,6 +15,8 @@ RUN apt install -y python3-pip
 
 RUN pip3 install  --upgrade pip
 
+RUN apt install python-is-python3
+
 RUN apt install -y git
 RUN pip3 install grpcio==1.43.0
 
