@@ -12,29 +12,8 @@ if not modal.is_local():
     from . import secrets
     from . import server
 
-image = modal.Image.debian_slim().run_commands([
-    "apt-get install -y software-properties-common",
-    "apt-add-repository non-free",
-    "apt-add-repository contrib",
-    "apt-get update",
-]).run_commands([
-    'apt install -y git',
-]).pip_install([
-    'grpcio==1.43.0',
-]).run_commands([
-    "pip install playwright==1.22",
-    "playwright install-deps chromium",
-    "playwright install chromium",
-]).pip_install([
-    'cryptography',
-    'requests',
-    'requests_oauthlib',
-    'pillow',
-    'firebase-admin',
-    'nest-asyncio',
-    'beautifulsoup4',
-])
-modal_app = modal.Stub(image=image)
+dockerfile_image = modal.Image.from_dockerfile("../Dockerfile")
+modal_app = modal.Stub(image=dockerfile_image)
 
 
 def init(s: str):
