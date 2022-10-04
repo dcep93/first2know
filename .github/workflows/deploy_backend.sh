@@ -3,7 +3,7 @@
 set -euo pipefail
 
 MODAL_KEY="$1"
-TWITTER_KEY="$2"
+SECRETS_JSON="$2"
 
 cd "$(dirname "$0")"
 
@@ -13,7 +13,7 @@ if [[ -z "$DIFF" ]]; then
 else
   echo "$DIFF"
   bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
-  bash ./deploy_to_modal.sh "$MODAL_KEY" "$TWITTER_KEY"
+  bash ./deploy_to_modal.sh "$MODAL_KEY" "$SECRETS_JSON"
 fi
 
 function c() {
