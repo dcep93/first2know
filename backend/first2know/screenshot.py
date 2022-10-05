@@ -41,14 +41,22 @@ class Screenshot:
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
 
-    async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
+    async def async_init(
+        self,
+        retries=3,
+    ) -> typing.Tuple[typing.Any, typing.Any]:
         from playwright.async_api import async_playwright as _p  # type: ignore # noqa
 
-        p = _p()
+        try:
+            p = _p()
 
-        entered = await p.__aenter__()
-        browser = await entered.chromium.launch()
-        return p, browser
+            entered = await p.__aenter__()
+            browser = await entered.chromium.launch()
+            return p, browser
+        except Exception as e:
+            if retries > 0:
+                return await self.async_init(retries - 1)
+            raise e
 
     async def close(self):
         await self.browser.close()

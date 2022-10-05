@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import modal  # type: ignore
 
@@ -30,6 +31,7 @@ def init(s: str):
 def modal_cron():
     init("cron")
     cron.init()
+    time.sleep(10)
     was_successful = cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
     if not was_successful:
         raise Exception("no_exit modal_cron")
