@@ -41,22 +41,29 @@ class Screenshot:
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
 
+    @classmethod
+    async def async_retry(cls, f: typing.Callable, retries: int):
+        try:
+            return f()
+        except Exception as e:
+            if retries > 0:
+                return await cls.async_retry(f, retries - 1)
+            raise e
+
     async def async_init(
         self,
         retries=3,
     ) -> typing.Tuple[typing.Any, typing.Any]:
         from playwright.async_api import async_playwright as _p  # type: ignore # noqa
 
-        try:
+        async def helper():
             p = _p()
 
             entered = await p.__aenter__()
             browser = await entered.chromium.launch()
             return p, browser
-        except Exception as e:
-            if retries > 0:
-                return await self.async_init(retries - 1)
-            raise e
+
+        return await self.async_retry(helper, 3)
 
     async def close(self):
         await self.browser.close()
@@ -67,7 +74,10 @@ class Screenshot:
             print(self.id, s)
 
     def __call__(self, request: Request) -> Response:
-        r = asyncio.run(self.__acall__(request))
+        async def helper():
+            return self.__acall__(request)
+
+        r = asyncio.run(self.async_retry(helper, 3))
         return r
 
     async def __acall__(
