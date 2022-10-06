@@ -44,16 +44,13 @@ class Screenshot:
     @classmethod
     async def async_retry(cls, f: typing.Callable, retries: int):
         try:
-            return f()
+            return await f()
         except Exception as e:
             if retries > 0:
                 return await cls.async_retry(f, retries - 1)
             raise e
 
-    async def async_init(
-        self,
-        retries=3,
-    ) -> typing.Tuple[typing.Any, typing.Any]:
+    async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
         from playwright.async_api import async_playwright as _p  # type: ignore # noqa
 
         async def helper():
@@ -77,7 +74,7 @@ class Screenshot:
     def __call__(self, request: Request) -> Response:
 
         async def helper():
-            return self.__acall__(request)
+            return await self.__acall__(request)
 
         r = asyncio.run(self.async_retry(helper, 3))
         return r
