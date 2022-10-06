@@ -63,7 +63,8 @@ class Screenshot:
             browser = await entered.chromium.launch()
             return p, browser
 
-        return await self.async_retry(helper, 3)
+        p, browser = await self.async_retry(helper, 3)
+        return p, browser
 
     async def close(self):
         await self.browser.close()
@@ -74,6 +75,7 @@ class Screenshot:
             print(self.id, s)
 
     def __call__(self, request: Request) -> Response:
+
         async def helper():
             return self.__acall__(request)
 
