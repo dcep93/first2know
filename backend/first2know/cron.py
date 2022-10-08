@@ -14,7 +14,7 @@ IGNORE = "first2know_ignore"
 # update version to clear errors
 VERSION = '2.0.6'
 
-NUM_SCREENSHOTTERS = 8
+NUM_SCREENSHOTTERS = 1
 
 
 class Vars:
