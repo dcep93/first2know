@@ -49,4 +49,4 @@ RUN pip3 install mypy
 
 COPY . ./
 
-# RUN mypy .
+RUN mypy .

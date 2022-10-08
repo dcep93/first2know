@@ -19,57 +19,73 @@ NUM_SCREENSHOTTERS = 8
 
 class Vars:
     _token: str
-    _screenshot_manager: manager.Manager
 
 
 def main():
     init()
     firebase_wrapper.wait_10s_for_data()
+    screenshot_manager = manager.Manager(
+        screenshot.Screenshot,
+        NUM_SCREENSHOTTERS,
+    )
     try:
-        resp = run_cron()
+        resp = run()
     finally:
-        Vars._screenshot_manager.close()
+        screenshot_manager.close()
     print("success", resp)
 
 
 def init():
     firebase_wrapper.init()
-    Vars._screenshot_manager = manager.Manager(
+
+
+def loop(
+    period_seconds: int,
+    grace_period_seconds: int,
+) -> bool:
+    init()
+    screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-
-
-def loop(period_seconds: int, grace_period_seconds: int) -> bool:
-
-    def helper():
-        start = time.time()
-        end = start + period_seconds + grace_period_seconds
-        loops = 0
-        s = start
-        print_freq = 10
-        resp = None
-        while time.time() < end:
-            now = time.time()
-            loops += 1
-            if loops % print_freq == 0:
-                loops_per = print_freq / (now - s)
-                s = now
-                print(loops, "loops", f"{loops_per:.2f}/s", resp)
-            # exit if another process has spun up to take over
-            new_token = firebase_wrapper.get_token()
-            if new_token != Vars._token:
-                print("exiting cron", loops)
-                return True
-
-            resp = run_cron()
-            time.sleep(1)
-        return False
-
-    Vars._token = refresh_access_token()
-    rval = helper()
-    Vars._screenshot_manager.close()
+    rval = loop_with_manager(
+        period_seconds,
+        grace_period_seconds,
+        screenshot_manager,
+    )
+    screenshot_manager.close()
     return rval
+
+
+def loop_with_manager(
+    period_seconds: int,
+    grace_period_seconds: int,
+    screenshot_manager: manager.Manager,
+) -> bool:
+    Vars._token = refresh_access_token()
+
+    start = time.time()
+    end = start + period_seconds + grace_period_seconds
+    loops = 0
+    s = start
+    print_freq = 10
+    resp = None
+    while time.time() < end:
+        now = time.time()
+        loops += 1
+        if loops % print_freq == 0:
+            loops_per = print_freq / (now - s)
+            s = now
+            print(loops, "loops", f"{loops_per:.2f}/s", resp)
+        # exit if another process has spun up to take over
+        new_token = firebase_wrapper.get_token()
+        if new_token != Vars._token:
+            print("exiting cron", loops)
+            return True
+
+        resp = run(screenshot_manager)
+        time.sleep(1)
+    return False
 
 
 # refresh token is not actually used to auth anymore
@@ -82,15 +98,22 @@ def refresh_access_token() -> str:
     return new_token
 
 
-def run_cron() -> typing.List[str]:
+def run(screenshot_manager: manager.Manager) -> typing.List[str]:
     to_handle_arr = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(NUM_SCREENSHOTTERS) as executor:
-        _results = executor.map(handle, to_handle_arr)
+        _results = executor.map(
+            lambda to_handle: handle(
+                to_handle,
+                screenshot_manager,
+            ), to_handle_arr)
         results = list(_results)
     return results
 
 
-def handle(to_handle: firebase_wrapper.ToHandle) -> str:
+def handle(
+    to_handle: firebase_wrapper.ToHandle,
+    screenshot_manager: manager.Manager,
+) -> str:
     data_output = firebase_wrapper.DataOutput() \
         if to_handle.data_output is None \
         else to_handle.data_output
@@ -118,7 +141,7 @@ def handle(to_handle: firebase_wrapper.ToHandle) -> str:
     )
 
     try:
-        screenshot_response: screenshot.Response = Vars._screenshot_manager.run(
+        screenshot_response: screenshot.Response = screenshot_manager.run(
             request)
     except Exception as e:
         to_write = data_output

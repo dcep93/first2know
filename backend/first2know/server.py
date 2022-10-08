@@ -1,11 +1,12 @@
 import json
 import os
+import pydantic
 import traceback
 import typing
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse
 
 from . import cron
 from . import firebase_wrapper
@@ -150,10 +151,29 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
     return HTMLResponse(json.dumps(d))
 
 
-@web_app.get("/cron")
+@web_app.get("/run_cron")
 def get_cron():
     try:
-        cron.run_cron()
+        cron.run()
+        return HTMLResponse(None, 200)
+    except Exception:
+        err = traceback.format_exc()
+        return HTMLResponse(err, 500)
+
+
+class LoopCronPayload(pydantic.BaseModel):
+    period_seconds: int
+    grace_period_seconds: int
+
+
+@web_app.post("/loop_cron")
+def post_cron(payload: LoopCronPayload):
+    try:
+        cron.loop_with_manager(
+            payload.period_seconds,
+            payload.grace_period_seconds,
+            Vars._screenshot_manager,
+        )
         return HTMLResponse(None, 200)
     except Exception:
         err = traceback.format_exc()
