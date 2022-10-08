@@ -60,7 +60,8 @@ class Screenshot:
             browser = await entered.chromium.launch()
             return p, browser
 
-        p, browser = await self.async_retry(helper, 3)
+        # p, browser = await self.async_retry(helper, 3)
+        p, browser = await helper()
         return p, browser
 
     async def close(self):

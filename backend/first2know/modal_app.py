@@ -38,7 +38,7 @@ def modal_cron():
 
 
 @modal_app.asgi(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
-def app():
+def web_app():
     init("web_app")
     server.init()
     return server.web_app
