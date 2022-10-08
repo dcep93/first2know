@@ -23,7 +23,6 @@ class Vars:
 
 def main():
     init()
-    firebase_wrapper.wait_10s_for_data()
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
@@ -37,6 +36,7 @@ def main():
 
 def init():
     firebase_wrapper.init()
+    firebase_wrapper.wait_10s_for_data()
 
 
 def loop(
