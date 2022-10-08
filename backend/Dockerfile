@@ -25,7 +25,8 @@ RUN pip3 install grpcio==1.43.0
 # solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
 RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >> /etc/apt/sources.list.d/fonts.list
 
-RUN pip3 install playwright==1.22
+# RUN pip3 install playwright==1.22
+RUN pip3 install playwright==1.27
 RUN playwright install-deps chromium
 RUN playwright install chromium
 
