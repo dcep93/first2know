@@ -7,7 +7,7 @@ import time
 import typing
 import uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # type: ignore
 
 from PIL import Image, ImageDraw  # type: ignore
 
