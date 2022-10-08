@@ -1,12 +1,13 @@
 import json
 import os
-import pydantic
 import traceback
 import typing
 
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+import pydantic  # type: ignore
+
+from fastapi import FastAPI, Request  # type: ignore
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore
+from fastapi.responses import HTMLResponse  # type: ignore
 
 from . import cron
 from . import firebase_wrapper
