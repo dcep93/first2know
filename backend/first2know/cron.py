@@ -29,7 +29,7 @@ def main():
         NUM_SCREENSHOTTERS,
     )
     try:
-        resp = run()
+        resp = run(screenshot_manager)
     finally:
         screenshot_manager.close()
     print("success", resp)
