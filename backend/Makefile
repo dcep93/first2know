@@ -33,7 +33,7 @@ runserver:
 	LOCAL=true uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
 runcron:
-	LOCAL=true python3 -m first2know.cron
+	LOCAL=true python3 -u -m first2know.cron
 
 regenauth:
 	LOCAL=true python3 -m first2know.twitter_auth
