@@ -154,6 +154,7 @@ class Screenshot:
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
+        await context.close()
         C()
 
         encoded = base64.b64encode(binary_data)
