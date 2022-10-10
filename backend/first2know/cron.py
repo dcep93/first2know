@@ -1,4 +1,5 @@
 import time
+import os, psutil
 
 import concurrent.futures
 import typing
@@ -18,6 +19,7 @@ NUM_SCREENSHOTTERS = 2
 
 
 class Vars:
+    _process = psutil.Process(os.getpid())
     _token: str
 
 
@@ -29,12 +31,19 @@ def main():
     )
     try:
         resp = run(screenshot_manager)
+        print(get_memory_mb())
     finally:
         screenshot_manager.close()
     print("success", resp)
+    print(get_memory_mb())
+
+
+def get_memory_mb():
+    return Vars._process.memory_info().rss / 1000000
 
 
 def init():
+    print(get_memory_mb())
     firebase_wrapper.init()
     firebase_wrapper.wait_10s_for_data()
 
@@ -76,7 +85,7 @@ def loop_with_manager(
         if loops % print_freq == 0:
             loops_per = print_freq / (now - s)
             s = now
-            print(loops, "loops", f"{loops_per:.2f}/s", resp)
+            print(get_memory_mb(), loops, "loops", f"{loops_per:.2f}/s", resp)
         # exit if another process has spun up to take over
         new_token = firebase_wrapper.get_token()
         if new_token != Vars._token:
