@@ -164,7 +164,7 @@ def get_cron():
 
 class LoopCronPayload(pydantic.BaseModel):
     period_seconds: int
-    grace_period_seconds: int
+    grace_period_seconds: int = 0
 
 
 @web_app.post("/loop_cron")

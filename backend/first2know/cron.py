@@ -15,7 +15,7 @@ IGNORE = "first2know_ignore"
 # update version to clear errors
 VERSION = '2.0.6'
 
-NUM_SCREENSHOTTERS = 2
+NUM_SCREENSHOTTERS = 8
 
 
 class Vars:
@@ -50,7 +50,7 @@ def init():
 
 def loop(
     period_seconds: int,
-    grace_period_seconds: int,
+    grace_period_seconds: int = 0,
 ) -> bool:
     init()
     screenshot_manager = manager.Manager(
