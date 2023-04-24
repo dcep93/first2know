@@ -34,8 +34,8 @@ def modal_cron():
         raise Exception("no_exit modal_cron")
 
 
-@modal_app.asgi(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
-def app():
-    init("web_app")
-    server.init()
-    return server.web_app
+# @modal_app.asgi(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
+# def app():
+#     init("web_app")
+#     server.init()
+#     return server.web_app
