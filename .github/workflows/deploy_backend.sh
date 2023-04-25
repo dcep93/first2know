@@ -17,7 +17,7 @@ else
 fi
 
 function c() {
-  curl --fail https://dcep93-first2know-app.modal.run/
+  curl --fail https://dcep93--first2know-app.modal.run/
 }
 
 c || c || c
