@@ -34,7 +34,7 @@ def modal_cron():
         raise Exception("no_exit modal_cron")
 
 
-@stub.function(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
+@stub.function(secret=modal.Secret.from_name("first2know_s"), keep_warm=1)
 @modal.asgi_app()
 def app():
     init("web_app")
