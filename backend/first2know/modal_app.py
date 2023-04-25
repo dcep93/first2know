@@ -14,7 +14,7 @@ if not modal.is_local():
     from . import server
 
 dockerfile_image = modal.Image.from_dockerfile("./Dockerfile")
-modal_app = modal.Stub(image=dockerfile_image)
+stub = modal.Stub(image=dockerfile_image)
 
 
 def init(s: str):
@@ -23,7 +23,7 @@ def init(s: str):
     secrets.Vars.secrets = secrets.Secrets(**json.loads(raw_json))
 
 
-@modal_app.function(
+@stub.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
     secret=modal.Secret.from_name("first2know_s"),
 )
@@ -34,9 +34,8 @@ def modal_cron():
         raise Exception("no_exit modal_cron")
 
 
-@modal_app.function()
+@stub.function(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
 @modal.asgi_app()
-# @modal_app.asgi(secret=modal.Secret.from_name("first2know_s"), keep_warm=True)
 def app():
     init("web_app")
     server.init()

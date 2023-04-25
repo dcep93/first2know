@@ -39,7 +39,7 @@ regenauth:
 	LOCAL=true python3 -m first2know.twitter_auth
 
 modaldeploy:
-	modal deploy --name first2know first2know.modal_app::modal_app
+	modal deploy --name first2know first2know.modal_app
 
 test:
 	python3 -m unittest first2know.test
