@@ -1,3 +1,5 @@
+import json
+
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
@@ -8,13 +10,16 @@ def main():
     request = screenshot.Request(data_input=firebase_wrapper.DataInput(
         url=url,
         raw_proxy=True,
-        params={"data": {
-            "Quantity": 1,
-        }},
+        params={
+            "method": "POST",
+            "data": {
+                "Quantity": 1,
+            }
+        },
         evaluate="document.body.innerHTML",
     ), )
     screenshot_response = screenshot.Screenshot()(request)
-    print(screenshot_response.evaluation)
+    print(json.dumps(screenshot_response.evaluation))
     print("oneoff complete")
 
 
