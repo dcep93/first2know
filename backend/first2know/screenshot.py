@@ -73,11 +73,12 @@ class Screenshot:
             print(self.id, s)
 
     async def new_context(self):
-        for _ in range(10):
-            try:
-                return await self.browser.new_context()
-            except:
-                pass
+        try:
+            return await self.browser.new_context()
+        except:
+            pass
+        await self.close()
+        self.p, self.browser = await self.async_init()
         return await self.browser.new_context()
 
     def __call__(self, request: Request) -> Response:
