@@ -29,6 +29,13 @@ dockerrunserver:
 		$(local_image_tag) \
 		make runserver
 
+oneoff: dockerbuild
+	docker run \
+		--rm \
+		--name $(service_name) \
+		$(local_image_tag) \
+		python3 -u -m first2know.oneoff
+
 runserver:
 	LOCAL=true uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
