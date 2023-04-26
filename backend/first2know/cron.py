@@ -13,7 +13,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '2.0.6'
+VERSION = '3.0.0'
 
 NUM_SCREENSHOTTERS = 8
 
