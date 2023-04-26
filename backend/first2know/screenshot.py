@@ -72,6 +72,14 @@ class Screenshot:
         if secrets.Vars.is_local:
             print(self.id, s)
 
+    async def new_context(self):
+        for _ in range(10):
+            try:
+                return await self.browser.new_context()
+            except:
+                pass
+        return await self.browser.new_context()
+
     def __call__(self, request: Request) -> Response:
 
         async def helper():
@@ -106,7 +114,7 @@ class Screenshot:
         if request.data_input.user_agent_hack:
             params["user-agent"] = GOOD_USER_AGENT
 
-        context = await self.browser.new_context()
+        context = await self.new_context()
         page = await context.new_page()
         C()
 
