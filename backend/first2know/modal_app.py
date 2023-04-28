@@ -25,6 +25,7 @@ def init(s: str):
 
 @stub.function(
     schedule=modal.Period(seconds=PERIOD_SECONDS),
+    timeout=PERIOD_SECONDS + (2 * GRACE_PERIOD_SECONDS),
     secret=modal.Secret.from_name("first2know_s"),
 )
 def modal_cron():
