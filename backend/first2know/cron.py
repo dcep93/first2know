@@ -17,6 +17,8 @@ VERSION = '3.0.2'
 
 NUM_SCREENSHOTTERS = 8
 
+DEBOUNCE_SECONDS = 12 * 60 * 60
+
 
 class Vars:
     _process = psutil.Process(os.getpid())
@@ -188,7 +190,7 @@ def handle(
             md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,
         ),
-        time=now + 60 * 10,
+        time=now + DEBOUNCE_SECONDS,
         error=None,
     )
 
