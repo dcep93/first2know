@@ -13,4 +13,4 @@ modal token set --token-id "$TOKEN_ID" --token-secret "$MODAL_KEY"
 cd ../../backend
 # modal secret create "first2know_s" secrets.json="$SECRETS_JSON"
 
-make modaldeploy || make modaldeploy || make modaldeploy
+make modaldeploy
