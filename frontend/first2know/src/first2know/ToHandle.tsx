@@ -1,5 +1,6 @@
 import { createRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { sfetch, url } from "./Server";
 import {
   AllToHandleType,
   DataInputType,
@@ -7,7 +8,6 @@ import {
   UserType,
 } from "./firebase";
 import loading from "./loading.gif";
-import { sfetch, url } from "./Server";
 
 const urlRef = createRef<HTMLInputElement>();
 const rawProxyRef = createRef<HTMLInputElement>();
@@ -182,7 +182,7 @@ function getData(): DataInputType {
     params,
     selector: cssSelectorRef.current!.value || null,
     evaluate: evaluateRef.current!.value || null,
-    evaluation_to_img: evaluationToImgRef.current!.checked || null,
+    evaluation_to_img: evaluationToImgRef.current!.checked || false,
     user_agent_hack: userAgentRef.current!.checked || null,
     raw_proxy: rawProxyRef.current!.checked || null,
   };
