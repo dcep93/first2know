@@ -4,20 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-grpcio = "==1.43.0"
-cryptography = "*"
-requests = "*"
-uvicorn = "*"
-fastapi = "*"
-requests-oauthlib = "*"
-pillow = "*"
-firebase-admin = "*"
-nest-asyncio = "*"
-beautifulsoup4 = "*"
-psutil = "*"
-mypy = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"
