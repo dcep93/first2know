@@ -26,8 +26,8 @@ def _get_oauth():
     return OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
+        secrets.Vars.secrets.access_token,
+        secrets.Vars.secrets.access_token_secret,
     )
 
 

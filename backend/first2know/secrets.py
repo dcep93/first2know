@@ -11,8 +11,8 @@ class Secrets(BaseModel):
     api_key_secret: str
     client_id: str
     client_secret: str
-    oauth_token: str
-    oauth_token_secret: str
+    access_token: str
+    access_token_secret: str
 
 
 class Vars:

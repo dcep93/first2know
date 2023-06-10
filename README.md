@@ -22,12 +22,3 @@
 - visit [https://dcep93--first2know-app.modal.run/](https://dcep93--first2know-app.modal.run/) to verify working
 
 # secrets
-
-#### required_keys:
-
-- client_id
-- client_secret
-- api_key
-- api_key_secret
-- oauth_token
-- oauth_token_secret
