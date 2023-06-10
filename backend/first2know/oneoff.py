@@ -1,25 +1,18 @@
 import json
 
+from . import twitter_wrapper
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
 
 
 def main():
-    url = "https://www.stubhub.com/taylor-swift-east-rutherford-tickets-5-26-2023/event/150593661/"
-    request = screenshot.Request(data_input=firebase_wrapper.DataInput(
-        url=url,
-        raw_proxy=True,
-        params={
-            "method": "POST",
-            "data": {
-                "Quantity": 1,
-            }
-        },
-        evaluate="document.body.innerHTML",
-    ), )
-    screenshot_response = screenshot.Screenshot()(request)
-    print(json.dumps(screenshot_response.evaluation))
+    img_data = 'iVBORw0KGgoAAAANSUhEUgAAAHcAAABzAQAAAACK06AxAAAAPElEQVR4nGNgGAWjYBRQCNgKD6Dw+W4nQBhMEIrDASrBAqEU/qLyOVVgAlDzYPph/J+o5o+CUTAKBgAAAPx/CBp43LB8AAAAAElFTkSuQmCC'
+    img_url = twitter_wrapper.tweet(
+        "test @dcep93",
+        img_data,
+    )
+    print(img_url)
     print("oneoff complete")
 
 

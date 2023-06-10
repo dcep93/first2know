@@ -48,6 +48,8 @@ RUN pip3 install psutil
 
 RUN pip3 install mypy
 
+RUN pip3 install modal
+
 # EXPOSE 8000
 
 COPY . ./

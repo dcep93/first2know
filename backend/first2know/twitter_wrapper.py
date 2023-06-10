@@ -22,6 +22,15 @@ def tweet(text: str, img_data: str) -> str:
     return resp["includes"]["media"][0]["url"]
 
 
+def _get_oauth():
+    return OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
+    )
+
+
 def _read_tweets(
     tweet_ids: typing.List[int],
     params: typing.Optional[typing.Dict[str, str]] = None,
@@ -30,12 +39,7 @@ def _read_tweets(
     params["ids"] = ",".join([str(i) for i in tweet_ids])
     params_arr = [f"{k}={v}" for k, v in params.items()]
     url = f'https://api.twitter.com/2/tweets?{"&".join(params_arr)}'
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    )
+    oauth = _get_oauth()
     resp = oauth.get(url)
     if resp.status_code >= 300:
         print(resp)
@@ -44,12 +48,7 @@ def _read_tweets(
 
 
 def _post_image(img_data: str) -> str:
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    )
+    oauth = _get_oauth()
     resp = oauth.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
@@ -71,12 +70,7 @@ def _post_tweet(text: str, media_id: str) -> int:
             "media_ids": [media_id]
         },
     }
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    )
+    oauth = _get_oauth()
     resp = oauth.post(
         'https://api.twitter.com/2/tweets',
         headers={
@@ -112,12 +106,7 @@ def _send_message(user_id: int, text: str, media_id: str):
         }
     }
 
-    oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    )
+    oauth = _get_oauth()
 
     resp = oauth.post(
         'https://api.twitter.com/1.1/direct_messages/events/new.json',
