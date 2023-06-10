@@ -4,13 +4,14 @@ import time
 
 import modal  # type: ignore
 
+from . import secrets
+
 PERIOD_SECONDS = 60 * 5
 GRACE_PERIOD_SECONDS = 60 * 12
 
-if not modal.is_local():
+if not secrets.Vars.is_local:
     from . import cron
     from . import recorded_sha
-    from . import secrets
     from . import server
 
 dockerfile_image = modal.Image.from_dockerfile("./Dockerfile")

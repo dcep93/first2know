@@ -3,6 +3,8 @@ import os
 
 from pydantic import BaseModel
 
+import modal
+
 
 class Secrets(BaseModel):
     api_key: str
@@ -18,7 +20,7 @@ class Vars:
     is_local = False
 
 
-if os.environ.get("LOCAL"):
+if modal.is_local():
     if Vars.secrets is None:
         Vars.is_local = True
         client_secret_path = os.path.join(

@@ -32,7 +32,7 @@ def init():
     )
 
 
-if os.environ.get("LOCAL"):
+if secrets.Vars.is_local:
     init()
 
 web_app = FastAPI()

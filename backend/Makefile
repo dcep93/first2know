@@ -6,44 +6,24 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 dockerbuild:
 	docker build -t $(local_image_tag) .
 
-dockerruncron:
+dockerexec: dockerbuild
 	docker run \
 		--rm \
 		--name $(service_name) \
 		$(local_image_tag) \
-		make runcron
+		make $(ARGS)
 
-dockertest:
-	docker run \
-		--rm \
-		--name $(service_name) \
-		$(local_image_tag) \
-		make test
-
-dockerrunserver:
-	docker run \
-		-it \
-		--rm \
-		-p 8000:8000 \
-		--name $(service_name) \
-		$(local_image_tag) \
-		make runserver
-
-oneoff: dockerbuild
-	docker run \
-		--rm \
-		--name $(service_name) \
-		$(local_image_tag) \
-		python3 -u -m first2know.oneoff
+oneoff:
+	python3 -u -m first2know.oneoff
 
 runserver:
-	LOCAL=true uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
+	uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
 runcron:
-	LOCAL=true python3 -u -m first2know.cron
+	python3 -u -m first2know.cron
 
 regenauth:
-	LOCAL=true python3 -m first2know.twitter_auth
+	python3 -m first2know.twitter_auth
 
 modaldeploy:
 	modal deploy --name first2know first2know.modal_app
