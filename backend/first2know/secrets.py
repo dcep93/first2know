@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 
 from pydantic import BaseModel
 
@@ -24,8 +23,6 @@ class Vars:
     is_local = False
 
 
-print("\n".join(dir(modal)))
-print(sys.argv)
 if modal.is_local():
     if Vars.secrets is None:
         Vars.is_local = True
