@@ -13,6 +13,9 @@ class Secrets(BaseModel):
     client_secret: str
     access_token: str
     access_token_secret: str
+    # twitter_wrapper.py::get_oauth_tokens
+    oauth_token: str
+    oauth_token_secret: str
 
 
 class Vars:

@@ -12,11 +12,9 @@ def message(user_id: int, img_data: str):
 
 
 def tweet(text: str, img_data: str) -> str:
-    oauth = _get_oauth()
-    media_id = _post_image(oauth, img_data)
-    tweet_id = _post_tweet(oauth, text, media_id)
+    media_id = _post_image(img_data)
+    tweet_id = _post_tweet(text, media_id)
     resp = _read_tweets(
-        oauth,
         [tweet_id],
         {
             "expansions": "attachments.media_keys",
@@ -26,35 +24,45 @@ def tweet(text: str, img_data: str) -> str:
     return resp["includes"]["media"][0]["url"]
 
 
-def _get_oauth():
-    oauth = OAuth1Session(
+# https://requests-oauthlib.readthedocs.io/en/v1.3.1/oauth1_workflow.html
+def get_oauth_tokens():
+    request_oauth = OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,
     )
-    request_token = oauth.fetch_request_token(
+    request_token = request_oauth.fetch_request_token(
         "https://api.twitter.com/oauth/request_token")
-    resp = OAuth1Session(
-        secrets.Vars.secrets.client_id,
-        secrets.Vars.secrets.client_secret,
-        fetch_response["oauth_token"],
-        fetch_response["oauth_token_secret"],
-    ).get("https://api.twitter.com/1.1/account/verify_credentials.json")
-    print(resp.status_code)
-    print(resp.text)
-    exit()
+    authorization_url = request_oauth.authorization_url(
+        "https://api.twitter.com/oauth/authorize")
+    redirect_response = input(f"{authorization_url}\n")
+    verifier = request_oauth.parse_authorization_response(
+        redirect_response)["oauth_verifier"]
+    access_oauth = OAuth1Session(
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        resource_owner_key=request_token["oauth_token"],
+        resource_owner_secret=request_token["oauth_token_secret"],
+        verifier=verifier,
+    )
+    oauth_tokens = access_oauth.fetch_access_token(
+        "https://api.twitter.com/oauth/access_token")
+    print(json.dumps(oauth_tokens, indent=1))
+
+
+def _get_oauth():
     return OAuth1Session(
-        secrets.Vars.secrets.client_id,
-        secrets.Vars.secrets.client_secret,
-        request_token["oauth_token"],
-        request_token["oauth_token_secret"],
+        secrets.Vars.secrets.api_key,
+        secrets.Vars.secrets.api_key_secret,
+        secrets.Vars.secrets.oauth_token,
+        secrets.Vars.secrets.oauth_token_secret,
     )
 
 
 def _read_tweets(
-    oauth,
     tweet_ids: typing.List[int],
     params: typing.Optional[typing.Dict[str, str]] = None,
 ) -> typing.Any:
+    oauth = _get_oauth()
     params = dict(params) if params else {}
     params["ids"] = ",".join([str(i) for i in tweet_ids])
     params_arr = [f"{k}={v}" for k, v in params.items()]
@@ -66,7 +74,8 @@ def _read_tweets(
     return json.loads(resp.text)
 
 
-def _post_image(oauth, img_data: str) -> str:
+def _post_image(img_data: str) -> str:
+    oauth = _get_oauth()
     resp = oauth.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
@@ -81,7 +90,8 @@ def _post_image(oauth, img_data: str) -> str:
     return r["media_id_string"]
 
 
-def _post_tweet(oauth, text: str, media_id: str) -> int:
+def _post_tweet(text: str, media_id: str) -> int:
+    oauth = _get_oauth()
     message_obj = {
         "text": text,
         "media": {
@@ -102,7 +112,8 @@ def _post_tweet(oauth, text: str, media_id: str) -> int:
     return r["data"]["id"]
 
 
-def _send_message(oauth, user_id: int, text: str, media_id: str):
+def _send_message(user_id: int, text: str, media_id: str):
+    oauth = _get_oauth()
     message_obj = {
         "event": {
             "type": "message_create",
