@@ -19,7 +19,6 @@ RUN pip3 install  --upgrade pip
 RUN apt install python-is-python3
 
 RUN apt install -y git
-RUN pip3 install grpcio==1.43.0
 
 # for playwright
 # solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
@@ -30,24 +29,19 @@ RUN pip3 install playwright==1.27
 RUN playwright install-deps chromium
 RUN playwright install chromium
 
+# pipfile.lock would be preferred, but modal doesnt support it easily
+RUN pip3 install grpcio==1.43.0
 RUN pip3 install cryptography
 RUN pip3 install requests
-
 RUN pip3 install uvicorn
 RUN pip3 install fastapi
 RUN pip3 install requests_oauthlib
 RUN pip3 install pillow
-
 RUN pip3 install firebase-admin
-
 RUN pip3 install nest-asyncio
-
 RUN pip3 install beautifulsoup4
-
 RUN pip3 install psutil
-
 RUN pip3 install mypy
-
 RUN pip3 install modal
 
 # EXPOSE 8000

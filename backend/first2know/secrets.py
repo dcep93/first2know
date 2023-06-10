@@ -20,12 +20,11 @@ class Secrets(BaseModel):
 
 class Vars:
     secrets: Secrets = None  # type: ignore
-    is_local = False
+    is_local = modal.is_local()
 
 
-if modal.is_local():
+if Vars.is_local:
     if Vars.secrets is None:
-        Vars.is_local = True
         local_secret_path = os.path.join(
             os.path.dirname(__file__),
             "secrets.json",
