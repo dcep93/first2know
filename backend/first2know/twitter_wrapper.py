@@ -12,26 +12,46 @@ def message(user_id: int, img_data: str):
 
 
 def tweet(text: str, img_data: str) -> str:
-    media_id = _post_image(img_data)
-    tweet_id = _post_tweet(text, media_id)
+    oauth = _get_oauth()
+    media_id = _post_image(oauth, img_data)
+    tweet_id = _post_tweet(oauth, text, media_id)
     resp = _read_tweets(
-        [tweet_id], {
+        oauth,
+        [tweet_id],
+        {
             "expansions": "attachments.media_keys",
             "media.fields": "url,preview_image_url",
-        })
+        },
+    )
     return resp["includes"]["media"][0]["url"]
 
 
 def _get_oauth():
-    return OAuth1Session(
+    oauth = OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.access_token,
-        secrets.Vars.secrets.access_token_secret,
+    )
+    request_token = oauth.fetch_request_token(
+        "https://api.twitter.com/oauth/request_token")
+    resp = OAuth1Session(
+        secrets.Vars.secrets.client_id,
+        secrets.Vars.secrets.client_secret,
+        fetch_response["oauth_token"],
+        fetch_response["oauth_token_secret"],
+    ).get("https://api.twitter.com/1.1/account/verify_credentials.json")
+    print(resp.status_code)
+    print(resp.text)
+    exit()
+    return OAuth1Session(
+        secrets.Vars.secrets.client_id,
+        secrets.Vars.secrets.client_secret,
+        request_token["oauth_token"],
+        request_token["oauth_token_secret"],
     )
 
 
 def _read_tweets(
+    oauth,
     tweet_ids: typing.List[int],
     params: typing.Optional[typing.Dict[str, str]] = None,
 ) -> typing.Any:
@@ -39,7 +59,6 @@ def _read_tweets(
     params["ids"] = ",".join([str(i) for i in tweet_ids])
     params_arr = [f"{k}={v}" for k, v in params.items()]
     url = f'https://api.twitter.com/2/tweets?{"&".join(params_arr)}'
-    oauth = _get_oauth()
     resp = oauth.get(url)
     if resp.status_code >= 300:
         print(resp)
@@ -47,8 +66,7 @@ def _read_tweets(
     return json.loads(resp.text)
 
 
-def _post_image(img_data: str) -> str:
-    oauth = _get_oauth()
+def _post_image(oauth, img_data: str) -> str:
     resp = oauth.post(
         'https://upload.twitter.com/1.1/media/upload.json',
         headers={
@@ -63,14 +81,13 @@ def _post_image(img_data: str) -> str:
     return r["media_id_string"]
 
 
-def _post_tweet(text: str, media_id: str) -> int:
+def _post_tweet(oauth, text: str, media_id: str) -> int:
     message_obj = {
         "text": text,
         "media": {
             "media_ids": [media_id]
         },
     }
-    oauth = _get_oauth()
     resp = oauth.post(
         'https://api.twitter.com/2/tweets',
         headers={
@@ -85,7 +102,7 @@ def _post_tweet(text: str, media_id: str) -> int:
     return r["data"]["id"]
 
 
-def _send_message(user_id: int, text: str, media_id: str):
+def _send_message(oauth, user_id: int, text: str, media_id: str):
     message_obj = {
         "event": {
             "type": "message_create",
@@ -105,8 +122,6 @@ def _send_message(user_id: int, text: str, media_id: str):
             }
         }
     }
-
-    oauth = _get_oauth()
 
     resp = oauth.post(
         'https://api.twitter.com/1.1/direct_messages/events/new.json',

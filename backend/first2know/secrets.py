@@ -23,9 +23,9 @@ class Vars:
 if modal.is_local():
     if Vars.secrets is None:
         Vars.is_local = True
-        client_secret_path = os.path.join(
+        local_secret_path = os.path.join(
             os.path.dirname(__file__),
             "secrets.json",
         )
-        with open(client_secret_path) as fh:
+        with open(local_secret_path) as fh:
             Vars.secrets = Secrets(**json.load(fh))
