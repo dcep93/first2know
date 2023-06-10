@@ -24,31 +24,6 @@ def tweet(text: str, img_data: str) -> str:
     return resp["includes"]["media"][0]["url"]
 
 
-# https://requests-oauthlib.readthedocs.io/en/v1.3.1/oauth1_workflow.html
-def get_oauth_tokens():
-    request_oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-    )
-    request_token = request_oauth.fetch_request_token(
-        "https://api.twitter.com/oauth/request_token")
-    authorization_url = request_oauth.authorization_url(
-        "https://api.twitter.com/oauth/authorize")
-    redirect_response = input(f"{authorization_url}\n")
-    verifier = request_oauth.parse_authorization_response(
-        redirect_response)["oauth_verifier"]
-    access_oauth = OAuth1Session(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        resource_owner_key=request_token["oauth_token"],
-        resource_owner_secret=request_token["oauth_token_secret"],
-        verifier=verifier,
-    )
-    oauth_tokens = access_oauth.fetch_access_token(
-        "https://api.twitter.com/oauth/access_token")
-    print(json.dumps(oauth_tokens, indent=1))
-
-
 def _get_oauth():
     return OAuth1Session(
         secrets.Vars.secrets.api_key,

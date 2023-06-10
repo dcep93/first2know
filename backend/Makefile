@@ -16,13 +16,13 @@ dockerexec: dockerbuild
 oneoff:
 	python3 -u -m first2know.oneoff
 
-runserver:
+server:
 	uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
 
-runcron:
+cron:
 	python3 -u -m first2know.cron
 
-regenauth:
+twitter_auth:
 	python3 -m first2know.twitter_auth
 
 modaldeploy:
