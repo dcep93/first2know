@@ -23,6 +23,7 @@ class Vars:
     is_local = False
 
 
+print("\n".join(dir(modal)))
 if modal.is_local():
     if Vars.secrets is None:
         Vars.is_local = True
