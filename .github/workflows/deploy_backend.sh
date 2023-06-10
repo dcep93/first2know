@@ -7,7 +7,7 @@ SECRETS_JSON="$2"
 
 cd "$(dirname "$0")"
 
-DIFF="$(git diff HEAD^ ../../backend/first2know)"
+DIFF="x$(git diff HEAD^ ../../backend/first2know)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
 else
