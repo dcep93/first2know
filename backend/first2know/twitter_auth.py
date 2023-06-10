@@ -17,7 +17,7 @@ def login_request_token():
     resp_json = parse_qs(resp.text)
     print("login_request_token", resp_json)
     return {
-        "oauth_token": resp_json["oauth_token"],
+        "oauth_token": resp_json["oauth_token"][0],
     }
 
 
