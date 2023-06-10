@@ -138,7 +138,7 @@ def post_twitter_request_token():
 @web_app.post("/twitter/access_token")
 def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
     resp_json = twitter_auth.login_access_token(
-        access_token,
+        oauth_verifier,
         oauth_verifier,
     )
     user = firebase_wrapper.User(

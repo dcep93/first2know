@@ -142,14 +142,14 @@ def _extract_to_handle(
         separators=(',', ':'),
     )
     if str_to_md5(to_md5.encode('utf-8')) != to_handle.md5:
-        print("bad md5")
+        print("bad_md5")
         return None
 
     decrypted_user = decrypt(encrypted_user)
     user = User(**json.loads(decrypted_user))
 
     if user.encrypted != secrets.Vars.secrets.client_secret:
-        print("bad encrpytion")
+        print("bad_encrpytion")
         return None
 
     return to_handle
