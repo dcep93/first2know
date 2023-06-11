@@ -15,7 +15,6 @@ def login_request_token():
         print(resp)
         raise Exception(resp.text)
     resp_json = parse_qs(resp.text)
-    print("login_request_token", resp_json)
     return {
         "oauth_token": resp_json["oauth_token"][0],
     }
@@ -26,7 +25,6 @@ def login_access_token(oauth_token: str, oauth_verifier: str):
         secrets.Vars.secrets.api_key,
         client_secret=secrets.Vars.secrets.api_key_secret,
     )
-    print("login_access_token", oauth_token, oauth_verifier)
     resp = oauth.post(
         'https://api.twitter.com/oauth/access_token',
         data={
@@ -34,14 +32,6 @@ def login_access_token(oauth_token: str, oauth_verifier: str):
             "oauth_token": oauth_token,
         },
     )
-    #       File "/usr/local/lib/python3.9/dist-packages/anyio/_backends/_asyncio.py", line 807, in run
-    #     result = context.run(func, *args)
-    #   File "/root/first2know/server.py", line 140, in post_twitter_access_token
-    #     resp_json = twitter_auth.login_access_token(
-    #   File "/root/first2know/twitter_auth.py", line 37, in login_access_token
-    #     raise Exception(resp.text)
-    # Exception: Request token missing
-
     if resp.status_code >= 300:
         print(resp)
         raise Exception(resp.text)
