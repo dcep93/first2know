@@ -41,8 +41,7 @@ function User(props: {
 }
 
 export function isAdmin(user: UserType): boolean {
-  alert(hashCode(user.encrypted || ""));
-  return [-416693726].includes(hashCode(user.encrypted || ""));
+  return [481352569].includes(hashCode(user.encrypted || ""));
 }
 
 function hashCode(s: string): number {
