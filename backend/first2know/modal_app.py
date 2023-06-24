@@ -25,6 +25,7 @@ def init(s: str):
     secret=modal.Secret.from_name("first2know_s"),
 )
 def modal_cron():
+    return
     from . import cron
     init("cron")
     was_successful = cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
