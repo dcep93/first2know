@@ -173,6 +173,8 @@ def handle(
     if screenshot_response.md5 == old_md5:
         return "old_md5"
 
+    print(screenshot_response.md5, old_md5)
+
     text = "\n".join([
         f"@{to_handle.user.screen_name}",
         to_handle.data_input.url,
