@@ -13,7 +13,7 @@ class Secrets(BaseModel):
     client_secret: str
     access_token: str
     access_token_secret: str
-    # make twitter_auth
+    # $ make twitter_auth
     oauth_token: str
     oauth_token_secret: str
 
