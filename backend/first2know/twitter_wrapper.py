@@ -14,14 +14,15 @@ def message(user_id: int, img_data: str):
 def tweet(text: str, img_data: str) -> str:
     media_id = _post_image(img_data)
     tweet_id = _post_tweet(text, media_id)
-    resp = _read_tweets(
-        [tweet_id],
-        {
-            "expansions": "attachments.media_keys",
-            "media.fields": "url,preview_image_url",
-        },
-    )
-    return resp["includes"]["media"][0]["url"]
+    return str(tweet_id)
+    # resp = _read_tweets(
+    #     [tweet_id],
+    #     {
+    #         "expansions": "attachments.media_keys",
+    #         "media.fields": "url,preview_image_url",
+    #     },
+    # )
+    # return resp["includes"]["media"][0]["url"]
 
 
 def _get_oauth():
