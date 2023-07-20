@@ -13,7 +13,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '3.0.2'
+VERSION = '3.1.0'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -134,13 +134,12 @@ def handle(
     previous_error = data_output.error
 
     if secrets.Vars.is_local:
-        print("\nhandle", to_handle.json(), "\n")
+        print("\nlocal handle", to_handle.json(), "\n")
     else:
         if previous_error is not None and previous_error.version == VERSION:
             return "previous_error"
-        if previous_time is not None:
-            if previous_time > now:
-                return "previous_time"
+        if previous_time is not None and previous_time > now:
+            return "previous_time"
 
     evaluation = None \
         if data_output.screenshot_data is None \
@@ -162,7 +161,12 @@ def handle(
             message=f'{type(e)}: {e}',
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
-        raise e
+        err_str = to_write.error.message
+        err_img_data = screenshot.str_to_binary_data(err_str)
+        img_url = twitter_wrapper.tweet(
+            str(type(e)),
+            err_img_data,
+        )
 
     if screenshot_response.evaluation == IGNORE:
         return "ignore"

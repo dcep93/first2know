@@ -137,21 +137,7 @@ class Screenshot:
             )
         C()
         if request.data_input.evaluation_to_img:
-            text = str(evaluation).encode('latin-1',
-                                          'ignore').decode('latin-1')
-            lines = text.split("\n")
-            padding_pixels = 50
-            pixels_per_row = 15.2
-            pixels_per_column = 6.6
-            width = int(2 * padding_pixels +
-                        (pixels_per_column * max([len(i) for i in lines])))
-            height = int(2 * padding_pixels + (pixels_per_row * len(lines)))
-            img = Image.new('1', (width, height))
-            draw = ImageDraw.Draw(img)
-            draw.text((padding_pixels, padding_pixels), text, fill=255)
-            img_byte_arr = io.BytesIO()
-            img.save(img_byte_arr, format='PNG')
-            binary_data = img_byte_arr.getvalue()
+            binary_data = str_to_binary_data(evaluation)
         else:
             dest = f"screenshot_{self.id}.png"
             if request.data_input.selector is None:
@@ -186,3 +172,21 @@ class Screenshot:
             md5=md5,
             elapsed=elapsed,
         )
+
+
+def str_to_binary_data(s: str) -> str:
+    text = s.encode('latin-1', 'ignore').decode('latin-1')
+    lines = text.split("\n")
+    padding_pixels = 50
+    pixels_per_row = 15.2
+    pixels_per_column = 6.6
+    width = int(2 * padding_pixels +
+                (pixels_per_column * max([len(i) for i in lines])))
+    height = int(2 * padding_pixels + (pixels_per_row * len(lines)))
+    img = Image.new('1', (width, height))
+    draw = ImageDraw.Draw(img)
+    draw.text((padding_pixels, padding_pixels), text, fill=255)
+    img_byte_arr = io.BytesIO()
+    img.save(img_byte_arr, format='PNG')
+    binary_data = img_byte_arr.getvalue()
+    return binary_data
