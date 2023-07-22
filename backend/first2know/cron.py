@@ -13,7 +13,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '3.1.0'
+VERSION = '3.1.1'
 
 NUM_SCREENSHOTTERS = 8
 
@@ -167,6 +167,7 @@ def handle(
             str(type(e)),
             err_img_data,
         )
+        return
 
     if screenshot_response.evaluation == IGNORE:
         return "ignore"
