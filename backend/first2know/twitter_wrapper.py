@@ -26,12 +26,6 @@ def tweet(text: str, img_data: str) -> str:
 
 
 def _get_oauth():
-    print(
-        secrets.Vars.secrets.api_key,
-        secrets.Vars.secrets.api_key_secret,
-        secrets.Vars.secrets.oauth_token,
-        secrets.Vars.secrets.oauth_token_secret,
-    )
     return OAuth1Session(
         secrets.Vars.secrets.api_key,
         secrets.Vars.secrets.api_key_secret,

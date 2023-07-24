@@ -161,10 +161,16 @@ def handle(
             message=f'{type(e)}: {e}',
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
+        text = "\n".join([
+            f"@{to_handle.user.screen_name}",
+            str(type(e)),
+            to_handle.data_input.url,
+            f"https://first2know.web.app/{to_handle.key}",
+        ])
         err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
         img_url = twitter_wrapper.tweet(
-            str(type(e)),
+            text,
             err_img_data,
         )
         return

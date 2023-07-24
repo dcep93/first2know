@@ -137,7 +137,7 @@ class Screenshot:
             )
         C()
         if request.data_input.evaluation_to_img:
-            binary_data = str_to_binary_data(evaluation)
+            img_data = str_to_binary_data(evaluation)
         else:
             dest = f"screenshot_{self.id}.png"
             if request.data_input.selector is None:
@@ -149,15 +149,15 @@ class Screenshot:
             with open(dest, "rb") as fh:
                 binary_data = fh.read()
             os.remove(dest)
+            encoded = base64.b64encode(binary_data)
+            img_data = encoded.decode('utf-8')
         await context.close()
         C()
 
-        encoded = base64.b64encode(binary_data)
-        img_data = encoded.decode('utf-8')
         if evaluation is None:
-            md5 = firebase_wrapper.str_to_md5(encoded)
+            md5 = firebase_wrapper.str_to_md5(img_data)
         else:
-            md5 = firebase_wrapper.str_to_md5(evaluation.encode("utf-8"))
+            md5 = firebase_wrapper.str_to_md5(evaluation)
         e = time.time()
         elapsed = e - s
         self.log(' '.join([
@@ -189,4 +189,6 @@ def str_to_binary_data(s: str) -> str:
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='PNG')
     binary_data = img_byte_arr.getvalue()
-    return binary_data
+    encoded = base64.b64encode(binary_data)
+    img_data = encoded.decode('utf-8')
+    return img_data

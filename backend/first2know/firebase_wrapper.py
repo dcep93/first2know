@@ -141,7 +141,7 @@ def _extract_to_handle(
         ],
         separators=(',', ':'),
     )
-    if str_to_md5(to_md5.encode('utf-8')) != to_handle.md5:
+    if str_to_md5(to_md5) != to_handle.md5:
         print("bad_md5")
         return None
 
@@ -155,8 +155,8 @@ def _extract_to_handle(
     return to_handle
 
 
-def str_to_md5(s: bytes) -> str:
-    return hashlib.md5(s).hexdigest()
+def str_to_md5(b: bytes) -> str:
+    return hashlib.md5(b.encode('utf-8')).hexdigest()
 
 
 def write_data(key: str, data_output: DataOutput) -> None:
