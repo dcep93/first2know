@@ -24,10 +24,12 @@ RUN apt install -y git
 # solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
 RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >> /etc/apt/sources.list.d/fonts.list
 
-# RUN pip3 install playwright==1.22
-RUN pip3 install playwright==1.27
+RUN pip3 install playwright==1.36
 RUN playwright install-deps chromium
 RUN playwright install chromium
+
+# screenshot double defines timeout
+RUN cat /usr/local/lib/python3.9/dist-packages/playwright/_impl/_locator.py
 
 # pipfile.lock would be preferred, but modal doesnt support it easily
 RUN pip3 install grpcio==1.43.0
