@@ -28,9 +28,6 @@ RUN pip3 install playwright==1.36
 RUN playwright install-deps chromium
 RUN playwright install chromium
 
-# screenshot double defines timeout
-RUN cat /usr/local/lib/python3.9/dist-packages/playwright/_impl/_locator.py
-
 # pipfile.lock would be preferred, but modal doesnt support it easily
 RUN pip3 install grpcio==1.43.0
 RUN pip3 install cryptography

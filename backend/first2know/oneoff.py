@@ -1,6 +1,6 @@
 import json
 
-from pydantic.tools import parse_obj_as
+import pydantic
 
 from . import cron
 from . import twitter_wrapper
@@ -32,7 +32,8 @@ def main():
       "data_output": {
         "screenshot_data": {
           "img_url": "https://pbs.twimg.com/media/FySHdEhWYAYnAZk.jpg",
-          "md5": "c2cb5bd5ff26bff7d0ebd712111ed45c"
+          "md5": "c2cb5bd5ff26bff7d0ebd712111ed45c",
+          "evaluation": null
         },
         "time": 1686424278.642834
       },
@@ -45,7 +46,7 @@ def main():
     }
     ''')
     data["key"] = ""
-    to_handle = parse_obj_as(firebase_wrapper.ToHandle, data)
+    to_handle = firebase_wrapper.ToHandle(**data)
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         1,
