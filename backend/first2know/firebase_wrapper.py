@@ -134,6 +134,13 @@ def _extract_to_handle(
 
     encrypted_user = decrypt(to_handle.user.encrypted)
 
+    decrypted_user = decrypt(encrypted_user)
+    user = User(**json.loads(decrypted_user))
+
+    if user.encrypted != secrets.Vars.secrets.client_secret:
+        print("bad_encrpytion")
+        return None
+
     to_md5 = json.dumps(
         [
             dict(to_handle.data_input),
@@ -142,14 +149,9 @@ def _extract_to_handle(
         separators=(',', ':'),
     )
     if str_to_md5(to_md5) != to_handle.md5:
+        print(user)
+        print(to_handle.user)
         print("bad_md5", key)
-        return None
-
-    decrypted_user = decrypt(encrypted_user)
-    user = User(**json.loads(decrypted_user))
-
-    if user.encrypted != secrets.Vars.secrets.client_secret:
-        print("bad_encrpytion")
         return None
 
     return to_handle
