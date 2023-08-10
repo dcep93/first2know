@@ -142,7 +142,7 @@ def _extract_to_handle(
         separators=(',', ':'),
     )
     if str_to_md5(to_md5) != to_handle.md5:
-        print("bad_md5")
+        print("bad_md5", key)
         return None
 
     decrypted_user = decrypt(encrypted_user)

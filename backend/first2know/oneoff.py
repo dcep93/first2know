@@ -11,16 +11,10 @@ from . import twitter_auth
 
 
 def main():
-    # url = "https://www.uschess.org/msa/MbrDtlTnmtHst.php?30789401"
-    # request = screenshot.Request(data_input=firebase_wrapper.DataInput(
-    #     url=url,
-    #     selector="#selector",
-    #     evaluate=
-    #     "Promise.resolve()\n.then(() => document.getElementsByTagName(\"table\")[6])\n.then(e => {e.id = \"selector\"})\n",
-    # ), )
-    # screenshot_response = screenshot.Screenshot()(request)
-    # print(screenshot_response.md5)
+    print("oneoff complete")
 
+
+def handle_from_x():
     data = json.loads('''
     {
       "data_input": {
@@ -54,7 +48,17 @@ def main():
     result = cron.handle(to_handle, screenshot_manager)
     print(result)
 
-    print("oneoff complete")
+
+def screenshot_from_request():
+    url = "https://www.uschess.org/msa/MbrDtlTnmtHst.php?30789401"
+    request = screenshot.Request(data_input=firebase_wrapper.DataInput(
+        url=url,
+        selector="#selector",
+        evaluate=
+        "Promise.resolve()\n.then(() => document.getElementsByTagName(\"table\")[6])\n.then(e => {e.id = \"selector\"})\n",
+    ), )
+    screenshot_response = screenshot.Screenshot()(request)
+    print(screenshot_response.md5)
 
 
 if __name__ == "__main__":
