@@ -15,7 +15,7 @@ IGNORE = "first2know_ignore"
 # update version to clear errors
 VERSION = '3.2.2'
 
-NUM_SCREENSHOTTERS = 8
+NUM_SCREENSHOTTERS = 1
 
 DEBOUNCE_SECONDS = 15 * 60
 
@@ -150,6 +150,8 @@ def handle(
         evaluation=evaluation,
     )
 
+    print(153)
+
     try:
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request)
@@ -174,6 +176,8 @@ def handle(
             err_img_data,
         )
         raise e
+
+    print(180)
 
     if screenshot_response.evaluation == IGNORE:
         return "ignore"
