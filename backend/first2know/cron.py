@@ -82,6 +82,7 @@ def loop_with_manager(
     print_freq = 10
     resp = None
     while time.time() < end:
+        print(85)
         now = time.time()
         loops += 1
         if loops % print_freq == 0:
