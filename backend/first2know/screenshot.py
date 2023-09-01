@@ -106,7 +106,7 @@ class Screenshot:
                 now = time.time()
                 diff = now - C.now
                 C.now = now
-                if diff > 5:
+                if diff > 0:
                     print('C', C.c, diff)
 
         C()
@@ -168,7 +168,6 @@ class Screenshot:
             datetime.datetime.now().strftime("%H:%M:%S.%f"),
         ]))
         C()
-        print(171)
         return Response(
             img_data=img_data,
             evaluation=evaluation,

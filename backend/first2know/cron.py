@@ -33,11 +33,9 @@ def main():
     )
     try:
         resp = run(screenshot_manager)
-        print(get_memory_mb())
     finally:
         screenshot_manager.close()
     print("success", resp)
-    print(get_memory_mb())
 
 
 def get_memory_mb():
@@ -45,7 +43,6 @@ def get_memory_mb():
 
 
 def init():
-    print(get_memory_mb())
     firebase_wrapper.init()
     firebase_wrapper.wait_10s_for_data()
 
@@ -82,13 +79,12 @@ def loop_with_manager(
     print_freq = 10
     resp = None
     while time.time() < end:
-        print(85)
         now = time.time()
         loops += 1
         if loops % print_freq == 0:
             loops_per = print_freq / (now - s)
             s = now
-            print(get_memory_mb(), loops, "loops", f"{loops_per:.2f}/s", resp)
+            print(loops, "loops", f"{loops_per:.2f}/s", resp)
         # exit if another process has spun up to take over
         new_token = firebase_wrapper.get_token()
         if new_token != Vars._token:
@@ -151,8 +147,6 @@ def handle(
         evaluation=evaluation,
     )
 
-    print(153)
-
     try:
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request)
@@ -177,8 +171,6 @@ def handle(
             err_img_data,
         )
         raise e
-
-    print(180)
 
     if screenshot_response.evaluation == IGNORE:
         return "ignore"
