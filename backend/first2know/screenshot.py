@@ -119,8 +119,10 @@ class Screenshot:
         context = await self.new_context()
         page = await context.new_page()
         C()
+        print(122)
 
         if request.data_input.raw_proxy:
+            print(125)
             proxy_result = proxy.proxy(
                 proxy.Request(
                     url=request.data_input.url,
