@@ -106,7 +106,7 @@ class Screenshot:
                 now = time.time()
                 diff = now - C.now
                 C.now = now
-                if diff > 0:
+                if diff > 5:
                     print('C', C.c, diff)
 
         C()
@@ -128,8 +128,11 @@ class Screenshot:
                 ))
             await page.set_content(proxy_result)
         elif request.data_input.url:
+            print(131)
             await page.set_extra_http_headers(params)
+            print(133)
             await page.goto(request.data_input.url)
+            print(135)
         evaluation = None \
             if request.data_input.evaluate is None \
             else await page.evaluate(
