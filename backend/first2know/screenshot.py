@@ -135,6 +135,7 @@ class Screenshot:
             print(133)
             await page.goto(request.data_input.url)
             print(135)
+        print(138)
         evaluation = None \
             if request.data_input.evaluate is None \
             else await page.evaluate(
