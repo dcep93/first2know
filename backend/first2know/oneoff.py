@@ -11,6 +11,8 @@ from . import twitter_auth
 
 
 def main():
+    screenshot_response = screenshot_from_request()
+    print(screenshot_response.evaluation)
     print("oneoff complete")
 
 
@@ -18,10 +20,9 @@ def handle_from_x():
     data = json.loads('''
     {
       "data_input": {
-        "evaluate": "Promise.resolve()\\n.then(() => document.getElementsByTagName(\\"table\\")[6])\\n.then(e => {e.id = \\"selector\\"})\\n",
+        "evaluate": "new Promise((resolve, reject) => {\\nfunction helper(i) {\\n  if (i < 0) return resolve(\\"first2know_ignore\\")\\n  const contents = Array.from(document.getElementsByClassName(\\"recentActivityDetail\\"))\\n    .map(e => e.innerText.split(\\"\\n\\"))\\n  if (contents.length > 0) {\\n    return resolve(JSON.stringify(contents, null, 2))\\n  }\\n  setTimeout(() => helper(i - 1), 10)\\n}\\nhelper(30000)\\n})",
         "evaluation_to_img": false,
-        "selector": "#selector",
-        "url": "https://www.uschess.org/msa/MbrDtlTnmtHst.php?30789401"
+        "url": "https://fantasy.espn.com/football/recentactivity?leagueId=203836968"
       },
       "data_output": {
         "screenshot_data": {
@@ -50,15 +51,17 @@ def handle_from_x():
 
 
 def screenshot_from_request():
-    url = "https://www.uschess.org/msa/MbrDtlTnmtHst.php?30789401"
-    request = screenshot.Request(data_input=firebase_wrapper.DataInput(
-        url=url,
-        selector="#selector",
-        evaluate=
-        "Promise.resolve()\n.then(() => document.getElementsByTagName(\"table\")[6])\n.then(e => {e.id = \"selector\"})\n",
-    ), )
+    url = "https://fantasy.espn.com/football/recentactivity?leagueId=203836968"
+    request = screenshot.Request(
+        evaluation=None,
+        data_input=firebase_wrapper.DataInput(
+            url=url,
+            evaluate=
+            "new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(document.body.innerHTML || \"first2know_ignore\")\n  const contents = Array.from(document.getElementsByClassName(\"recentActivityDetail\"))\n    .map(e => e.innerText.split(\"\\n\"))\n  if (contents.length > 0) {\n    return resolve(JSON.stringify(contents, null, 2))\n  }\n  setTimeout(() => helper(i - 1), 10)\n}\nhelper(1000)\n})",
+        ),
+    )
     screenshot_response = screenshot.Screenshot()(request)
-    print(screenshot_response.md5)
+    return screenshot_response
 
 
 if __name__ == "__main__":
