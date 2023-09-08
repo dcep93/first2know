@@ -44,7 +44,7 @@ class Screenshot:
     @classmethod
     async def async_retry(cls, f: typing.Callable, retries: int):
         try:
-            return await f()
+            return await asyncio.wait_for(f(), timeout=60)
         except Exception as e:
             if retries > 0:
                 return await cls.async_retry(f, retries - 1)
@@ -93,8 +93,6 @@ class Screenshot:
         self,
         request: Request,
     ) -> Response:
-        print(96)
-
         s = time.time()
 
         class C:
@@ -119,10 +117,7 @@ class Screenshot:
         context = await self.new_context()
         page = await context.new_page()
         C()
-        print(122)
-
         if request.data_input.raw_proxy:
-            print(125)
             proxy_result = proxy.proxy(
                 proxy.Request(
                     url=request.data_input.url,
@@ -130,19 +125,14 @@ class Screenshot:
                 ))
             await page.set_content(proxy_result)
         elif request.data_input.url:
-            print(131)
             await page.set_extra_http_headers(params)
-            print(133)
             await page.goto(request.data_input.url)
-            print(135)
-        print(138)
         evaluation = None \
             if request.data_input.evaluate is None \
             else await page.evaluate(
                 request.data_input.evaluate,
                 request.evaluation,
             )
-        print(145)
         C()
         if request.data_input.evaluation_to_img:
             img_data = str_to_binary_data(evaluation)
