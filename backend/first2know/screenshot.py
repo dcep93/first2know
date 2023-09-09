@@ -48,6 +48,7 @@ class Screenshot:
         except Exception as e:
             if retries > 0:
                 return await cls.async_retry(f, retries - 1)
+            print("exhausted retries")
             raise e
 
     async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
