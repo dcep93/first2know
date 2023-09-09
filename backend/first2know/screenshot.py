@@ -87,7 +87,7 @@ class Screenshot:
         async def helper():
             return await self.__acall__(request)
 
-        r = asyncio.run(self.async_retry(helper, 3))
+        r = asyncio.run(self.async_retry(helper, 5))
         return r
 
     async def __acall__(
