@@ -141,7 +141,7 @@ class Screenshot:
             if request.data_input.selector is None:
                 to_screenshot = page
             else:
-                page.set_default_timeout(10001)
+                page.set_default_timeout(30001)
                 to_screenshot = page.locator(request.data_input.selector)
             dest = f"screenshot_{self.id}.png"
             await to_screenshot.screenshot(path=dest, timeout=10001)
