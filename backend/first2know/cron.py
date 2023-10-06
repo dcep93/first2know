@@ -13,7 +13,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '3.2.2'
+VERSION = '3.2.3'
 
 NUM_SCREENSHOTTERS = 1
 
@@ -151,6 +151,9 @@ def handle(
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request)
     except Exception as e:
+        if str(e.__class__
+               ) == "<class 'playwright._impl._api_types.TimeoutError'>":
+            raise e
         to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
