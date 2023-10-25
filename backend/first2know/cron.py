@@ -34,6 +34,7 @@ def main():
     try:
         resp = run(screenshot_manager)
     finally:
+        print("debug closing")
         screenshot_manager.close()
     print("success", resp)
 
@@ -151,6 +152,7 @@ def handle(
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request)
     except Exception as e:
+        print("debug seen exception", str(e.__class__))
         if str(e.__class__
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":
             raise e
