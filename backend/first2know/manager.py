@@ -50,13 +50,15 @@ class Manager(typing.Generic[T, U]):
                 break
             register.put((response, True))
 
-    def run(self, request: T) -> U:
+    def run(self, request: T, loops: int) -> U:
+        print("debug get", loops)
         register = self.response_queues.get()
         self.request_queue.put_nowait((request, register))
         (response, is_successful) = register.get()
+        self.response_queues.put_nowait(register)
+        print("debug put", loops)
         if not is_successful:
             print(f"raising {response}")
             traceback.print_tb(response.__traceback__)
             raise response
-        self.response_queues.put_nowait(register)
         return response
