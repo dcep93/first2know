@@ -94,7 +94,6 @@ class Screenshot:
         self,
         request: Request,
     ) -> Response:
-        raise Exception("debug")
         s = time.time()
 
         class C:

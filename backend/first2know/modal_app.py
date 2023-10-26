@@ -27,7 +27,7 @@ def init(s: str):
 def modal_cron():
     from . import cron
     init("cron")
-    was_successful = cron.loop(PERIOD_SECONDS, GRACE_PERIOD_SECONDS)
+    was_successful = cron.loop(PERIOD_SECONDS + GRACE_PERIOD_SECONDS)
     if not was_successful:
         raise Exception("no_exit modal_cron")
 

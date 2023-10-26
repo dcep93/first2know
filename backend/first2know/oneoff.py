@@ -11,8 +11,7 @@ from . import twitter_auth
 
 
 def main():
-    screenshot_response = screenshot_from_request()
-    print(screenshot_response.evaluation)
+    cron.loop(1)
     print("oneoff complete")
 
 

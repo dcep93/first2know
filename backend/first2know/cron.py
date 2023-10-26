@@ -13,7 +13,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '3.2.3'
+VERSION = '4.0.0'
 
 NUM_SCREENSHOTTERS = 1
 
@@ -32,9 +32,8 @@ def main():
         NUM_SCREENSHOTTERS,
     )
     try:
-        resp = run(screenshot_manager, -1)
+        resp = run(screenshot_manager)
     finally:
-        print("debug closing")
         screenshot_manager.close()
     print("success", resp)
 
@@ -48,10 +47,7 @@ def init():
     firebase_wrapper.wait_10s_for_data()
 
 
-def loop(
-    period_seconds: int,
-    grace_period_seconds: int = 0,
-) -> bool:
+def loop(period_seconds: int) -> bool:
     init()
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
@@ -59,7 +55,6 @@ def loop(
     )
     rval = loop_with_manager(
         period_seconds,
-        grace_period_seconds,
         screenshot_manager,
     )
     screenshot_manager.close()
@@ -68,13 +63,12 @@ def loop(
 
 def loop_with_manager(
     period_seconds: int,
-    grace_period_seconds: int,
     screenshot_manager: manager.Manager,
 ) -> bool:
     Vars._token = refresh_access_token()
 
     start = time.time()
-    end = start + period_seconds + grace_period_seconds
+    end = start + period_seconds
     loops = 0
     s = start
     print_freq = 10
@@ -92,7 +86,7 @@ def loop_with_manager(
             print("exiting cron", loops)
             return True
 
-        resp = run(screenshot_manager, loops)
+        resp = run(screenshot_manager)
         time.sleep(1)
     return False
 
@@ -107,15 +101,13 @@ def refresh_access_token() -> str:
     return new_token
 
 
-def run(screenshot_manager: manager.Manager, loops: int) -> typing.List[str]:
-    print("debug run", loops)
+def run(screenshot_manager: manager.Manager) -> typing.List[str]:
     to_handle_arr = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(NUM_SCREENSHOTTERS) as executor:
         _results = executor.map(
             lambda to_handle: handle(
                 to_handle,
                 screenshot_manager,
-                loops,
             ), to_handle_arr)
         results = list(_results)
     return results
@@ -124,7 +116,6 @@ def run(screenshot_manager: manager.Manager, loops: int) -> typing.List[str]:
 def handle(
     to_handle: firebase_wrapper.ToHandle,
     screenshot_manager: manager.Manager,
-    loops: int,
 ) -> str:
     data_output = firebase_wrapper.DataOutput() \
         if to_handle.data_output is None \
@@ -153,13 +144,11 @@ def handle(
 
     try:
         screenshot_response: screenshot.Response = screenshot_manager.run(
-            request,
-            loops,
-        )
+            request, )
     except Exception as e:
+        raise e
         if str(e.__class__
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":
-            print("debug seen exception raising")
             raise e
         to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(

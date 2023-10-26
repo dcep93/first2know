@@ -47,16 +47,14 @@ class Manager(typing.Generic[T, U]):
                 response: U = runner(request)
             except Exception as e:
                 register.put((e, False))
-                break
+                continue
             register.put((response, True))
 
-    def run(self, request: T, loops: int) -> U:
-        print("debug get", loops)
+    def run(self, request: T) -> U:
         register = self.response_queues.get()
         self.request_queue.put_nowait((request, register))
         (response, is_successful) = register.get()
         self.response_queues.put_nowait(register)
-        print("debug put", loops)
         if not is_successful:
             print(f"raising {response}")
             traceback.print_tb(response.__traceback__)
