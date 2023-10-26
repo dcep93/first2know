@@ -146,10 +146,9 @@ def handle(
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request, )
     except Exception as e:
-        raise e
         if str(e.__class__
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":
-            raise e
+            return "timeout"
         to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
