@@ -6,7 +6,7 @@ import typing
 
 import pydantic  # type: ignore
 
-from fastapi import FastAPI, Request  # type: ignore
+from fastapi import FastAPI, Request, Response  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from fastapi.responses import HTMLResponse  # type: ignore
 
