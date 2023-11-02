@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 import traceback
 import typing
 
@@ -43,6 +44,19 @@ web_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@web_app.middleware("http")
+async def log_requests(request: Request, call_next) -> Response:
+    logger.info(f"Received request: {request.method} {request.url}")
+    response = await call_next(request)
+    logger.info(f"Sent response: {response.status_code}")
+
+    return response
+
 
 # # known issue: RuntimeError: Event loop is closed
 # @web_app.on_event("shutdown")
