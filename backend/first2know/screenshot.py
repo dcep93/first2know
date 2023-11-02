@@ -11,6 +11,7 @@ from pydantic import BaseModel  # type: ignore
 
 from PIL import Image, ImageDraw  # type: ignore
 
+from . import exceptions
 from . import firebase_wrapper
 from . import proxy
 from . import secrets
@@ -144,7 +145,17 @@ class Screenshot:
                 page.set_default_timeout(30001)
                 to_screenshot = page.locator(request.data_input.selector)
             dest = f"screenshot_{self.id}.png"
-            await to_screenshot.screenshot(path=dest, timeout=10001)
+
+            try:
+                await to_screenshot.screenshot(path=dest, timeout=10001)
+            except Exception as e:
+                ignorable_exception = exceptions.get_ignorable_exception(
+                    e,
+                    exceptions.Src.screenshot_null_location,
+                )
+                if not ignorable_exception is None:
+                    raise ignorable_exception
+                raise e
 
             with open(dest, "rb") as fh:
                 binary_data = fh.read()

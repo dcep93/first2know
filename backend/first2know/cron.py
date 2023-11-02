@@ -4,6 +4,7 @@ import os, psutil
 import concurrent.futures
 import typing
 
+from . import exceptions
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
@@ -146,9 +147,12 @@ def handle(
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request, )
     except Exception as e:
-        if str(e.__class__
-               ) == "<class 'playwright._impl._api_types.TimeoutError'>":
-            return "timeout"
+        ignorable_exception = exceptions.get_ignorable_exception(
+            e,
+            exceptions.Src.playwright_screenshot,
+        )
+        if not ignorable_exception is None:
+            return str(ignorable_exception)
         to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
