@@ -66,6 +66,7 @@ def loop_with_manager(
     period_seconds: int,
     screenshot_manager: manager.Manager,
 ) -> bool:
+    print("looping")
     Vars._token = refresh_access_token()
 
     start = time.time()

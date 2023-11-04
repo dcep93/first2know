@@ -96,6 +96,7 @@ def init():
         target=lambda: db.reference("/to_handle").listen(listenF),
         daemon=True,
     ).start()
+    print("firebase initialized")
 
 
 def wait_10s_for_data():
