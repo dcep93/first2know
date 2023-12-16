@@ -168,7 +168,17 @@ def write_data(key: str, data_output: DataOutput) -> None:
 
 def write_token(token: str) -> None:
     encrypted = encrypt(token)
-    db.reference("token").set(encrypted)
+    ref = db.reference("token")
+    f = lambda: ref.set(encrypted)
+    for _ in range(3):
+        try:
+            f()
+            return
+        except:
+            print("failed to write token")
+            pass
+    f()
+
 
 
 def get_token() -> str:
