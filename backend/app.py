@@ -1,9 +1,12 @@
 import threading
 import uvicorn
 
+raise Exception("checking")
+
+
+
 from .first2know import cron, server
 
-raise Exception("checking")
 threading.Thread(
     target=lambda: uvicorn.run(server.web_app, host="0.0.0.0", port=8000),
     daemon=True,
