@@ -43,6 +43,6 @@ RUN pip3 install mypy
 
 COPY . ./
 
-# RUN mypy .
+RUN mypy .
 
 ENTRYPOINT [ "python3 app.py" ]
