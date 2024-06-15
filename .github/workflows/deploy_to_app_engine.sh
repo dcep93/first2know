@@ -31,7 +31,6 @@ manual_scaling:
 
 EOF
 echo "$2" >first2know/secrets.json
-for operation in $(gcloud app operations list --project "${GOOGLE_CLOUD_PROJECT}" --pending --format="value(id)"); do gcloud app operations cancel --project "${GOOGLE_CLOUD_PROJECT}" $operation; done
 gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
 # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # gcloud beta app repair
