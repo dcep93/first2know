@@ -11,7 +11,7 @@ def get_(request: Request):
     return HTMLResponse("hi")
 
 
-uvicorn.run(web_app, host="0.0.0.0", port=8080),
+uvicorn.run(web_app, host="0.0.0.0", port=8080)
 
 
 # import threading
