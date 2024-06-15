@@ -26,11 +26,10 @@ GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)
 cat <<EOF >app.yaml
 runtime: custom
 env: flex
-automatic_scaling:
-  min_num_instances: 1
-  max_num_instances: 1
+manual_scaling:
+  instances: 1
 
 EOF
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1 --no-cache
+gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
 gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # gcloud beta app repair
