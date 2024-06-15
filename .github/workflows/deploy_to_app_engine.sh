@@ -27,8 +27,8 @@ cat <<EOF >app.yaml
 runtime: custom
 env: flex
 automatic_scaling:
-  min_instances: 1
-  max_instances: 1
+  min_num_instances: 1
+  max_num_instances: 1
 
 EOF
 gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1 --no-cache
