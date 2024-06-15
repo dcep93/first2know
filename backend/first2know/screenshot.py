@@ -136,7 +136,7 @@ class Screenshot:
             )
         C()
         if request.data_input.evaluation_to_img:
-            img_data = str_to_binary_data(evaluation)
+            img_data = str_to_binary_data(str(evaluation))
         else:
             if request.data_input.selector is None:
                 to_screenshot = page
@@ -168,8 +168,7 @@ class Screenshot:
             md5 = firebase_wrapper.str_to_md5(img_data)
         else:
             md5 = firebase_wrapper.str_to_md5(evaluation)
-        e = time.time()
-        elapsed = e - s
+        elapsed = time.time() - s
         self.log(' '.join([
             f"{elapsed:.3f}s",
             f"{len(img_data)/1000}kb",

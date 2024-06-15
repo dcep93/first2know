@@ -61,12 +61,15 @@ def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
     Vars._token = refresh_access_token()
 
     loops = 0
+    s = time.time()
     print_freq = 10
     resp = None
     while True:
+        now = time.time()
         loops += 1
         if loops % print_freq == 0:
             loops_per = print_freq / (now - s)
+            s = now
             print(loops, "loops", f"{loops_per:.2f}/s", resp)
         # exit if another process has spun up to take over
         new_token = firebase_wrapper.get_token()

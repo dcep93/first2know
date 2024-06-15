@@ -158,7 +158,7 @@ def _extract_to_handle(
     return to_handle
 
 
-def str_to_md5(b: bytes) -> str:
+def str_to_md5(b: str) -> str:
     return hashlib.md5(b.encode('utf-8')).hexdigest()
 
 
@@ -169,7 +169,7 @@ def write_data(key: str, data_output: DataOutput) -> None:
 def write_token(token: str) -> None:
     encrypted = encrypt(token)
     ref = db.reference("token")
-    f = lambda: ref.set(encrypted)
+    def f(): return ref.set(encrypted)
     for _ in range(3):
         try:
             f()
@@ -178,7 +178,6 @@ def write_token(token: str) -> None:
             print("failed to write token")
             pass
     f()
-
 
 
 def get_token() -> str:

@@ -1,7 +1,7 @@
 import threading
 import uvicorn
 
-from . import cron, server
+from . import cron, server  # type: ignore
 
 raise Exception("checking")
 threading.Thread(

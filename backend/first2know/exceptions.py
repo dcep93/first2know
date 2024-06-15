@@ -23,7 +23,7 @@ def get_ignorable_exception(
 
     if src == Src.screenshot_null_location:
         if str(e.__class__) == "<class 'playwright._impl._api_types.Error'>":
-            if e.getMessage() == "location: expected object, got null":
+            if e.getMessage() == "location: expected object, got null":  # type: ignore
                 return IgnorableException(f"1.{src.value}")
 
     return None

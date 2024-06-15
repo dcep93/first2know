@@ -167,22 +167,3 @@ def get_cron():
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)
-
-
-class LoopCronPayload(pydantic.BaseModel):
-    period_seconds: int
-    grace_period_seconds: int = 0
-
-
-@web_app.post("/loop_cron")
-def post_cron(payload: LoopCronPayload):
-    try:
-        cron.loop_with_manager(
-            payload.period_seconds,
-            payload.grace_period_seconds,
-            Vars._screenshot_manager,
-        )
-        return HTMLResponse(None, 200)
-    except Exception:
-        err = traceback.format_exc()
-        return HTMLResponse(err, 500)
