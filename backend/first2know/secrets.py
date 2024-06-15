@@ -3,8 +3,6 @@ import os
 
 from pydantic import BaseModel
 
-import modal
-
 
 class Secrets(BaseModel):
     api_key: str
@@ -18,16 +16,13 @@ class Secrets(BaseModel):
     oauth_token_secret: str
 
 
+local_secret_path = os.path.join(
+    os.path.dirname(__file__),
+    "secrets.json",
+)
+with open(local_secret_path) as fh:
+    _secrets = Secrets(**json.load(fh))
+
+
 class Vars:
-    secrets: Secrets = None  # type: ignore
-    is_local = modal.is_local()
-
-
-if Vars.is_local:
-    if Vars.secrets is None:
-        local_secret_path = os.path.join(
-            os.path.dirname(__file__),
-            "secrets.json",
-        )
-        with open(local_secret_path) as fh:
-            Vars.secrets = Secrets(**json.load(fh))
+    secrets: Secrets = _secrets

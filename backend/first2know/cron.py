@@ -1,5 +1,6 @@
 import time
-import os, psutil
+import os
+import psutil
 
 import concurrent.futures
 import typing
@@ -20,6 +21,9 @@ NUM_SCREENSHOTTERS = 1
 
 DEBOUNCE_SECONDS = 1 * 60
 
+firebase_wrapper.init()
+firebase_wrapper.wait_10s_for_data()
+
 
 class Vars:
     _process = psutil.Process(os.getpid())
@@ -27,7 +31,6 @@ class Vars:
 
 
 def main():
-    init()
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
@@ -43,44 +46,27 @@ def get_memory_mb():
     return Vars._process.memory_info().rss / 1000000
 
 
-def init():
-    firebase_wrapper.init()
-    firebase_wrapper.wait_10s_for_data()
-
-
-def loop(period_seconds: int) -> bool:
-    init()
+def loop() -> bool:
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    rval = loop_with_manager(
-        period_seconds,
-        screenshot_manager,
-    )
+    rval = loop_with_manager(screenshot_manager)
     screenshot_manager.close()
     return rval
 
 
-def loop_with_manager(
-    period_seconds: int,
-    screenshot_manager: manager.Manager,
-) -> bool:
+def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
     print("looping")
     Vars._token = refresh_access_token()
 
-    start = time.time()
-    end = start + period_seconds
     loops = 0
-    s = start
     print_freq = 10
     resp = None
-    while time.time() < end:
-        now = time.time()
+    while True:
         loops += 1
         if loops % print_freq == 0:
             loops_per = print_freq / (now - s)
-            s = now
             print(loops, "loops", f"{loops_per:.2f}/s", resp)
         # exit if another process has spun up to take over
         new_token = firebase_wrapper.get_token()
@@ -90,7 +76,6 @@ def loop_with_manager(
 
         resp = run(screenshot_manager)
         time.sleep(1)
-    return False
 
 
 # refresh token is not actually used to auth anymore
@@ -127,13 +112,10 @@ def handle(
     previous_time = data_output.time
     previous_error = data_output.error
 
-    if secrets.Vars.is_local:
-        print("\nlocal handle", to_handle.json(), "\n")
-    else:
-        if previous_error is not None and previous_error.version == VERSION:
-            return "previous_error"
-        if previous_time is not None and previous_time > now:
-            return "previous_time"
+    if previous_error is not None and previous_error.version == VERSION:
+        return "previous_error"
+    if previous_time is not None and previous_time > now:
+        return "previous_time"
 
     evaluation = None \
         if data_output.screenshot_data is None \
@@ -208,8 +190,7 @@ def handle(
         error=None,
     )
 
-    if True or secrets.Vars.is_local:
-        print(to_handle.key, to_write.json())
+    print(to_handle.key, to_write.json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)
 

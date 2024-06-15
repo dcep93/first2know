@@ -15,4 +15,3 @@ else
   bash ./build_react.sh
   bash ./deploy_to_firebase.sh "$SA_KEY"
 fi
-curl https://first2know.web.app/

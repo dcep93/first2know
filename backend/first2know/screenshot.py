@@ -71,8 +71,7 @@ class Screenshot:
         await self.p.__aexit__()
 
     def log(self, s: str):
-        if secrets.Vars.is_local:
-            print(self.id, s)
+        print(self.id, s)
 
     async def new_context(self):
         try:

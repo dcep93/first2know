@@ -23,18 +23,11 @@ NUM_SCREENSHOTTERS = 4
 
 
 class Vars:
-    _screenshot_manager: manager.Manager
-
-
-def init():
-    Vars._screenshot_manager = manager.Manager(
+    _screenshot_manager: manager.Manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
 
-
-if secrets.Vars.is_local:
-    init()
 
 web_app = FastAPI()
 web_app.add_middleware(

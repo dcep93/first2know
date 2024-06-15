@@ -18,7 +18,7 @@
 
 # backend
 
-- use `make -C backend regenauth` and place secrets in modal first2know_s and/or github SECRETS_JSON
-- visit [https://dcep93--first2know-app.modal.run/](https://dcep93--first2know-app.modal.run/) to verify working
+- use `make -C backend regenauth` and place secrets in github SECRETS_JSON
+- visit [https://first2know20240615.appspot.com](https://first2know20240615.appspot.com) to verify working
 
 # secrets

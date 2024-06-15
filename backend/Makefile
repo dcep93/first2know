@@ -25,9 +25,6 @@ cron:
 twitter_auth:
 	python3 -m first2know.twitter_auth
 
-modaldeploy:
-	modal deploy --name first2know first2know.modal_app
-
 test:
 	python3 -m unittest first2know.test
 	# python3 -m unittest first2know.test.TestScreenshot.test_raw_proxy
