@@ -16,8 +16,8 @@ def get_health(request: Request):
     return HTMLResponse("hi")
 
 
-@web_app.get("/healthcheck")
-def get_healthcheck(request: Request):
+@web_app.get("/readiness_check")
+def get_readiness_check(request: Request):
     return HTMLResponse("hi")
 
 
