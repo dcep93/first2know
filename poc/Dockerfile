@@ -18,10 +18,8 @@ RUN apt install python-is-python3
 
 RUN apt install -y git
 
-RUN pip3 install uvicorn
-RUN pip3 install fastapi
-RUN pip3 install gunicorn
-RUN pip3 install flask
+COPY requirements.txt ./
+RUN pip3 install -r requirements.txt
 
 COPY . ./
 
