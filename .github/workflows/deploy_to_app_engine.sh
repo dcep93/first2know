@@ -24,7 +24,7 @@ npm install google-auth-library
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
 cat <<EOF >app.yaml
-runtime: custom
+runtime: python
 env: flex
 manual_scaling:
   instances: 1
