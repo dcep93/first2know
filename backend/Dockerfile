@@ -18,32 +18,32 @@ RUN apt install python-is-python3
 
 RUN apt install -y git
 
-# # for playwright
-# # solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
-# RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >>/etc/apt/sources.list.d/fonts.list
+# for playwright
+# solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
+RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >>/etc/apt/sources.list.d/fonts.list
 
-# RUN pip3 install playwright==1.36
-# RUN playwright install-deps chromium
-# RUN playwright install chromium
+RUN pip3 install playwright==1.36
+RUN playwright install-deps chromium
+RUN playwright install chromium
 
-# RUN pip3 install grpcio==1.43.0
-# RUN pip3 install cryptography
-# RUN pip3 install requests
-# RUN pip3 install requests_oauthlib
-# RUN pip3 install pillow
-# RUN pip3 install firebase-admin
-# RUN pip3 install nest-asyncio
-# RUN pip3 install beautifulsoup4
-# RUN pip3 install psutil
-# RUN pip3 install types-psutil
+RUN pip3 install grpcio==1.43.0
+RUN pip3 install cryptography
+RUN pip3 install requests
 RUN pip3 install uvicorn
 RUN pip3 install fastapi
-# RUN pip3 install mypy
+RUN pip3 install requests_oauthlib
+RUN pip3 install pillow
+RUN pip3 install firebase-admin
+RUN pip3 install nest-asyncio
+RUN pip3 install beautifulsoup4
+RUN pip3 install psutil
+RUN pip3 install types-psutil
+RUN pip3 install mypy
 
 # EXPOSE 8000
 
 COPY . ./
 
-# RUN mypy .
+RUN mypy .
 
 ENTRYPOINT [ "python3 app.py" ]
