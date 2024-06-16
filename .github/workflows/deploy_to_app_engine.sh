@@ -26,6 +26,7 @@ GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)
 cat <<EOF >app.yaml
 runtime: python
 env: flex
+entrypoint: gunicorn -b :\$PORT main:app
 manual_scaling:
   instances: 1
 
