@@ -46,7 +46,8 @@ RUN apt install -y git
 
 RUN pip3 install uvicorn
 RUN pip3 install fastapi
+RUN pip3 install gunicorn
 
 COPY . ./
 
-ENTRYPOINT [ "python3 app.py" ]
+ENTRYPOINT [ "python3 main.py" ]
