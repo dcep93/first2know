@@ -24,7 +24,8 @@ gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
 
 cd ../../poc
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 2
+gcloud builds submit --tag docker.pkg.dev/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend
+# gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 2
 # cat <<EOF >app.yaml
 # EOF
 # echo "$2" >first2know/secrets.json
