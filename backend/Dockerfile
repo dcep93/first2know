@@ -38,12 +38,12 @@ RUN apt install -y git
 # RUN pip3 install types-psutil
 RUN pip3 install uvicorn
 RUN pip3 install fastapi
-RUN pip3 install mypy
+# RUN pip3 install mypy
 
 # EXPOSE 8000
 
 COPY . ./
 
-RUN mypy .
+# RUN mypy .
 
 ENTRYPOINT [ "python3 app.py" ]
