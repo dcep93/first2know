@@ -23,15 +23,16 @@ echo "$1" >"$GOOGLE_APPLICATION_CREDENTIALS"
 npm install google-auth-library
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
-cat <<EOF >app.yaml
-runtime: python
-env: flex
-entrypoint: gunicorn -b :\$PORT main:app
-manual_scaling:
-  instances: 1
-
-EOF
-echo "$2" >first2know/secrets.json
 gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
-# gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
-# gcloud beta app repair
+# cat <<EOF >app.yaml
+# runtime: python
+# env: flex
+# entrypoint: gunicorn -b :\$PORT main:app
+# manual_scaling:
+#   instances: 1
+
+# EOF
+# echo "$2" >first2know/secrets.json
+# gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
+# # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
+# # gcloud beta app repair
