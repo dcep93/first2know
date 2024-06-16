@@ -16,14 +16,14 @@ RUN mkdir -p /var/log/app_engine
 # Because 404 responses are considered healthy, this could actually be left
 # out as nginx will return 404 if the file isn't found. However, it is better
 # to be explicit.
-RUN mkdir -p /usr/share/nginx/www/_ah &&
-    echo "healthy" >/usr/share/nginx/www/_ah/health
+RUN mkdir -p /usr/share/nginx/www/_ah && \
+    echo "healthy" > /usr/share/nginx/www/_ah/health
 
 # Finally, all static assets.
 ADD www/ /usr/share/nginx/www/
 RUN chmod -R a+r /usr/share/nginx/www
 
-ADD . ./
+# ADD . ./
 
 # FROM debian:11
 # # FROM debian:11@sha256:e538a2f0566efc44db21503277c7312a142f4d0dedc5d2886932b92626104bff
@@ -47,5 +47,3 @@ ADD . ./
 
 # RUN pip3 install uvicorn
 # RUN pip3 install fastapi
-
-# COPY . ./
