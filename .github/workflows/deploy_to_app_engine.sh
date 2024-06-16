@@ -24,14 +24,8 @@ gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
 
 cd ../../poc
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
+gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 2
 # cat <<EOF >app.yaml
-# runtime: python
-# env: flex
-# entrypoint: gunicorn -b :\$PORT main:app
-# manual_scaling:
-#   instances: 1
-
 # EOF
 # echo "$2" >first2know/secrets.json
 # gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
