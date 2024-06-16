@@ -25,7 +25,7 @@ GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)
 
 cd ../../poc
 for operation in $(gcloud app operations list --project "${GOOGLE_CLOUD_PROJECT}" --format="value(id)"); do gcloud operations cancel $operation; done
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
+gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1 --verbosity=debug
 # cat <<EOF >app.yaml
 # runtime: python
 # env: flex
