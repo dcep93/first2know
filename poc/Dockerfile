@@ -48,3 +48,5 @@ RUN pip3 install uvicorn
 RUN pip3 install fastapi
 
 COPY . ./
+
+ENTRYPOINT [ "python3 app.py" ]
