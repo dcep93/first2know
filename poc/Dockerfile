@@ -16,8 +16,8 @@ RUN mkdir -p /var/log/app_engine
 # Because 404 responses are considered healthy, this could actually be left
 # out as nginx will return 404 if the file isn't found. However, it is better
 # to be explicit.
-RUN mkdir -p /usr/share/nginx/www/_ah &&
-    echo "healthy" >/usr/share/nginx/www/_ah/health
+RUN mkdir -p /usr/share/nginx/www/_ah && \
+    echo "healthy" > /usr/share/nginx/www/_ah/health
 
 # Finally, all static assets.
 ADD www/ /usr/share/nginx/www/
