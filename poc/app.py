@@ -11,6 +11,11 @@ def get_(request: Request):
     return HTMLResponse("hi")
 
 
+@web_app.get("/_ah/health")
+def get__ah_health(request: Request):
+    return HTMLResponse("hi")
+
+
 @web_app.get("/blah")
 def get_blah(request: Request):
     return HTMLResponse("hi")
