@@ -21,6 +21,7 @@ RUN apt install -y git
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt
 
+RUN date
 COPY . ./
 
 ENTRYPOINT [ "gunicorn", "-b", ":8080", "main:app" ]
