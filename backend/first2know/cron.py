@@ -46,17 +46,17 @@ def get_memory_mb():
     return Vars._process.memory_info().rss / 1000000
 
 
-def loop() -> bool:
+def loop(setState: typing.Any = lambda state: None) -> bool:
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    rval = loop_with_manager(screenshot_manager)
+    rval = loop_with_manager(screenshot_manager, setState)
     screenshot_manager.close()
     return rval
 
 
-def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
+def loop_with_manager(screenshot_manager: manager.Manager, setState: typing.Any) -> bool:
     print("looping")
     Vars._token = refresh_access_token()
 
@@ -70,6 +70,7 @@ def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
         if loops % print_freq == 0:
             loops_per = print_freq / (now - s)
             s = now
+            setState(s)
             print(loops, "loops", f"{loops_per:.2f}/s", resp)
         # exit if another process has spun up to take over
         new_token = firebase_wrapper.get_token()

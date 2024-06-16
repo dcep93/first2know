@@ -23,5 +23,7 @@ uvicorn.run(web_app, host="0.0.0.0", port=8080)
 #     target=lambda: uvicorn.run(server.web_app, host="0.0.0.0", port=8000),
 #     daemon=True,
 # ).start()
-# cron.loop()
+# def setState(state):
+#     server.Vars.state = state
+# cron.loop(setState)
 # raise Exception("loop_finished")
