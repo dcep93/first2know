@@ -26,8 +26,9 @@ GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)
 cd ../../poc
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
-# gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 2
+IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend
+gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
+gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 2 --image-url="${IMG_URL}"
 # cat <<EOF >app.yaml
 # EOF
 # echo "$2" >first2know/secrets.json
