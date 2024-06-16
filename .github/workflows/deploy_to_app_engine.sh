@@ -17,12 +17,14 @@ set -xeuo pipefail
 # gcloud iam service-accounts keys create gac.json --iam-account "deployer-github@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com"
 # cat gac.json
 
-cd ../../poc
 export GOOGLE_APPLICATION_CREDENTIALS="gac.json"
 echo "$1" >"$GOOGLE_APPLICATION_CREDENTIALS"
 npm install google-auth-library
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
+
+cd ../../poc
+for operation in $(gcloud app operations list --format="value(id)" | tee /dev/tty); do gcloud operations cancel $operation; done
 gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
 # cat <<EOF >app.yaml
 # runtime: python
