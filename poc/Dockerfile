@@ -52,4 +52,6 @@ COPY . ./
 
 RUN pip3 install -r requirements.txt
 
+RUN date
+
 ENTRYPOINT [ "gunicorn", "-b", ":8080", "main:app" ]
