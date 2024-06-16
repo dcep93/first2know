@@ -52,4 +52,4 @@ COPY . ./
 
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT [ "gunicorn -b :$PORT main:app" ]
+ENTRYPOINT [ "gunicorn", "-b", ":$PORT", "main:app" ]
