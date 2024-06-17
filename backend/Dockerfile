@@ -29,7 +29,7 @@ RUN playwright install chromium
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT [ "gunicorn", "-b", ":8080", "app:app" ]
+ENTRYPOINT [ "gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "-b", ":8080", "app:app" ]
 
 COPY . ./
 
