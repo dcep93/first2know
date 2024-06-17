@@ -6,7 +6,7 @@ FMT="$1"
 DESTINATION="$2"
 
 CURRENT_TIME="$(TZ='America/New_York' date)"
-GIT_LOG="$(git log -1)"
+GIT_LOG="$(git log -1 --format=format:%H)"
 
 test -f "$DESTINATION"
 # shellcheck disable=2059
