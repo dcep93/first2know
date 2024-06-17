@@ -128,7 +128,7 @@ def post_screenshot(payload: ScreenshotPayload):
         return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
-        return HTMLResponse(err, 500)
+        return HTMLResponse(f"<pre>{err}</pre>", 500)
 
 
 @web_app.post("/encrypt")
@@ -146,7 +146,7 @@ def post_proxy(payload: proxy.Request):
         return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
-        return HTMLResponse(err, 500)
+        return HTMLResponse(f"<pre>{err}</pre>", 500)
 
 
 @web_app.get("/proxy/{url:path}")
@@ -157,15 +157,14 @@ def get_proxy(url: str):
         return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
-        return HTMLResponse(err, 500)
+        return HTMLResponse(f"<pre>{err}</pre>", 500)
 
 
 # TwitterLogin.requestTokenUrl auth/twitter/reverse
 @web_app.post("/twitter/request_token")
 def post_twitter_request_token():
     resp_json = twitter_auth.login_request_token()
-    resp_str = json.dumps(resp_json)
-    return HTMLResponse(resp_str)
+    return JSONResponse(resp_json)
 
 
 # TwitterLogin.loginUrl auth/twitter
@@ -183,7 +182,7 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
     user.encrypted = firebase_wrapper.encrypt(user.json())
     d = dict(user)
     d["double_encrypted"] = firebase_wrapper.encrypt(user.encrypted)
-    return HTMLResponse(json.dumps(d))
+    return JSONResponse(d)
 
 
 @web_app.get("/run_cron")
@@ -193,4 +192,4 @@ def get_cron():
         return JSONResponse(results)
     except Exception:
         err = traceback.format_exc()
-        return HTMLResponse(err, 500)
+        return HTMLResponse(f"<pre>{err}</pre>", 500)
