@@ -8,6 +8,7 @@ dockerbuild:
 
 dockerexec: dockerbuild
 	docker run \
+		-it \
 		--rm \
 		--name $(service_name) \
 		$(local_image_tag) \

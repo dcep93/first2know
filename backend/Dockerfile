@@ -8,15 +8,9 @@ WORKDIR /var/www
 
 RUN apt-get update
 RUN apt-get install -y software-properties-common
-
-RUN apt install -y python3.9
-RUN apt install -y python3-pip
+RUN apt install -y curl git python-is-python3 python3.9 python3-pip
 
 RUN pip3 install --upgrade pip
-
-RUN apt install python-is-python3
-
-RUN apt install -y git
 
 # for playwright
 # solves: E: Package "ttf-ubuntu-font-family" has no installation candidate
