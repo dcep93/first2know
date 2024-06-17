@@ -25,7 +25,11 @@ NUM_SCREENSHOTTERS = 4
 
 class Vars:
     start_time = time.time()
-    screenshot_manager: manager.Manager = manager.Manager(
+    screenshot_manager: manager.Manager
+
+
+def init():
+    Vars.screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
