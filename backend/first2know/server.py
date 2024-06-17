@@ -9,7 +9,7 @@ import pydantic  # type: ignore
 
 from fastapi import FastAPI, Request, Response  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
-from fastapi.responses import HTMLResponse  # type: ignore
+from fastapi.responses import JSONResponse, HTMLResponse  # type: ignore
 
 from . import cron
 from . import firebase_wrapper
@@ -60,8 +60,24 @@ async def log_requests(request: Request, call_next) -> Response:
 
 
 @web_app.get("/")
-def get_(request: Request):
-    return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
+def get_():
+    now = time.time()
+    alive_age = now - Vars.start_time
+    cron_age = now - cron.Vars.latest
+    return JSONResponse(
+        status_code=200 if alive_age < 60 or cron_age < 30 else 500,
+        content={
+            "alive_age": alive_age,
+            "cron_age": cron_age,
+            "count": cron.Vars.count,
+            "recorded_sha": recorded_sha.recorded_sha,
+        },
+    )
+
+
+@web_app.get("/_ae/health")
+def get_health():
+    return get_()
 
 
 @web_app.get("/start_time")
