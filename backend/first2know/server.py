@@ -70,7 +70,7 @@ def get_():
     alive_age = now - Vars.start_time
     cron_age = now - cron.Vars.latest
     return JSONResponse(
-        status_code=200 if (alive_age < 60 or cron_age < 300) else 599,
+        status_code=200 if (alive_age < 600 or cron_age < 300) else 599,
         content={
             "alive_age": alive_age,
             "cron_age": cron_age,
@@ -81,7 +81,7 @@ def get_():
     )
 
 
-@web_app.get("/_ae/health")
+@web_app.get("/liveness_check")
 def get_health():
     Vars.health += 1
     return get_()
