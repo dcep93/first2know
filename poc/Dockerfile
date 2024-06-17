@@ -21,8 +21,6 @@ RUN apt install -y git
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT [ "gunicorn", "-b", ":8080", "main:app" ]
+# ENTRYPOINT [ "gunicorn", "-b", ":8080", "main:app" ]
 
 COPY . ./
-
-RUN pip3 install flask
