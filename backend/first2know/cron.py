@@ -28,6 +28,7 @@ firebase_wrapper.wait_10s_for_data()
 class Vars:
     _process = psutil.Process(os.getpid())
     _token: str
+    latest = -1.
 
 
 def main():
@@ -66,6 +67,7 @@ def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
     resp = None
     while True:
         now = time.time()
+        Vars.latest = now
         loops += 1
         if loops % print_freq == 0:
             loops_per = print_freq / (now - s)

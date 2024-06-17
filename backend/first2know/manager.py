@@ -31,7 +31,7 @@ class Manager(typing.Generic[T, U]):
         for _ in range(self.num):
             self.request_queue.put_nowait((None, None))
 
-    def init_runner(self):
+    def init_runner(self) -> None:
         try:
             runner = self.f()
         except Exception as e:

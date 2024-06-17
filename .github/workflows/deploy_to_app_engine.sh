@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xeuo pipefail
+set -euo pipefail
 
 # # requires billing!
 # # first2know20240615

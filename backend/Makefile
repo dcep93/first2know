@@ -17,7 +17,7 @@ oneoff:
 	python3 -u -m first2know.oneoff
 
 server:
-	uvicorn $(service_name).server:web_app --host 0.0.0.0 --port 8000
+	gunicorn --worker-class uvicorn.workers.UvicornWorker -b :8080 app:app
 
 cron:
 	python3 -u -m first2know.cron

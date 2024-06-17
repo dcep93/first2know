@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+import time
 import traceback
 import typing
 
@@ -23,6 +24,7 @@ NUM_SCREENSHOTTERS = 4
 
 
 class Vars:
+    start_time = time.time()
     _screenshot_manager: manager.Manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
@@ -60,6 +62,11 @@ async def log_requests(request: Request, call_next) -> Response:
 @web_app.get("/")
 def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
+
+
+@web_app.get("/start_time")
+def get_start_time(request: Request):
+    return Response(Vars.start_time)
 
 
 # class PostInputPayload(firebase_wrapper.DataInput):
