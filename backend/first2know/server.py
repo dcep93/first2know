@@ -26,6 +26,7 @@ NUM_SCREENSHOTTERS = 4
 class Vars:
     start_time = time.time()
     screenshot_manager: manager.Manager
+    health = 0
 
 
 def init():
@@ -75,12 +76,14 @@ def get_():
             "cron_age": cron_age,
             "count": cron.Vars.count,
             "recorded_sha": recorded_sha.recorded_sha,
+            "health": Vars.health,
         },
     )
 
 
 @web_app.get("/_ae/health")
 def get_health():
+    Vars.health += 1
     return get_()
 
 
