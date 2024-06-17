@@ -26,24 +26,11 @@ RUN pip3 install playwright==1.36
 RUN playwright install-deps chromium
 RUN playwright install chromium
 
-RUN pip3 install grpcio==1.43.0
-RUN pip3 install cryptography
-RUN pip3 install requests
-RUN pip3 install uvicorn
-RUN pip3 install fastapi
-RUN pip3 install requests_oauthlib
-RUN pip3 install pillow
-RUN pip3 install firebase-admin
-RUN pip3 install nest-asyncio
-RUN pip3 install beautifulsoup4
-RUN pip3 install psutil
-RUN pip3 install types-psutil
-RUN pip3 install mypy
+COPY requirements.txt ./
+RUN pip3 install -r requirements.txt
 
-# EXPOSE 8000
+ENTRYPOINT [ "gunicorn", "-b", ":8080", "app:app" ]
 
 COPY . ./
 
 RUN mypy .
-
-ENTRYPOINT [ "python3 app.py" ]

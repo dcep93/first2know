@@ -27,7 +27,6 @@ class Vars:
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    state = "_"
 
 
 web_app = FastAPI()
@@ -61,11 +60,6 @@ async def log_requests(request: Request, call_next) -> Response:
 @web_app.get("/")
 def get_(request: Request):
     return HTMLResponse(f'<pre>{recorded_sha.recorded_sha}</pre>')
-
-
-@web_app.get("/state")
-def get_state(request: Request):
-    return HTMLResponse(Vars.state)
 
 
 # class PostInputPayload(firebase_wrapper.DataInput):

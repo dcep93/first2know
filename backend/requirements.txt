@@ -1,0 +1,13 @@
+grpcio==1.43.0
+cryptography
+requests
+uvicorn
+fastapi
+requests_oauthlib
+pillow
+firebase-admin
+nest-asyncio
+beautifulsoup4
+psutil
+types-psutil
+mypy
