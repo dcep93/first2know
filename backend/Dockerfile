@@ -31,8 +31,6 @@ RUN pip3 install -r requirements.txt
 
 ENTRYPOINT [ "gunicorn", "-b", ":8080", "app:app" ]
 
-RUN pip3 install flask
-
 COPY . ./
 
-RUN mypy .
+RUN mypy first2know
