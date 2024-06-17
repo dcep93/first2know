@@ -40,6 +40,6 @@ gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
 gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 4 --image-url="${IMG_URL}"
+gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 5 --image-url="${IMG_URL}"
 # # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # # gcloud beta app repair
