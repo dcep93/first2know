@@ -3,7 +3,7 @@ import time
 
 from first2know import cron, server
 
-time.sleep(10)
+time.sleep(60)
 
 server.init()
 
