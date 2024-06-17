@@ -185,8 +185,8 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
 @web_app.get("/run_cron")
 def get_cron():
     try:
-        cron.run(Vars.screenshot_manager)
-        return HTMLResponse(None, 200)
+        results = cron.run(Vars.screenshot_manager)
+        return JSONResponse(results)
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(err, 500)
