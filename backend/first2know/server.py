@@ -25,7 +25,7 @@ NUM_SCREENSHOTTERS = 4
 
 class Vars:
     start_time = time.time()
-    _screenshot_manager: manager.Manager = manager.Manager(
+    screenshot_manager: manager.Manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
@@ -114,7 +114,7 @@ def post_screenshot(payload: ScreenshotPayload):
     print("received screenshot request")
     # payload.reencrypt_cookie()
     try:
-        screenshot_response = Vars._screenshot_manager.run(
+        screenshot_response = Vars.screenshot_manager.run(
             screenshot.Request(
                 data_input=payload,
                 evaluation=payload.evaluation,
@@ -185,7 +185,7 @@ def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
 @web_app.get("/run_cron")
 def get_cron():
     try:
-        cron.main()
+        cron.run(Vars.screenshot_manager)
         return HTMLResponse(None, 200)
     except Exception:
         err = traceback.format_exc()
