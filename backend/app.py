@@ -3,12 +3,15 @@ import time
 
 from first2know import cron, server
 
-time.sleep(60)
 
-server.init()
+def start_server():
+    time.sleep(120)
+    server.init()
+    cron.loop_with_manager(server.Vars.screenshot_manager)
+
 
 threading.Thread(
-    target=lambda: cron.loop_with_manager(server.Vars.screenshot_manager),
+    target=start_server,
     daemon=True,
 ).start()
 
