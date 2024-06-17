@@ -24,14 +24,19 @@ gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
 
 cd ../../poc
+cat <<EOF >app.yaml
+runtime: custom
+env: flex
+
+manual_scaling:
+  instances: 1
+
+EOF
+# echo "$2" >first2know/secrets.json
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
 gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
 gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 3 --image-url="${IMG_URL}"
-# cat <<EOF >app.yaml
-# EOF
-# echo "$2" >first2know/secrets.json
-# gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1
 # # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # # gcloud beta app repair
