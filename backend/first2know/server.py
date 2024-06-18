@@ -20,7 +20,7 @@ from . import screenshot
 from . import secrets
 from . import twitter_auth
 
-NUM_SCREENSHOTTERS = 4
+NUM_SCREENSHOTTERS = 1
 
 
 class Vars:
@@ -195,7 +195,7 @@ def get_cron():
         results = cron.run(Vars.screenshot_manager)
         e = time.time()
         duration = e - s
-        return JSONResponse({"results": results, duration: "duration"})
+        return JSONResponse({"results": results, "duration": duration})
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(f"<pre>{err}</pre>", 500)
