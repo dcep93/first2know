@@ -10,9 +10,9 @@ def start_server():
     cron.loop_with_manager(server.Vars.screenshot_manager)
 
 
-# threading.Thread(
-#     target=start_server,
-#     daemon=True,
-# ).start()
+threading.Thread(
+    target=start_server,
+    daemon=True,
+).start()
 
 app = server.web_app
