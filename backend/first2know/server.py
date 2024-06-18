@@ -20,7 +20,7 @@ from . import screenshot
 from . import secrets
 from . import twitter_auth
 
-NUM_SCREENSHOTTERS = 1
+NUM_SCREENSHOTTERS = 4
 
 
 class Vars:
@@ -70,7 +70,7 @@ def get_():
     alive_age = now - Vars.start_time
     cron_age = now - cron.Vars.latest
     return JSONResponse(
-        status_code=200 if (alive_age < 600 or cron_age < 300) else 599,
+        status_code=200 if cron_age < 300 else 599,
         content={
             "alive_age": alive_age,
             "cron_age": cron_age,
