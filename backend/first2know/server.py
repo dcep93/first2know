@@ -20,7 +20,7 @@ from . import screenshot
 from . import secrets
 from . import twitter_auth
 
-NUM_SCREENSHOTTERS = 4
+NUM_SCREENSHOTTERS = 1
 
 
 class Vars:
