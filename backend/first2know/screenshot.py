@@ -18,8 +18,6 @@ from . import secrets
 
 import nest_asyncio  # type: ignore
 
-# nest_asyncio.apply()
-
 GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"  # noqa
 
 
@@ -39,6 +37,7 @@ class Response(BaseModel):
 class Screenshot:
 
     def __init__(self):
+        # nest_asyncio.apply()
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
 

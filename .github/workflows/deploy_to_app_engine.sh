@@ -34,6 +34,10 @@ env: flex
 liveness_check:
   path: "/liveness_check"
 
+resources:
+  cpu: 8
+  memory_gb: 50
+
 manual_scaling:
   instances: 1
 
