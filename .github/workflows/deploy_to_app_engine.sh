@@ -31,6 +31,9 @@ cat <<EOF >app.yaml
 runtime: custom
 env: flex
 
+liveness_check:
+  path: "/liveness_check"
+
 manual_scaling:
   instances: 1
 
