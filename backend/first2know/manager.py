@@ -9,6 +9,8 @@ U = typing.TypeVar('U')
 
 class Manager(typing.Generic[T, U]):
 
+    init_lock = threading.Lock()
+
     def __init__(
         self,
         f: typing.Callable[[], typing.Callable[[T], U]],
@@ -32,11 +34,12 @@ class Manager(typing.Generic[T, U]):
             self.request_queue.put_nowait((None, None))
 
     def init_runner(self) -> None:
-        try:
-            runner = self.f()
-        except Exception as e:
-            self.response_queues.put(e)
-            return
+        with self.init_lock:
+            try:
+                runner = self.f()
+            except Exception as e:
+                self.response_queues.put(e)
+                return
         self.response_queues.put(None)
         while True:
             _request, register = self.request_queue.get()
