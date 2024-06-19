@@ -167,7 +167,7 @@ def handle(
         raise e
 
     if screenshot_response.evaluation == IGNORE:
-        return "ignore"
+        return IGNORE
 
     old_md5 = None \
         if data_output.screenshot_data is None \
