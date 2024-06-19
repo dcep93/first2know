@@ -42,6 +42,7 @@ manual_scaling:
   instances: 1
 
 EOF
+echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
 echo "$SECRETS_JSON" >first2know/secrets.json
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760

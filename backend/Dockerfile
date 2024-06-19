@@ -23,8 +23,6 @@ RUN playwright install chromium
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT [ "make", "server" ]
-
 COPY . ./
 
-RUN mypy first2know
+# RUN mypy first2know
