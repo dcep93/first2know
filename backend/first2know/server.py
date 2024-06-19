@@ -68,15 +68,16 @@ async def log_requests(request: Request, call_next) -> Response:
 def get_():
     now = time.time()
     alive_age = now - Vars.start_time
-    cron_age = now - cron.Vars.latest
+    cron_age = now - cron.Vars.latest_time
     return JSONResponse(
         status_code=200 if cron_age < 300 else 599,
         content={
             "alive_age": alive_age,
+            "health_count": Vars.health,
             "cron_age": cron_age,
-            "count": cron.Vars.count,
+            "cron_count": cron.Vars.count,
+            "cron_results": cron.Vars.latest_result,
             "recorded_sha": recorded_sha.recorded_sha,
-            "health": Vars.health,
         },
     )
 

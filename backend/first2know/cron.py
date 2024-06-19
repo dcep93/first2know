@@ -29,7 +29,8 @@ class Vars:
     _process = psutil.Process(os.getpid())
     _token: str
     count = 0
-    latest = -1.
+    latest_time = 0.
+    latest_result = None
 
 
 def main():
@@ -94,7 +95,7 @@ def refresh_access_token() -> str:
 
 
 def run(screenshot_manager: manager.Manager) -> typing.List[str]:
-    Vars.latest = time.time()
+    Vars.latest_time = time.time()
     Vars.count += 1
     to_handle_arr = firebase_wrapper.get_to_handle()
     with concurrent.futures.ThreadPoolExecutor(screenshot_manager.num) as executor:
@@ -104,6 +105,7 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
                 screenshot_manager,
             ), to_handle_arr)
         results = list(_results)
+    Vars.latest_result = results
     return results
 
 
