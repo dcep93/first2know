@@ -1,4 +1,5 @@
 import time
+import traceback
 import os
 import psutil
 
@@ -145,11 +146,12 @@ def handle(
         )
         if not ignorable_exception is None:
             return str(ignorable_exception)
+        traceback_err = traceback.format_exc()
         to_write = data_output
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
             time=time.time(),
-            message=f'{type(e)}: {e}',
+            message=f'{type(e)}: {e}\n{traceback_err}',
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
         text = "\n".join([
