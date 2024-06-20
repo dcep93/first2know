@@ -15,7 +15,7 @@ from . import twitter_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '4.0.2'
+VERSION = '5.0.0'
 
 NUM_SCREENSHOTTERS = 1
 
