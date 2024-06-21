@@ -19,7 +19,7 @@ def get_ignorable_exception(
     if src == Src.playwright_screenshot:
         if str(e.__class__
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":
-            return IgnorableException("timeout")
+            return IgnorableException("playwright_timeout")
 
     if src == Src.screenshot_null_location:
         if str(e.__class__) == "<class 'playwright._impl._api_types.Error'>":
