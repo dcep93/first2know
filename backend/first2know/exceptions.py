@@ -20,6 +20,9 @@ def get_ignorable_exception(
         if str(e.__class__
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":
             return IgnorableException("playwright_timeout")
+        if str(e.__class__
+               ) == "<class 'asyncio.exceptions.TimeoutError'>":
+            return IgnorableException("asyncio_timeout")
 
     if src == Src.screenshot_null_location:
         if str(e.__class__) == "<class 'playwright._impl._api_types.Error'>":
