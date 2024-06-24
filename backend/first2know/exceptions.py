@@ -21,6 +21,10 @@ def get_ignorable_exception(
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":
             return IgnorableException("playwright_timeout")
         if str(e.__class__
+               ) == "<class 'playwright._impl._api_types.Error'>":
+            if e.getMessage().startswith("Browser closed.\n"):  # type: ignore
+                return IgnorableException("browser_closed")
+        if str(e.__class__
                ) == "<class 'asyncio.exceptions.TimeoutError'>":
             return IgnorableException("asyncio_timeout")
 
