@@ -35,8 +35,8 @@ liveness_check:
   path: "/liveness_check"
 
 resources:
-  cpu: 4
-  memory_gb: 16
+  cpu: 2
+  memory_gb: 4
 
 manual_scaling:
   instances: 1
