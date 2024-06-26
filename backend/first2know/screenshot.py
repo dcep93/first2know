@@ -37,7 +37,7 @@ class Response(BaseModel):
 class Screenshot:
 
     def __init__(self):
-        # nest_asyncio.apply()
+        nest_asyncio.apply()
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
 

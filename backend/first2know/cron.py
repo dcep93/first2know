@@ -124,9 +124,11 @@ def handle(
     previous_time = data_output.time
     previous_error = data_output.error
 
-    if not Vars.is_just_cron and previous_error is not None and previous_error.version == VERSION:
+    if Vars.is_just_cron:
+        print(to_handle)
+    elif previous_error is not None and previous_error.version == VERSION:
         return "previous_error"
-    if previous_time is not None and previous_time > now:
+    elif previous_time is not None and previous_time > now:
         return "previous_time"
 
     evaluation = None \
@@ -164,7 +166,7 @@ def handle(
         ])
         err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
-        if previous_error is None:
+        if not Vars.is_just_cron:
             twitter_wrapper.tweet(
                 text,
                 err_img_data,
