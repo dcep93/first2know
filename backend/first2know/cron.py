@@ -2,6 +2,7 @@ import time
 import traceback
 import os
 import psutil
+import sys
 
 import concurrent.futures
 import typing
@@ -29,6 +30,7 @@ firebase_wrapper.wait_10s_for_data()
 class Vars:
     _process = psutil.Process(os.getpid())
     _token: str
+    is_just_cron = sys.argv[-1].endswith("cron.py")
     count = 0
     latest_time = 0.
     latest_result = None
@@ -122,7 +124,7 @@ def handle(
     previous_time = data_output.time
     previous_error = data_output.error
 
-    if previous_error is not None and previous_error.version == VERSION:
+    if not Vars.is_just_cron and previous_error is not None and previous_error.version == VERSION:
         return "previous_error"
     if previous_time is not None and previous_time > now:
         return "previous_time"

@@ -72,21 +72,12 @@ class Screenshot:
     def log(self, s: str):
         print(self.id, s)
 
-    async def new_context(self):
-        try:
-            return await self.browser.new_context()
-        except:
-            pass
-        await self.close()
-        self.p, self.browser = await self.async_init()
-        return await self.browser.new_context()
-
     def __call__(self, request: Request) -> Response:
 
         async def helper():
             return await self.__acall__(request)
 
-        r = asyncio.run(self.async_retry(helper, 5))
+        r = asyncio.run(self.async_retry(helper, 0))
         return r
 
     async def __acall__(
@@ -114,7 +105,7 @@ class Screenshot:
         if request.data_input.user_agent_hack:
             params["user-agent"] = GOOD_USER_AGENT
 
-        context = await self.new_context()
+        context = await self.browser.new_context()
         page = await context.new_page()
         C()
         if request.data_input.raw_proxy:
