@@ -18,7 +18,7 @@ oneoff:
 	python3 -u -m first2know.oneoff
 
 server:
-	uvicorn app:app --host 0.0.0.0 --port 8080
+	uvicorn app:app --host 0.0.0.0 --port 8080 --loop asyncio
 
 cron:
 	python3 -u -m first2know.cron
