@@ -16,8 +16,8 @@ def get_ignorable_exception(
         e: Exception,
         src: typing.Optional[Src] = None
 ) -> typing.Optional[IgnorableException]:
-    print(e)
-    print('\n'.join(dir(e)))
+    # print(e)
+    # print('\n'.join(dir(e)))
     if src == Src.playwright_screenshot:
         if str(e.__class__
                ) == "<class 'playwright._impl._api_types.TimeoutError'>":

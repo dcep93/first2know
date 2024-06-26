@@ -8,6 +8,7 @@ U = typing.TypeVar('U')
 
 
 class Manager(typing.Generic[T, U]):
+    cancelled = False
 
     init_lock = threading.Lock()
 
@@ -55,11 +56,14 @@ class Manager(typing.Generic[T, U]):
 
     def run(self, request: T) -> U:
         register = self.response_queues.get()
+        if self.__class__.cancelled:
+            raise Exception("first2know.manager.cancelled")
         self.request_queue.put_nowait((request, register))
         (response, is_successful) = register.get()
         self.response_queues.put_nowait(register)
         if not is_successful:
-            print(f"raising {response}")
-            traceback.print_tb(response.__traceback__)
+            # print(f"raising {response}")
+            # traceback.print_tb(response.__traceback__)
+            self.__class__.cancelled = True
             raise response
         return response

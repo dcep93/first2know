@@ -164,10 +164,11 @@ def handle(
         ])
         err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
-        img_url = twitter_wrapper.tweet(
-            text,
-            err_img_data,
-        )
+        if previous_error is None:
+            twitter_wrapper.tweet(
+                text,
+                err_img_data,
+            )
         raise e
 
     if screenshot_response.evaluation == IGNORE:
