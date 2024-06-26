@@ -1,7 +1,10 @@
+import sys
 import threading
 import time
 
 from first2know import cron, server
+
+print(sys.argv)
 
 server.init()
 
