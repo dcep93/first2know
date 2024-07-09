@@ -116,6 +116,7 @@ def handle(
     to_handle: firebase_wrapper.ToHandle,
     screenshot_manager: manager.Manager,
 ) -> str:
+    return "429"
     data_output = firebase_wrapper.DataOutput() \
         if to_handle.data_output is None \
         else to_handle.data_output
