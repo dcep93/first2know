@@ -21,7 +21,7 @@ VERSION = '5.0.2'
 
 NUM_SCREENSHOTTERS = 1
 
-DEBOUNCE_SECONDS = 1 * 60
+DEBOUNCE_SECONDS = 10 * 60
 
 firebase_wrapper.init()
 firebase_wrapper.wait_10s_for_data()
