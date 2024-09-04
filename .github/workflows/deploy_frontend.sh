@@ -6,7 +6,7 @@ SA_KEY="$1"
 
 cd "$(dirname "$0")"
 
-DIFF="$(git diff HEAD^ ../../frontend/first2know)"
+DIFF="x$(git diff HEAD^ ../../frontend/first2know)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
 else

@@ -11,7 +11,7 @@ function c() {
   curl --fail https://causal-sky-434620-f6.appspot.com/
 }
 
-DIFF="$(git diff HEAD^ ../../backend)"
+DIFF="x$(git diff HEAD^ ../../backend)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
   c && exit 0 || true
