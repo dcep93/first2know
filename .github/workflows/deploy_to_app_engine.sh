@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # # requires billing!
-# # first2know20240615
+# # first2know20240904@cloudshell:~
 # # enable api https://console.developers.google.com/apis/api/appengine.googleapis.com/overview
 # # enable cloud build https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com
 # nvm install 16.4.0

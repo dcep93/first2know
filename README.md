@@ -19,6 +19,6 @@
 # backend
 
 - use `make -C backend regenauth` and place secrets in github SECRETS_JSON
-- visit [https://first2know20240615.appspot.com](https://first2know20240615.appspot.com) to verify working
+- visit [https://causal-sky-434620-f6.appspot.com/](https://causal-sky-434620-f6.appspot.com/) to verify working
 
 # secrets

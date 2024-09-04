@@ -3,7 +3,7 @@ const FETCH_INTERVAL_MS = 10 * 1000;
 
 export const url = IS_LOCAL
   ? "http://localhost:8000"
-  : "https://first2know20240615.appspot.com";
+  : "https://causal-sky-434620-f6.appspot.com/";
 
 export function sfetch(url: string, options?: any) {
   return fetch(url, options)
