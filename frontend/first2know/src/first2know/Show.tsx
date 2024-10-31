@@ -10,12 +10,12 @@ function Show(props: {
   return (
     <div>
       {Object.entries(props.allToHandle).map(([k, toHandle]) => (
-        <>
-          <RenderToHandle key={k} k={k} toHandle={toHandle} />
+        <div key={k}>
+          <RenderToHandle k={k} toHandle={toHandle} />
           <div>
             <Link to={`/${k}`}>Edit {k}</Link>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
