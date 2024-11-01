@@ -63,7 +63,7 @@ def loop() -> bool:
 
 
 def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
-    time.sleep(60*60*24)  # getting 429s from twitter
+    time.sleep(60*60*24*30)  # getting 429s from twitter
     print("looping")
     Vars._token = refresh_access_token()
 
