@@ -21,7 +21,7 @@ VERSION = '5.0.2'
 
 NUM_SCREENSHOTTERS = 1
 
-DEBOUNCE_SECONDS = 5 * 60
+DEBOUNCE_SECONDS = 15 * 60
 
 firebase_wrapper.init()
 firebase_wrapper.wait_10s_for_data()
@@ -63,6 +63,7 @@ def loop() -> bool:
 
 
 def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
+    time.sleep(60*60*24*30)  # getting 429s from twitter
     print("looping")
     Vars._token = refresh_access_token()
 
