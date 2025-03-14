@@ -25,4 +25,4 @@ RUN pip3 install -r requirements.txt
 
 COPY . ./
 
-# RUN mypy first2know
+RUN mypy first2know
