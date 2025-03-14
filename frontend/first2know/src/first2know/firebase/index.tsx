@@ -20,10 +20,8 @@ export type DataOutputType = {
 };
 
 export type UserType = {
-  screen_name: string;
-  user_id: number;
-  encrypted: string;
-  double_encrypted: string;
+  email: string;
+  // encrypted: string;
 };
 
 export type DataInputType = {
@@ -43,16 +41,14 @@ export type ToHandleType = {
 };
 
 function _FBToHandle(toHandle: ToHandleType): any {
-  const to_md5 = JSON.stringify([toHandle.data_input, toHandle.user.encrypted]);
-  console.log({ to_md5 });
+  const to_md5 = JSON.stringify([toHandle.data_input]);
   const md5 = to_md5_f(to_md5);
+  console.log({ md5, to_md5 });
   return {
     ...toHandle,
     md5,
     user: {
       ...toHandle.user,
-      encrypted: toHandle.user.double_encrypted,
-      double_encrypted: null,
     },
   };
 }

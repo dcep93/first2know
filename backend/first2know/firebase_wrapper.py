@@ -139,7 +139,7 @@ def _extract_to_handle(
     user = User(**json.loads(decrypted_user))
 
     if user.encrypted != secrets.Vars.secrets.client_secret:
-        print("bad_encrpytion")
+        print("bad_encryption")
         return None
 
     to_md5 = json.dumps(

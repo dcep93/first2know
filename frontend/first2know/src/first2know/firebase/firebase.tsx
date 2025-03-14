@@ -1,5 +1,11 @@
 import { initializeApp } from "firebase/app"; // no compat for new SDK
 import {
+  Auth,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import {
   Database,
   get,
   getDatabase,
@@ -14,9 +20,13 @@ const project = "first2know";
 
 const config = {
   databaseURL: `https://${project}-default-rtdb.firebaseio.com/`,
+  authDomain: `${project}.firebaseapp.com`,
+  apiKey: "AIzaSyAG_IC1PT0KgGLRkEv64osMaVUgV0Iq_AU", // public, needed for auth
 };
 
 var database: Database;
+var auth: Auth;
+var provider: GoogleAuthProvider;
 type ResultType = { val: () => BlobType | null };
 type BlobType = any;
 
@@ -30,6 +40,8 @@ if (!window.firebaseinitialized) {
   window.firebaseinitialized = true;
   var app = initializeApp(config);
   database = getDatabase(app);
+  auth = getAuth(app);
+  provider = new GoogleAuthProvider();
 }
 
 function _connect(path: string, callback: (value: BlobType) => void): void {
@@ -62,6 +74,9 @@ const ex = {
   _set,
   _push,
   _delete,
+  signInWithPopup,
+  auth: auth!,
+  provider: provider!,
 };
 
 export default ex;

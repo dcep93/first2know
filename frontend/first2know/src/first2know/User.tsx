@@ -1,7 +1,8 @@
-import TwitterLogin from "./TwitterLogin";
-
 import { UserType } from "./firebase";
-import { url } from "./Server";
+
+import firebase from "./firebase/firebase";
+
+import { FcGoogle } from "react-icons/fc";
 
 function User(props: {
   user: UserType | null;
@@ -10,9 +11,8 @@ function User(props: {
   return props.user ? (
     <div>
       <div>
-        {props.user.screen_name}
+        {props.user.email}
         <button
-          disabled={window.location.hostname === "localhost"}
           onClick={() => {
             localStorage.removeItem("login");
             props.update(null);
@@ -25,23 +25,39 @@ function User(props: {
       </div>
     </div>
   ) : (
-    <TwitterLogin
-      // @ts-ignore
-      loginUrl={`${url}/twitter/access_token`}
-      onFailure={(error: string) => alert(error)}
-      onSuccess={(response: any) =>
-        response.json().then((user: UserType) => {
-          localStorage.setItem("login", JSON.stringify(user));
-          props.update(user);
-        })
-      }
-      requestTokenUrl={`${url}/twitter/request_token`}
-    />
+    <div>
+      <button
+        style={{ display: "flex", alignItems: "center" }}
+        onClick={() =>
+          Promise.resolve()
+            .then(() =>
+              firebase.signInWithPopup(firebase.auth, firebase.provider)
+            )
+            .then((result) => ({
+              email: result.user.email!,
+            }))
+            .then((user) => {
+              if (!user.email) {
+                throw new Error("no email");
+              }
+              return user;
+            })
+            .then((user: UserType) =>
+              localStorage.setItem("login", JSON.stringify(user))
+            )
+            .then(() => window.location.reload())
+            .catch((err) => alert(err))
+        }
+      >
+        <span>LOGIN</span>
+        <FcGoogle style={{ fontSize: "large" }} />
+      </button>
+    </div>
   );
 }
 
 export function isAdmin(user: UserType): boolean {
-  return [481352569].includes(hashCode(user.encrypted || ""));
+  return ["dcep93@gmail.com"].includes(user.email);
 }
 
 function hashCode(s: string): number {
