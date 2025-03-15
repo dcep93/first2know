@@ -60,7 +60,7 @@ export function isAdmin(user: UserType): boolean {
   return ["dcep93@gmail.com"].includes(user.email);
 }
 
-function hashCode(s: string): number {
+export function hashCode(s: string): number {
   var hash = 0;
   for (var i = 0; i < s.length; i++) {
     var code = s.charCodeAt(i);

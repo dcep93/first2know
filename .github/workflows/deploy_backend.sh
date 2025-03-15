@@ -21,5 +21,6 @@ fi
 
 bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
 bash ./deploy_to_app_engine.sh "$SA_KEY" "$SECRETS_JSON"
+bash ./test_backend.sh
 
 c || c || c

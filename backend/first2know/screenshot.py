@@ -2,6 +2,7 @@ import asyncio
 import base64
 import datetime
 import io
+import json
 import os
 import time
 import typing
@@ -23,7 +24,7 @@ GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 
 class Request(BaseModel):
     data_input: firebase_wrapper.DataInput
-    evaluation: typing.Optional[str]
+    evaluation: typing.Optional[str] = None
 
 
 class Response(BaseModel):
@@ -118,7 +119,7 @@ class Screenshot:
         elif request.data_input.url:
             await page.set_extra_http_headers(params)
             await page.goto(request.data_input.url)
-        evaluation = None \
+        raw_evaluation = None \
             if request.data_input.evaluate is None \
             else await page.evaluate(
                 request.data_input.evaluate,
@@ -126,7 +127,7 @@ class Screenshot:
             )
         C()
         if request.data_input.evaluation_to_img:
-            img_data = str_to_binary_data(str(evaluation))
+            img_data = str_to_binary_data(str(raw_evaluation))
         else:
             if request.data_input.selector is None:
                 to_screenshot = page
@@ -154,9 +155,11 @@ class Screenshot:
         await context.close()
         C()
 
-        if evaluation is None:
+        if raw_evaluation is None:
             md5 = firebase_wrapper.str_to_md5(img_data)
+            evaluation = None
         else:
+            evaluation = json.dumps(raw_evaluation)
             md5 = firebase_wrapper.str_to_md5(evaluation)
         elapsed = time.time() - s
         self.log(' '.join([
