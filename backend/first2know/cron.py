@@ -33,7 +33,7 @@ class Vars:
     is_just_cron = sys.argv[-1].endswith("cron.py")
     count = 0
     latest_time = 0.
-    latest_result = None
+    latest_result: typing.Optional[list[str]] = None
 
 
 def main():

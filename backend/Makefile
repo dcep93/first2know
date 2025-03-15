@@ -6,6 +6,7 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 dockerbuild:
 	docker build -t $(local_image_tag) .
 
+# ARGS=test make dockerexec
 dockerexec: dockerbuild
 	docker run \
 		-it \
@@ -27,6 +28,7 @@ twitter_auth:
 	python3 -m first2know.twitter_auth
 
 test:
+	mypy first2know
 	python3 -m unittest first2know.test
 	# python3 -m unittest first2know.test.TestScreenshot.test_raw_proxy
 
