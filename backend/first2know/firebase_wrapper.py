@@ -138,10 +138,6 @@ def _extract_to_handle(
     decrypted_user = decrypt(encrypted_user)
     user = User(**json.loads(decrypted_user))
 
-    if user.encrypted != secrets.Vars.secrets.client_secret:
-        print("bad_encryption")
-        return None
-
     to_md5 = json.dumps(
         [
             dict(to_handle.data_input),
@@ -167,9 +163,8 @@ def write_data(key: str, data_output: DataOutput) -> None:
 
 
 def write_token(token: str) -> None:
-    encrypted = encrypt(token)
     ref = db.reference("token")
-    def f(): return ref.set(encrypted)
+    def f(): return ref.set(token)
     for _ in range(3):
         try:
             f()
@@ -204,7 +199,7 @@ def decrypt(e: str) -> str:
     return a
 
 
-# for now, the twitter client secret is also the encryption key
+# for now, the email password is also the encryption key
 def _get_cipher_suite() -> Fernet:
     client_secret = secrets.Vars.secrets.client_secret
     key = base64.b64encode(client_secret.encode('utf-8')[:32])

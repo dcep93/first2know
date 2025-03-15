@@ -11,7 +11,6 @@ from . import exceptions
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
-from . import secrets
 from . import twitter_wrapper
 
 IGNORE = "first2know_ignore"

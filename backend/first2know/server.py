@@ -17,8 +17,6 @@ from . import manager
 from . import proxy
 from . import recorded_sha
 from . import screenshot
-from . import secrets
-from . import twitter_auth
 
 NUM_SCREENSHOTTERS = 4
 
@@ -162,31 +160,6 @@ def get_proxy(url: str):
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(f"<pre>{err}</pre>", 500)
-
-
-# TwitterLogin.requestTokenUrl auth/twitter/reverse
-@web_app.post("/twitter/request_token")
-def post_twitter_request_token():
-    resp_json = twitter_auth.login_request_token()
-    return JSONResponse(resp_json)
-
-
-# TwitterLogin.loginUrl auth/twitter
-@web_app.post("/twitter/access_token")
-def post_twitter_access_token(oauth_verifier: str, oauth_token: str):
-    resp_json = twitter_auth.login_access_token(
-        oauth_token,
-        oauth_verifier,
-    )
-    user = firebase_wrapper.User(
-        user_id=int(resp_json["user_id"]),
-        screen_name=resp_json["screen_name"],
-        encrypted=secrets.Vars.secrets.client_secret,
-    )
-    user.encrypted = firebase_wrapper.encrypt(user.json())
-    d = dict(user)
-    d["double_encrypted"] = firebase_wrapper.encrypt(user.encrypted)
-    return JSONResponse(d)
 
 
 @web_app.get("/run_cron")

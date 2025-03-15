@@ -5,15 +5,8 @@ from pydantic import BaseModel
 
 
 class Secrets(BaseModel):
-    api_key: str
-    api_key_secret: str
-    client_id: str
-    client_secret: str
-    access_token: str
-    access_token_secret: str
-    # $ make twitter_auth
-    oauth_token: str
-    oauth_token_secret: str
+    email_user: str
+    email_password: str
 
 
 local_secret_path = os.path.join(

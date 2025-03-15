@@ -3,11 +3,9 @@ import json
 import pydantic
 
 from . import cron
-from . import twitter_wrapper
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
-from . import twitter_auth
 
 
 def main():
@@ -55,8 +53,7 @@ def screenshot_from_request():
         evaluation=None,
         data_input=firebase_wrapper.DataInput(
             url=url,
-            evaluate=
-            "new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(document.body.innerHTML || \"first2know_ignore\")\n  const contents = Array.from(document.getElementsByClassName(\"recentActivityDetail\"))\n    .map(e => e.innerText.split(\"\\n\"))\n  if (contents.length > 0) {\n    return resolve(JSON.stringify(contents, null, 2))\n  }\n  setTimeout(() => helper(i - 1), 10)\n}\nhelper(1000)\n})",
+            evaluate="new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(document.body.innerHTML || \"first2know_ignore\")\n  const contents = Array.from(document.getElementsByClassName(\"recentActivityDetail\"))\n    .map(e => e.innerText.split(\"\\n\"))\n  if (contents.length > 0) {\n    return resolve(JSON.stringify(contents, null, 2))\n  }\n  setTimeout(() => helper(i - 1), 10)\n}\nhelper(1000)\n})",
         ),
     )
     screenshot_response = screenshot.Screenshot()(request)

@@ -24,15 +24,12 @@ server:
 cron:
 	python3 -u -m first2know.cron
 
-twitter_auth:
-	python3 -m first2know.twitter_auth
-
 mypy:
 	mypy first2know
 
 test:
-	# python3 -m unittest first2know.test
-	python3 -m unittest first2know.test.TestScreenshot.test_user_agent_hack
+	python3 -m unittest first2know.test
+	# python3 -m unittest first2know.test.TestScreenshot.test_user_agent_hack
 
 list:  # Meta target to list other targets.
 	@$(MAKE) -pRrq -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs

@@ -15,7 +15,6 @@ from PIL import Image, ImageDraw  # type: ignore
 from . import exceptions
 from . import firebase_wrapper
 from . import proxy
-from . import secrets
 
 import nest_asyncio  # type: ignore
 
