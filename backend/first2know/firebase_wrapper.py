@@ -130,20 +130,13 @@ def _extract_to_handle(
         **d,
     )
 
-    encrypted_user = decrypt(to_handle.user.encrypted)
-
-    decrypted_user = decrypt(encrypted_user)
-    user = User(**json.loads(decrypted_user))
-
     to_md5 = json.dumps(
         [
             dict(to_handle.data_input),
-            encrypted_user,
         ],
         separators=(',', ':'),
     )
     if str_to_md5(to_md5) != to_handle.md5:
-        print(user)
         print(to_handle.user)
         print("bad_md5", key)
         return None
@@ -198,6 +191,6 @@ def decrypt(e: str) -> str:
 
 # for now, the email password is also the encryption key
 def _get_cipher_suite() -> Fernet:
-    client_secret = secrets.Vars.secrets.client_secret
+    client_secret = secrets.Vars.secrets.email_password
     key = base64.b64encode(client_secret.encode('utf-8')[:32])
     return Fernet(key)
