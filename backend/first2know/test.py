@@ -103,26 +103,28 @@ class TestScreenshot(unittest.TestCase):
     def test_user_agent_hack(self):
         data_input = firebase_wrapper.DataInput(
             url="https://streeteasy.com/",
-            evaluate="document.body.getElementsByTagName('p')[0].innerHTML",
+            evaluate="document.body.innerText",
             user_agent_hack=True,
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
-        self.assertNotEqual(
+        self.assertNotIn(
+            json.dumps(
+                "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n")[:-1],
             screenshot_response.evaluation,
-            'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
         )
 
-    def test_user_agent_hack_is_valid(self):
+    def test_street_easy_requires_user_agent_hack(self):
         data_input = firebase_wrapper.DataInput(
             url="https://streeteasy.com/",
-            evaluate="document.body.getElementsByTagName('p')[0].innerHTML",
+            evaluate="document.body.innerText",
         )
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
-        self.assertEqual(
+        self.assertIn(
+            json.dumps(
+                "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n")[:-1],
             screenshot_response.evaluation,
-            'As you were browsing, something about your browser\n        made us think you were a bot. There are a few reasons why this might happen:',  # noqa
         )
 
         # def test_raw_proxy(self):
