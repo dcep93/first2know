@@ -27,9 +27,7 @@ function ToHandle(props: {
   submit: SubmitType;
   allToHandle: AllToHandleType;
 }) {
-  const [img_data, update] = useState<string | null | undefined>(
-    props.toHandle?.data_output?.screenshot_data?.img_url || undefined
-  );
+  const [img_data, update] = useState<string | null | undefined>(undefined);
   const navigate = useNavigate();
 
   const defaultParamsValue = props.toHandle?.data_input.params;

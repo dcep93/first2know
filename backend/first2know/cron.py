@@ -158,7 +158,6 @@ def handle(
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
         text = "\n".join([
-            f"@{to_handle.user.screen_name}",
             str(type(e)),
             to_handle.data_input.url,
             f"https://first2know.web.app/{to_handle.key}",
@@ -166,7 +165,8 @@ def handle(
         err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
         if not Vars.is_just_cron:
-            twitter_wrapper.tweet(
+            email_wrapper.send_email(
+                to_handle.user.email,
                 text,
                 err_img_data,
             )
@@ -184,20 +184,19 @@ def handle(
     print(screenshot_response.md5, old_md5)
 
     text = "\n".join([
-        f"@{to_handle.user.screen_name}",
         to_handle.data_input.url,
         f"https://first2know.web.app/{to_handle.key}",
         screenshot_response.md5,
     ])
 
-    img_url = twitter_wrapper.tweet(
+    email_wrapper.send_email(
+        to_handle.user.email,
         text,
         screenshot_response.img_data,
     )
 
     to_write = firebase_wrapper.DataOutput(
         screenshot_data=firebase_wrapper.ScreenshotData(
-            img_url=img_url,
             md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,
         ),

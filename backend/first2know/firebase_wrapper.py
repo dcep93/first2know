@@ -26,7 +26,6 @@ class ErrorType(BaseModel):
 
 
 class ScreenshotData(BaseModel):
-    img_url: str
     md5: str
     evaluation: typing.Optional[str] = None
 
@@ -48,9 +47,7 @@ class DataInput(BaseModel):
 
 
 class User(BaseModel):
-    screen_name: str
-    user_id: int
-    encrypted: str
+    email: str
 
 
 class ToHandle(BaseModel):

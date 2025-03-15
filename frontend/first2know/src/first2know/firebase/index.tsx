@@ -9,7 +9,6 @@ export type AllToHandleType = {
 };
 
 export type ScreenshotDataType = {
-  img_url: string;
   md5: string;
   evaluation?: string;
 };
