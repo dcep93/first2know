@@ -136,9 +136,10 @@ def _extract_to_handle(
         ],
         separators=(',', ':'),
     )
-    if str_to_md5(to_md5) != to_handle.md5:
+    md5 = str_to_md5(to_md5)
+    if md5 != to_handle.md5:
         print(to_handle.user)
-        print("bad_md5", key)
+        print("bad_md5", key, md5)
         return None
 
     return to_handle

@@ -124,7 +124,7 @@ def handle(
     previous_error = data_output.error
 
     if Vars.is_just_cron:
-        print(to_handle)
+        print("is_just_cron.to_handle", to_handle)
     elif previous_error is not None and previous_error.version == VERSION:
         return "previous_error"
     elif previous_time is not None and previous_time > now:

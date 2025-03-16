@@ -2,7 +2,6 @@ import asyncio
 import base64
 import datetime
 import io
-import json
 import os
 import time
 import typing
@@ -158,7 +157,7 @@ class Screenshot:
             md5 = firebase_wrapper.str_to_md5(img_data)
             evaluation = None
         else:
-            evaluation = json.dumps(raw_evaluation)
+            evaluation = raw_evaluation
             md5 = firebase_wrapper.str_to_md5(evaluation)
         elapsed = time.time() - s
         self.log(' '.join([
