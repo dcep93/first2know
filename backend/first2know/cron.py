@@ -51,17 +51,17 @@ def get_memory_mb():
     return Vars._process.memory_info().rss / 1000000
 
 
-def loop(max_loops: int) -> bool:
+def loop() -> bool:
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    rval = loop_with_manager(screenshot_manager, max_loops)
+    rval = loop_with_manager(screenshot_manager)
     screenshot_manager.close()
     return rval
 
 
-def loop_with_manager(screenshot_manager: manager.Manager, max_loops: int) -> bool:
+def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
     print("looping")
     Vars._token = refresh_access_token()
 
@@ -70,8 +70,6 @@ def loop_with_manager(screenshot_manager: manager.Manager, max_loops: int) -> bo
     print_freq = 10
     resp = None
     while True:
-        if loops == max_loops:
-            return False
         now = time.time()
         loops += 1
         if loops % print_freq == 0:

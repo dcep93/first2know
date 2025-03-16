@@ -149,6 +149,8 @@ def str_to_md5(b: str) -> str:
 
 
 def write_data(key: str, data_output: DataOutput) -> None:
+    if key == "":
+        return
     db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
 
 

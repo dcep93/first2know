@@ -1,3 +1,4 @@
+import base64
 import smtplib
 import typing
 from email.message import EmailMessage
@@ -35,6 +36,18 @@ def send_email(
     msg["To"] = email_to
     msg["Subject"] = subject
 
-    print(msg, text, len(img_data))
+    html_content = f"""
+    <html>
+        <body>
+            <pre>{text}</pre>
+            <img src="data:image/png;base64,{img_data}" alt="Embedded Image" />
+        </body>
+    </html>
+    """
 
-    # Vars.server.send_message(msg)
+    msg.set_content(text)
+    msg.add_alternative(html_content, subtype="html")
+
+    print(html_content)
+
+    Vars.server.send_message(msg)
