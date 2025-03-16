@@ -168,7 +168,7 @@ def write_token(token: str) -> None:
 def get_token() -> str:
     raw = db.reference("token").get()
     token: str = raw  # type: ignore
-    return decrypt(token)
+    return token
 
 
 def encrypt(a: str) -> str:
@@ -191,6 +191,6 @@ def decrypt(e: str) -> str:
 
 # for now, the email password is also the encryption key
 def _get_cipher_suite() -> Fernet:
-    client_secret = secrets.Vars.secrets.email_password
+    client_secret = secrets.Vars.secrets.email_password*32
     key = base64.b64encode(client_secret.encode('utf-8')[:32])
     return Fernet(key)
