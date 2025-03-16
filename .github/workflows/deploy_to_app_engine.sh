@@ -5,9 +5,10 @@ set -euo pipefail
 # # requires billing!
 # # create a new project every 3 months once trial expires
 # # first2know20240904@cloudshell:~
-# # enable api https://console.developers.google.com/apis/api/appengine.googleapis.com/overview
-# # enable cloud build https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com
 # nvm install 16.4.0
+# gcloud services enable compute
+# gcloud services enable appengine
+# gcloud services enable cloudbuild
 # gcloud app create --project "$GOOGLE_CLOUD_PROJECT" --region us-east1
 # gcloud iam service-accounts create deployer-github
 # gcloud projects add-iam-policy-binding "$GOOGLE_CLOUD_PROJECT" --member="serviceAccount:deployer-github@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com" --role="roles/appengine.appAdmin"
