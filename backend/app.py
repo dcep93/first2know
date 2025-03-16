@@ -9,7 +9,7 @@ print(sys.argv)
 server.init()
 
 threading.Thread(
-    target=lambda: cron.loop_with_manager(server.Vars.screenshot_manager),
+    target=lambda: cron.loop_with_manager(server.Vars.screenshot_manager, -1),
     daemon=True,
 ).start()
 

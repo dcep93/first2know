@@ -35,6 +35,6 @@ def send_email(
     msg["To"] = email_to
     msg["Subject"] = subject
 
-    print(msg, text, img_data)
+    print(msg, text, len(img_data))
 
-    Vars.server.send_message(msg)
+    # Vars.server.send_message(msg)
