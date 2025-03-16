@@ -41,8 +41,8 @@ def send_email(
     html_content = f"""
     <html>
         <body>
-            <pre>{text}</pre>
             <img src="cid:{img_cid}" alt="Embedded Image">
+            <pre>{text}</pre>
         </body>
     </html>
     """
