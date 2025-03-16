@@ -130,6 +130,8 @@ def handle(
     elif previous_time is not None and previous_time > now:
         return "previous_time"
 
+    subject = f"first2know: {to_handle.data_input.url} {to_handle.key}"
+
     evaluation = None \
         if data_output.screenshot_data is None \
         else data_output.screenshot_data.evaluation
@@ -167,6 +169,7 @@ def handle(
         if not Vars.is_just_cron:
             email_wrapper.send_email(
                 to_handle.user.email,
+                subject,
                 text,
                 err_img_data,
             )
@@ -179,6 +182,9 @@ def handle(
         if data_output.screenshot_data is None \
         else data_output.screenshot_data.md5
     if screenshot_response.md5 == old_md5:
+        if data_output.error is not None:
+            data_output.error = None
+            firebase_wrapper.write_data(to_handle.key, data_output)
         return "old_md5"
 
     print(screenshot_response.md5, old_md5)
@@ -191,6 +197,7 @@ def handle(
 
     email_wrapper.send_email(
         to_handle.user.email,
+        subject,
         text,
         screenshot_response.img_data,
     )
