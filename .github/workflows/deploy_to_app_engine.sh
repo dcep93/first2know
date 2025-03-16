@@ -4,7 +4,7 @@ set -euo pipefail
 
 # # requires billing!
 # # create a new project every 3 months once trial expires
-# # first2know20240904@cloudshell:~
+# # first2know20250316@cloudshell:~
 # nvm install 16.4.0
 # gcloud services enable compute
 # gcloud services enable appengine
