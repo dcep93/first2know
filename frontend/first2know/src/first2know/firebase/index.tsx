@@ -10,6 +10,8 @@ export type AllToHandleType = {
 
 export type ScreenshotDataType = {
   md5: string;
+  elapsed: number;
+  img_data: string;
   evaluation?: string;
 };
 

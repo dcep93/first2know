@@ -4,6 +4,7 @@ import { sfetch, url } from "./Server";
 import {
   AllToHandleType,
   DataInputType,
+  ScreenshotDataType,
   ToHandleType,
   UserType,
 } from "./firebase";
@@ -27,7 +28,9 @@ function ToHandle(props: {
   submit: SubmitType;
   allToHandle: AllToHandleType;
 }) {
-  const [img_data, update] = useState<string | null | undefined>(undefined);
+  const [resp_data, update] = useState<ScreenshotDataType | null | undefined>(
+    undefined
+  );
   const navigate = useNavigate();
 
   const defaultParamsValue = props.toHandle?.data_input.params;
@@ -71,7 +74,7 @@ function ToHandle(props: {
               })
             )
             .then((resp) => resp.json())
-            .then((json) => update(`data:image/png;base64,${json.img_data}`))
+            .then((resp_data: ScreenshotDataType) => update(resp_data))
             .catch((err) => {
               update(undefined);
               const e = `${err}`;
@@ -156,16 +159,18 @@ function ToHandle(props: {
         </div>
         <input type="submit" value="Check Screenshot" />
       </form>
-      <img
-        src={
-          img_data === undefined
-            ? undefined
-            : img_data === null
-            ? loading
-            : img_data
-        }
-        alt=""
-      ></img>
+      <div>
+        <div>
+          {resp_data === undefined ? undefined : resp_data === null ? (
+            <img src={loading} alt="" />
+          ) : (
+            <img src={`data:image/png;base64,${resp_data.img_data}`} alt="" />
+          )}
+        </div>
+        <div>
+          <pre>{resp_data?.evaluation}</pre>
+        </div>
+      </div>
     </div>
   );
 }
