@@ -166,13 +166,14 @@ def handle(
         ])
         err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
-        if not Vars.is_just_cron:
-            email_wrapper.send_email(
-                to_handle.user.email,
-                subject,
-                text,
-                err_img_data,
-            )
+        if Vars.is_just_cron:
+            return "error"
+        email_wrapper.send_email(
+            to_handle.user.email,
+            subject,
+            text,
+            err_img_data,
+        )
         raise e
 
     if screenshot_response.evaluation == IGNORE:

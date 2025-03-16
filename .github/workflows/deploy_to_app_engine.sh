@@ -3,6 +3,7 @@
 set -euo pipefail
 
 # # requires billing!
+# # create a new project every 3 months once trial expires
 # # first2know20240904@cloudshell:~
 # # enable api https://console.developers.google.com/apis/api/appengine.googleapis.com/overview
 # # enable cloud build https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com
