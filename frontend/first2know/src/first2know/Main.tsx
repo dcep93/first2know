@@ -4,6 +4,7 @@ import Edit from "./Edit";
 import { AllToHandleType, FirebaseWrapper, UserType } from "./firebase";
 import Home from "./Home";
 import { recorded_sha } from "./recorded_sha";
+import Server from "./Server";
 import User, { isAdmin } from "./User";
 
 console.log(recorded_sha);
@@ -39,7 +40,7 @@ function Helper(props: { allToHandle: AllToHandleType }) {
     )
   );
   return (
-    <>
+    <div>
       <User user={user} update={update} />
       {user && (
         <BrowserRouter>
@@ -57,7 +58,8 @@ function Helper(props: { allToHandle: AllToHandleType }) {
           </Routes>
         </BrowserRouter>
       )}
-    </>
+      <Server />
+    </div>
   );
 }
 

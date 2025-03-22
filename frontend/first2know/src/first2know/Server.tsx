@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 const IS_LOCAL = window.location.search.includes("local");
 const FETCH_INTERVAL_MS = 10 * 1000;
 
@@ -23,12 +25,18 @@ function iter() {
   sfetch(url).then(() => setTimeout(iter, FETCH_INTERVAL_MS));
 }
 
-sfetch(url)
-  .then((resp) => resp.text())
-  .then((text) => console.log(text))
-  .then(iter);
-
 export function clog<T>(t: T): T {
   console.log(t);
   return t;
+}
+
+export default function Server() {
+  const [resp, update] = useState<string | null>(null);
+  useEffect(() => {
+    sfetch(url)
+      .then((resp) => resp.text())
+      .then(update)
+      .then(iter);
+  }, []);
+  return <pre>{resp}</pre>;
 }
