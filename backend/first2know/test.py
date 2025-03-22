@@ -67,8 +67,8 @@ class TestScreenshot(unittest.TestCase):
             evaluation=None,
         ))
         self.assertEqual(
+            '\n<div>\n    <h1>Examp',
             screenshot_response.evaluation,
-            json.dumps('\n<div>\n    <h1>Examp'),
         )
 
     def test_evaluation_to_img(self):
@@ -83,7 +83,7 @@ class TestScreenshot(unittest.TestCase):
         ))
         self.assertEqual(
             screenshot_response.md5,
-            "3246264c9e4409c3a35a3df4f361bd97",
+            "80636eee396ece73b5ef8183b675013e",
         )
 
     def test_chain_evaluation(self):
@@ -109,8 +109,7 @@ class TestScreenshot(unittest.TestCase):
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
         self.assertNotIn(
-            json.dumps(
-                "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n")[:-1],
+            "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n",
             screenshot_response.evaluation,
         )
 
@@ -122,8 +121,7 @@ class TestScreenshot(unittest.TestCase):
         screenshot_response = screenshot.Screenshot()(screenshot.Request(
             data_input=data_input, ))
         self.assertIn(
-            json.dumps(
-                "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n")[:-1],
+            "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n",
             screenshot_response.evaluation,
         )
 

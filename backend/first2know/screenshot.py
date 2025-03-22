@@ -2,6 +2,7 @@ import asyncio
 import base64
 import datetime
 import io
+import json
 import os
 import time
 import typing
@@ -124,8 +125,12 @@ class Screenshot:
                 request.evaluation,
             )
         C()
+        str_evaluation = raw_evaluation \
+            if type(raw_evaluation) is str \
+            else json.dumps(raw_evaluation)
+        
         if request.data_input.evaluation_to_img:
-            img_data = str_to_binary_data(str(raw_evaluation))
+            img_data = str_to_binary_data(str_evaluation)
         else:
             if request.data_input.selector is None:
                 to_screenshot = page
@@ -157,8 +162,8 @@ class Screenshot:
             md5 = firebase_wrapper.str_to_md5(img_data)
             evaluation = None
         else:
-            evaluation = raw_evaluation
-            md5 = firebase_wrapper.str_to_md5(evaluation)
+            evaluation = str_evaluation
+            md5 = firebase_wrapper.str_to_md5(str_evaluation)
         elapsed = time.time() - s
         self.log(' '.join([
             f"{elapsed:.3f}s",
