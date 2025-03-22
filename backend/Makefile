@@ -9,7 +9,6 @@ dockerbuild:
 # ARGS=test make dockerexec
 dockerexec: dockerbuild
 	docker run \
-		-it \
 		--rm \
 		--name $(service_name) \
 		$(local_image_tag) \
