@@ -100,6 +100,7 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
     Vars.latest_time = time.time()
     Vars.count += 1
     to_handle_arr = firebase_wrapper.get_to_handle()
+    print("run 103")
     with concurrent.futures.ThreadPoolExecutor(screenshot_manager.num) as executor:
         _results = executor.map(
             lambda to_handle: handle(
@@ -107,6 +108,7 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
                 screenshot_manager,
             ), to_handle_arr)
         results = list(_results)
+    print("run 111")
     Vars.latest_result = results
     return results
 
