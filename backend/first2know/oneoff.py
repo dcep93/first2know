@@ -1,6 +1,6 @@
 import json
 
-import pydantic
+import pydantic  # type: ignore
 
 from . import cron
 from . import email_wrapper

@@ -1,7 +1,7 @@
 import requests  # type: ignore
 import typing
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # type: ignore
 
 from bs4 import BeautifulSoup  # type: ignore
 

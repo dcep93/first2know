@@ -18,6 +18,7 @@ from . import proxy
 
 import nest_asyncio  # type: ignore
 
+C_LOG_SECONDS = 0
 GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"  # noqa
 
 
@@ -95,7 +96,7 @@ class Screenshot:
                 now = time.time()
                 diff = now - C.now
                 C.now = now
-                if diff > 5:
+                if diff > C_LOG_SECONDS:
                     print("C", C.c, diff)
 
         C()

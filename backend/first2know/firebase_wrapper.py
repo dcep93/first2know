@@ -7,14 +7,14 @@ import threading
 import time
 import typing
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # type: ignore
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet  # type: ignore
 
 from google.auth import credentials as auth_creds  # type: ignore
 import firebase_admin  # type: ignore
-from firebase_admin import credentials as firebase_creds
-from firebase_admin import db
+from firebase_admin import credentials as firebase_creds  # type: ignore
+from firebase_admin import db  # type: ignore
 
 from . import secrets
 
