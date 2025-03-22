@@ -22,7 +22,6 @@ set -euo pipefail
 # cat gac.json
 
 SA_KEY="$1"
-SECRETS_JSON="$2"
 
 export GOOGLE_APPLICATION_CREDENTIALS="gac.json"
 echo "$SA_KEY" >"$GOOGLE_APPLICATION_CREDENTIALS"
@@ -47,7 +46,6 @@ manual_scaling:
 
 EOF
 echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
-echo "$SECRETS_JSON" >first2know/secrets.json
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
