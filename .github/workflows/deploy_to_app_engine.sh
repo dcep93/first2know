@@ -36,6 +36,7 @@ env: flex
 
 liveness_check:
   path: "/liveness_check"
+  failure_threshold: 8
 
 resources:
   cpu: 2
