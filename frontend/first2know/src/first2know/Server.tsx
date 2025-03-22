@@ -16,8 +16,7 @@ export function sfetch(url: string, options?: any) {
           throw Error(text);
         });
       return resp;
-    })
-    .then(clog);
+    });
 }
 
 function iter() {
