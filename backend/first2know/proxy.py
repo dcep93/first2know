@@ -38,7 +38,7 @@ def proxy(payload: Request) -> str:
 
         find = ["link[rel='stylesheet']"] + payload.params.find
 
-        found = "".join([i.prettify() for j in find for i in soup.select(j)])
+        found = "".join([i.prettify() for j in find for i in soup.select(j)]) # type: ignore
 
         return f"<base href='{payload.url}' />\n" + found
 
