@@ -6,5 +6,7 @@ cd "$(dirname "$0")"
 
 #
 
+cd ../../backend
+
 ARGS=mypy make dockerexec
 ARGS=test make dockerexec
