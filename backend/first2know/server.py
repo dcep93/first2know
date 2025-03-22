@@ -82,6 +82,7 @@ def get_():
 
 @web_app.get("/liveness_check")
 def get_health():
+    print("debug_log liveness_check")
     Vars.health += 1
     return get_()
 
