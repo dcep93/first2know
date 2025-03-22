@@ -12,7 +12,7 @@ class Params(BaseModel):
     find: typing.Optional[typing.List[str]] = None
     user_agent: typing.Optional[str] = Field(None, alias="user-agent")
     cookie: typing.Optional[str] = None
-    method: str = 'GET'
+    method: str = "GET"
 
 
 class Request(BaseModel):
@@ -38,7 +38,7 @@ def proxy(payload: Request) -> str:
 
         find = ["link[rel='stylesheet']"] + payload.params.find
 
-        found = "".join([i.prettify() for j in find for i in soup.select(j)]) # type: ignore
+        found = "".join([i.prettify() for j in find for i in soup.select(j)])  # type: ignore
 
         return f"<base href='{payload.url}' />\n" + found
 

@@ -59,8 +59,9 @@ class ToHandle(BaseModel):
 
 
 class Vars:
-    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Dict[
-        str, typing.Any]]] = None
+    _raw_all_to_handle: typing.Optional[
+        typing.Dict[str, typing.Dict[str, typing.Any]]
+    ] = None
 
 
 class Creds(firebase_creds.ApplicationDefault):
@@ -69,7 +70,7 @@ class Creds(firebase_creds.ApplicationDefault):
         return auth_creds.AnonymousCredentials()
 
 
-project = 'first2know'
+project = "first2know"
 
 
 def init():
@@ -77,8 +78,8 @@ def init():
     firebase_admin.initialize_app(
         creds,
         options={
-            'databaseURL': f'https://{project}-default-rtdb.firebaseio.com/',
-            'projectId': project,
+            "databaseURL": f"https://{project}-default-rtdb.firebaseio.com/",
+            "projectId": project,
         },
     )
 
@@ -108,8 +109,8 @@ def get_to_handle() -> typing.List[ToHandle]:
     if Vars._raw_all_to_handle is None:
         return []
     return [
-        i for i in
-        [_extract_to_handle(k, v) for k, v in Vars._raw_all_to_handle.items()]
+        i
+        for i in [_extract_to_handle(k, v) for k, v in Vars._raw_all_to_handle.items()]
         if i
     ]
 
@@ -134,7 +135,7 @@ def _extract_to_handle(
         [
             dict(to_handle.data_input),
         ],
-        separators=(',', ':'),
+        separators=(",", ":"),
     )
     md5 = str_to_md5(to_md5)
     if md5 != to_handle.md5:
@@ -146,7 +147,7 @@ def _extract_to_handle(
 
 
 def str_to_md5(b: str) -> str:
-    return hashlib.md5(b.encode('utf-8')).hexdigest()
+    return hashlib.md5(b.encode("utf-8")).hexdigest()
 
 
 def write_data(key: str, data_output: DataOutput) -> None:
@@ -157,7 +158,10 @@ def write_data(key: str, data_output: DataOutput) -> None:
 
 def write_token(token: str) -> None:
     ref = db.reference("token")
-    def f(): return ref.set(token)
+
+    def f():
+        return ref.set(token)
+
     for _ in range(3):
         try:
             f()
@@ -176,24 +180,24 @@ def get_token() -> str:
 
 def encrypt(a: str) -> str:
     cipher_suite = _get_cipher_suite()
-    b = a.encode('utf-8')
+    b = a.encode("utf-8")
     c = cipher_suite.encrypt(b)
     d = base64.b64encode(c)
-    e = d.decode('utf-8')
+    e = d.decode("utf-8")
     return e
 
 
 def decrypt(e: str) -> str:
     cipher_suite = _get_cipher_suite()
-    d = e.encode('utf-8')
+    d = e.encode("utf-8")
     c = base64.b64decode(d)
     b = cipher_suite.decrypt(c)
-    a = b.decode('utf-8')
+    a = b.decode("utf-8")
     return a
 
 
 # for now, the email password is also the encryption key
 def _get_cipher_suite() -> Fernet:
-    client_secret = secrets.Vars.secrets.email_password*32
-    key = base64.b64encode(client_secret.encode('utf-8')[:32])
+    client_secret = secrets.Vars.secrets.email_password * 32
+    key = base64.b64encode(client_secret.encode("utf-8")[:32])
     return Fernet(key)

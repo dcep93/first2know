@@ -11,10 +11,12 @@ from . import screenshot
 class TestScreenshot(unittest.TestCase):
     def test_screenshot(self):
         data_input = firebase_wrapper.DataInput(url="https://example.org")
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input,
-            evaluation=None,
-        ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            )
+        )
         self.assertEqual(
             screenshot_response.md5,
             "c5ab4b20641f3de2ca9bdb0ed6a88f9a",
@@ -48,10 +50,12 @@ class TestScreenshot(unittest.TestCase):
             url="https://example.org",
             selector="h1 >> nth=0",
         )
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input,
-            evaluation=None,
-        ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            )
+        )
         self.assertEqual(
             screenshot_response.md5,
             "814ff58bd2a6352eb89e8deffbf03510",
@@ -62,12 +66,14 @@ class TestScreenshot(unittest.TestCase):
             url="https://example.org",
             evaluate="document.body.innerHTML.substring(0, 20)",
         )
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input,
-            evaluation=None,
-        ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            )
+        )
         self.assertEqual(
-            '\n<div>\n    <h1>Examp',
+            "\n<div>\n    <h1>Examp",
             screenshot_response.evaluation,
         )
 
@@ -77,10 +83,12 @@ class TestScreenshot(unittest.TestCase):
             evaluate="document.body.innerHTML",
             evaluation_to_img=True,
         )
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input,
-            evaluation=None,
-        ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation=None,
+            )
+        )
         self.assertEqual(
             screenshot_response.md5,
             "80636eee396ece73b5ef8183b675013e",
@@ -91,10 +99,12 @@ class TestScreenshot(unittest.TestCase):
             url="https://example.org",
             evaluate="(prev) => JSON.parse(prev) + 1",
         )
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input,
-            evaluation="420",
-        ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+                evaluation="420",
+            )
+        )
         self.assertEqual(
             screenshot_response.evaluation,
             "421",
@@ -106,8 +116,11 @@ class TestScreenshot(unittest.TestCase):
             evaluate="document.body.innerText",
             user_agent_hack=True,
         )
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input, ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+            )
+        )
         self.assertNotIn(
             "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n",
             screenshot_response.evaluation,
@@ -118,8 +131,11 @@ class TestScreenshot(unittest.TestCase):
             url="https://streeteasy.com/",
             evaluate="document.body.innerText",
         )
-        screenshot_response = screenshot.Screenshot()(screenshot.Request(
-            data_input=data_input, ))
+        screenshot_response = screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+            )
+        )
         self.assertIn(
             "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n",
             screenshot_response.evaluation,

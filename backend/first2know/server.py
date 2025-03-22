@@ -37,7 +37,7 @@ def init():
 web_app = FastAPI()
 web_app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -125,7 +125,8 @@ def post_screenshot(payload: ScreenshotPayload):
             screenshot.Request(
                 data_input=payload,
                 evaluation=payload.evaluation,
-            ))
+            )
+        )
         resp = screenshot_response.json()
         print("responding screenshot request")
         return HTMLResponse(resp)

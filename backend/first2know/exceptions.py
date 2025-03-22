@@ -13,20 +13,16 @@ class Src(enum.Enum):
 
 
 def get_ignorable_exception(
-        e: Exception,
-        src: typing.Optional[Src] = None
+    e: Exception, src: typing.Optional[Src] = None
 ) -> typing.Optional[IgnorableException]:
     # print(e)
     # print('\n'.join(dir(e)))
     if src == Src.playwright_screenshot:
-        if str(e.__class__
-               ) == "<class 'asyncio.exceptions.TimeoutError'>":
+        if str(e.__class__) == "<class 'asyncio.exceptions.TimeoutError'>":
             return IgnorableException("asyncio_timeout")
-        if str(e.__class__
-               ) == "<class 'playwright._impl._api_types.TimeoutError'>":
+        if str(e.__class__) == "<class 'playwright._impl._api_types.TimeoutError'>":
             return IgnorableException("playwright_timeout")
-        if str(e.__class__
-               ) == "<class 'playwright._impl._api_types.Error'>":
+        if str(e.__class__) == "<class 'playwright._impl._api_types.Error'>":
             if e.message.startswith("Browser closed.\n"):  # type: ignore
                 return IgnorableException("browser_closed")
             if e.message.startswith("net::ERR_CONNECTION_RESET at"):  # type: ignore

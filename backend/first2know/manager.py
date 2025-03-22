@@ -3,8 +3,8 @@ import threading
 import traceback
 import typing
 
-T = typing.TypeVar('T')
-U = typing.TypeVar('U')
+T = typing.TypeVar("T")
+U = typing.TypeVar("U")
 
 
 class Manager(typing.Generic[T, U]):

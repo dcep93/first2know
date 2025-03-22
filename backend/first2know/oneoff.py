@@ -16,7 +16,8 @@ def main():
 
 
 def handle_from_x():
-    data = json.loads('''
+    data = json.loads(
+        """
     {
       "data_input": {
         "evaluate": "new Promise((resolve, reject) => {\\nfunction helper(i) {\\n  if (i < 0) return resolve(\\"first2know_ignore\\")\\n  const contents = Array.from(document.getElementsByClassName(\\"recentActivityDetail\\"))\\n    .map(e => e.innerText.split(\\"\\\\n\\"))\\n  if (contents.length > 0) {\\n    return resolve(JSON.stringify(contents, null, 2))\\n  }\\n  setTimeout(() => helper(i - 10), 10)\\n}\\nhelper(300)\\n})",
@@ -36,7 +37,8 @@ def handle_from_x():
         "email": "dcep93@gmail.com"
       }
     }
-    ''')
+    """
+    )
     data["key"] = ""
     to_handle = firebase_wrapper.ToHandle(**data)
     screenshot_manager = manager.Manager(
@@ -53,7 +55,7 @@ def screenshot_from_request():
         evaluation=None,
         data_input=firebase_wrapper.DataInput(
             url=url,
-            evaluate="new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(document.body.innerHTML || \"first2know_ignore\")\n  const contents = Array.from(document.getElementsByClassName(\"recentActivityDetail\"))\n    .map(e => e.innerText.split(\"\\n\"))\n  if (contents.length > 0) {\n    return resolve(JSON.stringify(contents, null, 2))\n  }\n  setTimeout(() => helper(i - 1), 10)\n}\nhelper(1000)\n})",
+            evaluate='new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(document.body.innerHTML || "first2know_ignore")\n  const contents = Array.from(document.getElementsByClassName("recentActivityDetail"))\n    .map(e => e.innerText.split("\\n"))\n  if (contents.length > 0) {\n    return resolve(JSON.stringify(contents, null, 2))\n  }\n  setTimeout(() => helper(i - 1), 10)\n}\nhelper(1000)\n})',
         ),
     )
     screenshot_response = screenshot.Screenshot()(request)

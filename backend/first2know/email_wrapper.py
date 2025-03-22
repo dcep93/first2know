@@ -51,11 +51,8 @@ def send_email(
     msg.add_alternative(html_content, subtype="html")
 
     img_bytes = base64.b64decode(img_data)
-    msg.get_payload()[1].add_related( # type: ignore
-        img_bytes,
-        maintype="image",
-        subtype="png",
-        cid=img_cid
+    msg.get_payload()[1].add_related(  # type: ignore
+        img_bytes, maintype="image", subtype="png", cid=img_cid
     )
 
     Vars.server.send_message(msg)

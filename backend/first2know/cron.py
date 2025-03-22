@@ -16,7 +16,7 @@ from . import email_wrapper
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = '5.0.2'
+VERSION = "5.0.2"
 
 NUM_SCREENSHOTTERS = 1
 
@@ -31,7 +31,7 @@ class Vars:
     _token: str
     is_just_cron = sys.argv[-1].endswith("cron.py")
     count = 0
-    latest_time = 0.
+    latest_time = 0.0
     latest_result: typing.Optional[list[str]] = None
 
 
@@ -106,7 +106,9 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
             lambda to_handle: handle(
                 to_handle,
                 screenshot_manager,
-            ), to_handle_arr)
+            ),
+            to_handle_arr,
+        )
         results = list(_results)
     print("debug_log run 111")
     Vars.latest_result = results
@@ -117,9 +119,11 @@ def handle(
     to_handle: firebase_wrapper.ToHandle,
     screenshot_manager: manager.Manager,
 ) -> str:
-    data_output = firebase_wrapper.DataOutput() \
-        if to_handle.data_output is None \
+    data_output = (
+        firebase_wrapper.DataOutput()
+        if to_handle.data_output is None
         else to_handle.data_output
+    )
 
     now = float(time.time())
     previous_time = data_output.time
@@ -134,9 +138,11 @@ def handle(
 
     subject = f"first2know: {to_handle.data_input.url} {to_handle.key}"
 
-    evaluation = None \
-        if data_output.screenshot_data is None \
+    evaluation = (
+        None
+        if data_output.screenshot_data is None
         else data_output.screenshot_data.evaluation
+    )
 
     request = screenshot.Request(
         data_input=to_handle.data_input,
@@ -145,7 +151,8 @@ def handle(
 
     try:
         screenshot_response: screenshot.Response = screenshot_manager.run(
-            request, )
+            request,
+        )
     except Exception as e:
         ignorable_exception = exceptions.get_ignorable_exception(
             e,
@@ -158,14 +165,16 @@ def handle(
         to_write.error = firebase_wrapper.ErrorType(
             version=VERSION,
             time=time.time(),
-            message=f'{type(e)}: {e}\n{traceback_err}',
+            message=f"{type(e)}: {e}\n{traceback_err}",
         )
         firebase_wrapper.write_data(to_handle.key, to_write)
-        text = "\n".join([
-            str(type(e)),
-            to_handle.data_input.url,
-            f"https://first2know.web.app/{to_handle.key}",
-        ])
+        text = "\n".join(
+            [
+                str(type(e)),
+                to_handle.data_input.url,
+                f"https://first2know.web.app/{to_handle.key}",
+            ]
+        )
         err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
         if Vars.is_just_cron:
@@ -181,9 +190,9 @@ def handle(
     if screenshot_response.evaluation == IGNORE:
         return IGNORE
 
-    old_md5 = None \
-        if data_output.screenshot_data is None \
-        else data_output.screenshot_data.md5
+    old_md5 = (
+        None if data_output.screenshot_data is None else data_output.screenshot_data.md5
+    )
     if screenshot_response.md5 == old_md5:
         if data_output.error is not None:
             data_output.error = None
@@ -192,11 +201,13 @@ def handle(
 
     print(screenshot_response.md5, old_md5)
 
-    text = "\n".join([
-        to_handle.data_input.url,
-        f"https://first2know.web.app/{to_handle.key}",
-        screenshot_response.md5,
-    ])
+    text = "\n".join(
+        [
+            to_handle.data_input.url,
+            f"https://first2know.web.app/{to_handle.key}",
+            screenshot_response.md5,
+        ]
+    )
 
     email_wrapper.send_email(
         to_handle.user.email,

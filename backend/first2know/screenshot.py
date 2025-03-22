@@ -96,7 +96,7 @@ class Screenshot:
                 diff = now - C.now
                 C.now = now
                 if diff > 5:
-                    print('C', C.c, diff)
+                    print("C", C.c, diff)
 
         C()
 
@@ -113,22 +113,27 @@ class Screenshot:
                 proxy.Request(
                     url=request.data_input.url,
                     params=proxy.Params(**params),
-                ))
+                )
+            )
             await page.set_content(proxy_result)
         elif request.data_input.url:
             await page.set_extra_http_headers(params)
             await page.goto(request.data_input.url)
-        raw_evaluation = None \
-            if request.data_input.evaluate is None \
+        raw_evaluation = (
+            None
+            if request.data_input.evaluate is None
             else await page.evaluate(
                 request.data_input.evaluate,
                 request.evaluation,
             )
+        )
         C()
-        str_evaluation = raw_evaluation \
-            if type(raw_evaluation) is str \
+        str_evaluation = (
+            raw_evaluation
+            if type(raw_evaluation) is str
             else json.dumps(raw_evaluation)
-        
+        )
+
         if request.data_input.evaluation_to_img:
             img_data = str_to_binary_data(str_evaluation)
         else:
@@ -154,7 +159,7 @@ class Screenshot:
                 binary_data = fh.read()
             os.remove(dest)
             encoded = base64.b64encode(binary_data)
-            img_data = encoded.decode('utf-8')
+            img_data = encoded.decode("utf-8")
         await context.close()
         C()
 
@@ -165,11 +170,15 @@ class Screenshot:
             evaluation = str_evaluation
             md5 = firebase_wrapper.str_to_md5(str_evaluation)
         elapsed = time.time() - s
-        self.log(' '.join([
-            f"{elapsed:.3f}s",
-            f"{len(img_data)/1000}kb",
-            datetime.datetime.now().strftime("%H:%M:%S.%f"),
-        ]))
+        self.log(
+            " ".join(
+                [
+                    f"{elapsed:.3f}s",
+                    f"{len(img_data)/1000}kb",
+                    datetime.datetime.now().strftime("%H:%M:%S.%f"),
+                ]
+            )
+        )
         C()
         return Response(
             img_data=img_data,
@@ -180,20 +189,19 @@ class Screenshot:
 
 
 def str_to_binary_data(s: str) -> str:
-    text = s.encode('latin-1', 'ignore').decode('latin-1')
+    text = s.encode("latin-1", "ignore").decode("latin-1")
     lines = text.split("\n")
     padding_pixels = 50
     pixels_per_row = 15.2
     pixels_per_column = 6.6
-    width = int(2 * padding_pixels +
-                (pixels_per_column * max([len(i) for i in lines])))
+    width = int(2 * padding_pixels + (pixels_per_column * max([len(i) for i in lines])))
     height = int(2 * padding_pixels + (pixels_per_row * len(lines)))
-    img = Image.new('1', (width, height))
+    img = Image.new("1", (width, height))
     draw = ImageDraw.Draw(img)
     draw.text((padding_pixels, padding_pixels), text, fill=255)
     img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format='PNG')
+    img.save(img_byte_arr, format="PNG")
     binary_data = img_byte_arr.getvalue()
     encoded = base64.b64encode(binary_data)
-    img_data = encoded.decode('utf-8')
+    img_data = encoded.decode("utf-8")
     return img_data
