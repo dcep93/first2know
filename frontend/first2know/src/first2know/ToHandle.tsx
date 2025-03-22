@@ -1,6 +1,6 @@
 import { createRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sfetch, url } from "./Server";
+import { clog, sfetch, url } from "./Server";
 import {
   AllToHandleType,
   DataInputType,
@@ -74,6 +74,7 @@ function ToHandle(props: {
               })
             )
             .then((resp) => resp.json())
+            .then(clog)
             .then((resp_data: ScreenshotDataType) => update(resp_data))
             .catch((err) => {
               update(undefined);
