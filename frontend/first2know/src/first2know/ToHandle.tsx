@@ -167,9 +167,6 @@ function ToHandle(props: {
             <img src={`data:image/png;base64,${resp_data.img_data}`} alt="" />
           )}
         </div>
-        <div>
-          <pre>{resp_data?.evaluation}</pre>
-        </div>
       </div>
     </div>
   );

@@ -16,7 +16,8 @@ export function sfetch(url: string, options?: any) {
           throw Error(text);
         });
       return resp;
-    });
+    })
+    .then(clog);
 }
 
 function iter() {
@@ -27,3 +28,8 @@ sfetch(url)
   .then((resp) => resp.text())
   .then((text) => console.log(text))
   .then(iter);
+
+export function clog<T>(t: T): T {
+  console.log(t);
+  return t;
+}
