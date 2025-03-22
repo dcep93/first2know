@@ -18,7 +18,7 @@ from . import proxy
 from . import recorded_sha
 from . import screenshot
 
-NUM_SCREENSHOTTERS = 4
+NUM_SCREENSHOTTERS = 1
 
 
 class Vars:
