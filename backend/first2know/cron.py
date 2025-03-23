@@ -200,6 +200,15 @@ def handle(
 
     print(screenshot_response.md5, old_md5)
 
+    to_write = firebase_wrapper.DataOutput(
+        screenshot_data=firebase_wrapper.ScreenshotData(
+            md5=screenshot_response.md5,
+            evaluation=screenshot_response.evaluation,
+        ),
+        time=now + DEBOUNCE_SECONDS,
+        error=None,
+    )
+
     text = "\n".join(
         [
             to_handle.data_input.url,
@@ -208,11 +217,7 @@ def handle(
             json.dumps(
                 {
                     "to_handle": to_handle,
-                    "screenshot_response": {
-                        i: j
-                        for i, j in dict(screenshot_response).items()
-                        if i != "img_data"
-                    },
+                    "to_write": to_write,
                 },
                 indent=2,
             ),
@@ -224,15 +229,6 @@ def handle(
         subject,
         text,
         screenshot_response.img_data,
-    )
-
-    to_write = firebase_wrapper.DataOutput(
-        screenshot_data=firebase_wrapper.ScreenshotData(
-            md5=screenshot_response.md5,
-            evaluation=screenshot_response.evaluation,
-        ),
-        time=now + DEBOUNCE_SECONDS,
-        error=None,
     )
 
     print(to_handle.key, to_write.json())
