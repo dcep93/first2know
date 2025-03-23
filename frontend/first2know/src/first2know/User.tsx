@@ -3,6 +3,7 @@ import { UserType } from "./firebase";
 import firebase from "./firebase/firebase";
 
 import { FcGoogle } from "react-icons/fc";
+import { url } from "./Server";
 
 function User(props: {
   user: UserType | null;
@@ -21,7 +22,12 @@ function User(props: {
         >
           Log out
         </button>
-        {isAdmin(props.user) ? <span> admin</span> : null}
+        {isAdmin(props.user) ? (
+          <span>
+            {" "}
+            <a href={url}>admin</a>
+          </span>
+        ) : null}
       </div>
     </div>
   ) : (
