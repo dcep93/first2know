@@ -205,9 +205,17 @@ def handle(
             to_handle.data_input.url,
             f"https://first2know.web.app/{to_handle.key}",
             "\n",
-            screenshot_response.md5,
-            "\n",
-            json.dumps(screenshot_response.evaluation),
+            json.dumps(
+                {
+                    "to_handle": to_handle,
+                    "screenshot_response": {
+                        i: j
+                        for i, j in dict(screenshot_response).items()
+                        if i != "img_data"
+                    },
+                },
+                indent=2,
+            ),
         ]
     )
 
