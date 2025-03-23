@@ -1,3 +1,4 @@
+import json
 import time
 import traceback
 import os
@@ -205,6 +206,8 @@ def handle(
             f"https://first2know.web.app/{to_handle.key}",
             "\n",
             screenshot_response.md5,
+            "\n",
+            json.dumps(screenshot_response.evaluation),
         ]
     )
 
