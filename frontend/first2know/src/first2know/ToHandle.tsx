@@ -165,7 +165,18 @@ function ToHandle(props: {
           {resp_data === undefined ? undefined : resp_data === null ? (
             <img src={loading} alt="" />
           ) : (
-            <img src={`data:image/png;base64,${resp_data.img_data}`} alt="" />
+            <div>
+              <img src={`data:image/png;base64,${resp_data.img_data}`} alt="" />
+              <div>
+                <pre>
+                  {JSON.stringify(
+                    { ...resp_data, img_data: undefined },
+                    null,
+                    2
+                  )}
+                </pre>
+              </div>
+            </div>
           )}
         </div>
       </div>
