@@ -24,6 +24,7 @@ jobs:
           if [ -f "/tmp/docker-cache/app.tar" ]; then
             docker load -i /tmp/docker-cache/app.tar
             echo "Docker image cache restored and loaded."
+            docker image ls
           else
             echo "No cache found, building from scratch."
           fi
