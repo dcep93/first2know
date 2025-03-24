@@ -19,25 +19,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker
 
-      - name: Restore and load Docker image cache
-        run: |
-          if [ -f "/tmp/docker-cache/app.tar" ]; then
-            docker load -i /tmp/docker-cache/app.tar
-            echo "Docker image cache restored and loaded."
-            docker image ls
-          else
-            echo "No cache found, building from scratch."
-          fi
-
       - name: Enable BuildKit
         run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+
+      - name: Set Docker cache environment variables
+        run: |
+          mkdir -p /tmp/docker-cache
+          echo "CACHE_FROM=type=local,src=/tmp/docker-cache/.buildx-cache" >> $GITHUB_ENV
+          echo "CACHE_TO=type=local,dest=/tmp/docker-cache/.buildx-cache,mode=max" >> $GITHUB_ENV
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
 
       - name: Save Docker image cache
         run: |
-          mkdir -p /tmp/docker-cache
           docker save -o /tmp/docker-cache/app.tar first2know:latest
 
       - name: Cache Docker image
