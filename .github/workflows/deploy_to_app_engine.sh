@@ -30,6 +30,10 @@ gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS
 GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
 
 cd ../../backend
+
+make dockerbuild
+exit 0
+
 cat <<EOF >app.yaml
 runtime: custom
 env: flex
