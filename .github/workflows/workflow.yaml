@@ -26,7 +26,10 @@ jobs:
         run: echo "DEBUG=1" >> $GITHUB_ENV
 
       - name: Debug cache directory
-        run: ls -lah /tmp/.buildx-cache
+        run: ls -lah /tmp/.buildx-cache || true
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
+
+      - name: Debug cache directory
+        run: ls -lah /tmp/.buildx-cache || true
