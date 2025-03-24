@@ -21,9 +21,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/github-cache
-          key: ${{ runner.os }}-github-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-github-
+          key: ${{ runner.os }}-github
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       # - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
