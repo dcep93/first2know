@@ -127,7 +127,7 @@ def post_screenshot(payload: ScreenshotPayload):
                 evaluation=payload.evaluation,
             )
         )
-        resp = screenshot_response.json()
+        resp = screenshot_response.model_dump_json()
         print("responding screenshot request")
         return HTMLResponse(resp)
     except Exception:
@@ -138,7 +138,7 @@ def post_screenshot(payload: ScreenshotPayload):
 @web_app.post("/encrypt")
 def post_encrypt(payload: firebase_wrapper.DataInput):
     print("received encrypt request")
-    json_str = payload.json()
+    json_str = payload.model_dump_json()
     encrypted = firebase_wrapper.encrypt(json_str)
     return HTMLResponse(encrypted)
 

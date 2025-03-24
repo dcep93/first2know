@@ -216,8 +216,8 @@ def handle(
             "\n",
             json.dumps(
                 {
-                    "to_handle": to_handle,
-                    "to_write": to_write,
+                    "to_handle": to_handle.model_dump_json(),
+                    "to_write": to_write.model_dump_json(),
                 },
                 indent=2,
             ),
@@ -231,7 +231,7 @@ def handle(
         screenshot_response.img_data,
     )
 
-    print(to_handle.key, to_write.json())
+    print(to_handle.key, to_write.model_dump_json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)
 
