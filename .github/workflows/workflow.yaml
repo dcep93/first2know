@@ -18,6 +18,7 @@ jobs:
           fetch-depth: 2
 
       - name: read cache
+        id: cache
         uses: actions/cache/restore@v4
         with:
           path: /tmp/github-cache
@@ -32,4 +33,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: /tmp/github-cache
-          key: ${{ runner.os }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
