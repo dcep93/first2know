@@ -28,6 +28,8 @@ jobs:
           ls -lah /tmp/docker-cache
           echo "CACHE_FROM=type=local,src=/tmp/docker-cache/.buildx-cache" >> $GITHUB_ENV
           echo "CACHE_TO=type=local,dest=/tmp/docker-cache/.buildx-cache,mode=max" >> $GITHUB_ENV
+          echo $GITHUB_ENV
+          cat $GITHUB_ENV
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
