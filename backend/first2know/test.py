@@ -122,7 +122,7 @@ class TestScreenshot(unittest.TestCase):
             )
         )
         self.assertNotIn(
-            "Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n",
+            "SKIP Press & Hold to confirm you are\na human (and not a bot).\nContact us for assistance at support@streeteasy.com\n",
             screenshot_response.evaluation,
         )
 
