@@ -31,6 +31,11 @@ jobs:
           echo $GITHUB_ENV
           cat $GITHUB_ENV
 
+      - name: Set Docker cache environment variables
+        run: |
+          echo $GITHUB_ENV
+          cat $GITHUB_ENV
+
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
 
