@@ -11,25 +11,27 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Enable BuildKit Debug
-        run: echo "DEBUG=1" >> $GITHUB_ENV
-
-      - name: Debug cache directory
-        run: ls -lah /tmp/.buildx-cache || true
+      - name: Restore and load Docker image cache
+        run: |
+          if [ -f "/tmp/docker-cache/my-app.tar" ]; then
+            docker load -i /tmp/docker-cache/my-app.tar
+            echo "Docker image cache restored and loaded."
+          else
+            echo "No cache found, building from scratch."
+          fi
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
 
-      - name: Debug cache directory
-        run: ls -lah /tmp/.buildx-cache || true
+      - name: Save Docker image cache
+        run: |
+          mkdir -p /tmp/docker-cache
+          docker save -o /tmp/docker-cache/app.tar first2know:latest
+
+      - name: Cache Docker image
+        uses: actions/cache@v4
+        with:
+          path: /tmp/docker-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
