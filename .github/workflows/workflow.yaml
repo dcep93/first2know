@@ -39,3 +39,5 @@ jobs:
         with:
           path: /tmp/docker-cache
           key: ${{ runner.os }}-docker-${{ github.sha }}
+
+      - run: ls -lah /tmp/docker-cache || true
