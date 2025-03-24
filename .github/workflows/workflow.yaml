@@ -21,7 +21,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/docker-cache
-          key: ${{ runner.os }}-docker
           restore-keys: |
             ${{ runner.os }}-docker
 
@@ -38,6 +37,4 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/docker-cache
-          key: ${{ runner.os }}-docker
-          restore-keys: |
-            ${{ runner.os }}-docker
+          key: ${{ runner.os }}-docker-${{ github.sha }}
