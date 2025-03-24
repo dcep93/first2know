@@ -102,7 +102,7 @@ class ScreenshotPayload(firebase_wrapper.DataInput):
 
 @web_app.post("/screenshot")
 def post_screenshot(payload: ScreenshotPayload):
-    logger.log("server.screenshot::receive")
+    logger.log("server.screenshot.receive")
     # payload.reencrypt_cookie()
     try:
         screenshot_response = Vars.screenshot_manager.run(
@@ -112,7 +112,7 @@ def post_screenshot(payload: ScreenshotPayload):
             )
         )
         resp = screenshot_response.model_dump_json()
-        logger.log("server.screenshot::respond")
+        logger.log("server.screenshot.respond")
         return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
@@ -121,7 +121,7 @@ def post_screenshot(payload: ScreenshotPayload):
 
 @web_app.post("/encrypt")
 def post_encrypt(payload: firebase_wrapper.DataInput):
-    logger.log("server.encrypt::receive")
+    logger.log("server.encrypt.receive")
     json_str = payload.model_dump_json()
     encrypted = firebase_wrapper.encrypt(json_str)
     return HTMLResponse(encrypted)

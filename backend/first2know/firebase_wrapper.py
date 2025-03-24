@@ -86,7 +86,7 @@ def init():
 
     def listenF(event: db.Event):
         if Vars._raw_all_to_handle is None:
-            logger.log("firebase_wrapper.init::listenF")
+            logger.log("firebase_wrapper.init.listenF")
             Vars._raw_all_to_handle = event.data
             return
         Vars._raw_all_to_handle = db.reference("/to_handle").get()
@@ -95,7 +95,7 @@ def init():
         target=lambda: db.reference("/to_handle").listen(listenF),
         daemon=True,
     ).start()
-    logger.log("firebase_wrapper.init::initialized")
+    logger.log("firebase_wrapper.init.initialized")
 
 
 def wait_10s_for_data():
@@ -140,8 +140,8 @@ def _extract_to_handle(
     )
     md5 = str_to_md5(to_md5)
     if md5 != to_handle.md5:
-        logger.log("firebase_wrapper._extract_to_handle.user", to_handle.user)
-        logger.log("firebase_wrapper._extract_to_handle.key_md5", key, md5)
+        logger.log(f"firebase_wrapper._extract_to_handle.user {to_handle.user}")
+        logger.log(f"firebase_wrapper._extract_to_handle.key_md5 {key} {md5}")
         return None
 
     return to_handle
@@ -168,7 +168,7 @@ def write_token(token: str) -> None:
             f()
             return
         except:
-            logger.log("firebase_wrapper.write_token::fail")
+            logger.log("firebase_wrapper.write_token.fail")
             pass
     f()
 

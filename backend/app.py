@@ -3,7 +3,7 @@ import threading
 
 from first2know import cron, logger, server
 
-logger.log("app.py::init.sys.argv", sys.argv)
+logger.log(f"app.init {sys.argv}")
 
 server.init()
 

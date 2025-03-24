@@ -50,7 +50,7 @@ class Screenshot:
         except Exception as e:
             if retries > 0:
                 return await cls.async_retry(f, retries - 1)
-            logger.log("screenshot.async_retry::exhausted")
+            logger.log("screenshot.async_retry.exhausted")
             raise e
 
     async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
@@ -72,7 +72,7 @@ class Screenshot:
         await self.p.__aexit__()
 
     def log(self, s: str):
-        logger.log("screenshot.log::log", self.id, s)
+        logger.log(f"screenshot.log.log {self.id} {s}")
 
     def __call__(self, request: Request) -> Response:
 
@@ -98,7 +98,7 @@ class Screenshot:
                 diff = now - C.now
                 C.now = now
                 if diff > C_LOG_SECONDS:
-                    logger.log("screenshot.C", C.c, diff)
+                    logger.log(f"screenshot.C {C.c} {diff}")
 
         C()
 
