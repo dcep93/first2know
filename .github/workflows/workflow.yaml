@@ -25,7 +25,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker
 
-      - run: env
       - run: ls -lah /tmp/docker-cache || true
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
