@@ -32,6 +32,7 @@ GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)
 cd ../../backend
 
 make dockerbuild
+ls -lah /tmp/docker-cache || true
 exit 0
 
 cat <<EOF >app.yaml
