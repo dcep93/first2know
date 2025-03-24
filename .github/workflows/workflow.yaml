@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 2
 
       - name: read cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: /tmp/github-cache
           key: ${{ runner.os }}
