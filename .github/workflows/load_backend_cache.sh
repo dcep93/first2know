@@ -11,6 +11,8 @@ ls -lah /tmp/github-cache || true
 
 docker buildx build --cache-to=type=local,dest=/tmp/github-cache --cache-from=type=local,src=/tmp/github-cache .
 
+echo asdfasdf
+
 docker image ls
 
 make dockerbuild
