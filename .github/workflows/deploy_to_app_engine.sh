@@ -31,6 +31,8 @@ GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)
 
 cd ../../backend
 
+docker buildx create --name mybuilder --driver docker-container
+docker buildx use mybuilder
 docker build --cache-from=type=local,src=/tmp/docker-cache --cache-to=type=local,dest=/tmp/docker-cache,mode=max  .
 make dockerbuild
 ls -lah /tmp/docker-cache || true
