@@ -7,12 +7,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: read Cache
+      - name: cache
         uses: actions/cache@v4
         with:
           path: /tmp/github-cache
@@ -20,9 +20,3 @@ jobs:
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
-
-      # - name: write Cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: /tmp/github-cache
-      #     key: ${{ runner.os }}-github-${{ github.sha }}
