@@ -14,7 +14,8 @@ docker buildx build --cache-to=type=registry,ref=myrepo/myimage-cache --tag myim
 rm /tmp/github-cache/*
 
 docker image ls
-docker history first2know
+
 make dockerbuild
+
 # docker save -o /tmp/github-cache/backend.tar first2know:latest
 ls -lah /tmp/github-cache || true
