@@ -1,17 +1,13 @@
-import json
-import os
-import logging
 import time
 import traceback
 import typing
-
-import pydantic  # type: ignore
 
 from fastapi import FastAPI, Request, Response  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from fastapi.responses import JSONResponse, HTMLResponse  # type: ignore
 
 from . import cron
+from . import logger
 from . import firebase_wrapper
 from . import manager
 from . import proxy
@@ -43,18 +39,6 @@ web_app.add_middleware(
     allow_headers=["*"],
 )
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-@web_app.middleware("http")
-async def log_requests(request: Request, call_next) -> Response:
-    logger.info(f"Received request: {request.method} {request.url}")
-    response = await call_next(request)
-    logger.info(f"Sent response: {response.status_code}")
-
-    return response
-
 
 # # known issue: RuntimeError: Event loop is closed
 # @web_app.on_event("shutdown")
@@ -82,7 +66,7 @@ def get_():
 
 @web_app.get("/liveness_check")
 def get_health():
-    print("debug_log liveness_check")
+    logger.log("get_health.liveness_check")
     Vars.health += 1
     return get_()
 
@@ -118,7 +102,7 @@ class ScreenshotPayload(firebase_wrapper.DataInput):
 
 @web_app.post("/screenshot")
 def post_screenshot(payload: ScreenshotPayload):
-    print("received screenshot request")
+    logger.log("server.screenshot::receive")
     # payload.reencrypt_cookie()
     try:
         screenshot_response = Vars.screenshot_manager.run(
@@ -128,7 +112,7 @@ def post_screenshot(payload: ScreenshotPayload):
             )
         )
         resp = screenshot_response.model_dump_json()
-        print("responding screenshot request")
+        logger.log("server.screenshot::respond")
         return HTMLResponse(resp)
     except Exception:
         err = traceback.format_exc()
@@ -137,7 +121,7 @@ def post_screenshot(payload: ScreenshotPayload):
 
 @web_app.post("/encrypt")
 def post_encrypt(payload: firebase_wrapper.DataInput):
-    print("received encrypt request")
+    logger.log("server.encrypt::receive")
     json_str = payload.model_dump_json()
     encrypted = firebase_wrapper.encrypt(json_str)
     return HTMLResponse(encrypted)

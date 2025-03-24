@@ -12,6 +12,7 @@ from pydantic import BaseModel  # type: ignore
 
 from PIL import Image, ImageDraw  # type: ignore
 
+from . import logger
 from . import exceptions
 from . import firebase_wrapper
 from . import proxy
@@ -49,7 +50,7 @@ class Screenshot:
         except Exception as e:
             if retries > 0:
                 return await cls.async_retry(f, retries - 1)
-            print("exhausted retries")
+            logger.log("screenshot.async_retry::exhausted")
             raise e
 
     async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
@@ -71,7 +72,7 @@ class Screenshot:
         await self.p.__aexit__()
 
     def log(self, s: str):
-        print(self.id, s)
+        logger.log("screenshot.log::log", self.id, s)
 
     def __call__(self, request: Request) -> Response:
 
@@ -97,7 +98,7 @@ class Screenshot:
                 diff = now - C.now
                 C.now = now
                 if diff > C_LOG_SECONDS:
-                    print("C", C.c, diff)
+                    logger.log("screenshot.C", C.c, diff)
 
         C()
 

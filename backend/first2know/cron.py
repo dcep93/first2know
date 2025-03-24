@@ -13,6 +13,7 @@ from . import firebase_wrapper
 from . import manager
 from . import screenshot
 from . import email_wrapper
+from . import logger
 
 IGNORE = "first2know_ignore"
 
@@ -45,7 +46,7 @@ def main():
         resp = run(screenshot_manager)
     finally:
         screenshot_manager.close()
-    print("success", resp)
+    logger.log("cron.main::success", resp)
 
 
 def get_memory_mb():
@@ -63,24 +64,24 @@ def loop() -> bool:
 
 
 def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
-    print("looping")
+    logger.log("loop_with_manager.looping")
     Vars._token = refresh_access_token()
 
     loops = 0
     s = time.time()
-    print_freq = 10
+    print_freq = 1
     resp = None
     while True:
         now = time.time()
         loops += 1
         if loops % print_freq == 0:
-            loops_per = print_freq / (now - s)
+            seconds_per = (now - s) / print_freq
             s = now
-            print(loops, "loops", f"{loops_per:.2f}/s", resp)
+            logger.log("loop_with_manager.loop", loops, f"{seconds_per:.2f} spl", resp)
         # exit if another process has spun up to take over
         new_token = firebase_wrapper.get_token()
         if new_token != Vars._token:
-            print("exiting cron", loops)
+            logger.log("loop_with_manager.exit", loops)
             return True
 
         resp = run(screenshot_manager)
@@ -90,10 +91,10 @@ def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
 # refresh token is not actually used to auth anymore
 # it's still used to detect if a new cron has been spun up and taken over
 def refresh_access_token() -> str:
-    print("refreshing token")
+    logger.log("refresh_access_token.start")
     new_token = str(time.time())
     firebase_wrapper.write_token(new_token)
-    print("token refreshed")
+    logger.log("refresh_access_token.end")
     return new_token
 
 
@@ -129,7 +130,7 @@ def handle(
     previous_error = data_output.error
 
     if Vars.is_just_cron:
-        print("is_just_cron.to_handle", to_handle)
+        logger.log("is_just_cron.to_handle", to_handle)
     elif previous_error is not None and previous_error.version == VERSION:
         return "previous_error"
     elif previous_time is not None and previous_time > now:
@@ -198,7 +199,7 @@ def handle(
             firebase_wrapper.write_data(to_handle.key, data_output)
         return "old_md5"
 
-    print(screenshot_response.md5, old_md5)
+    logger.log(screenshot_response.md5, old_md5)
 
     to_write = firebase_wrapper.DataOutput(
         screenshot_data=firebase_wrapper.ScreenshotData(
@@ -231,7 +232,7 @@ def handle(
         screenshot_response.img_data,
     )
 
-    print(to_handle.key, to_write.model_dump_json())
+    logger.log("cron.handle::", to_handle.key, to_write.model_dump_json())
 
     firebase_wrapper.write_data(to_handle.key, to_write)
 

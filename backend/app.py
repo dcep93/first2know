@@ -1,10 +1,9 @@
 import sys
 import threading
-import time
 
-from first2know import cron, server
+from first2know import cron, logger, server
 
-print(sys.argv)
+logger.log("app.py::init.sys.argv", sys.argv)
 
 server.init()
 
