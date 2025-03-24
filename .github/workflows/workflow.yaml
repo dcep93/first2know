@@ -13,8 +13,8 @@ jobs:
 
       - name: Restore and load Docker image cache
         run: |
-          if [ -f "/tmp/docker-cache/my-app.tar" ]; then
-            docker load -i /tmp/docker-cache/my-app.tar
+          if [ -f "/tmp/docker-cache/app.tar" ]; then
+            docker load -i /tmp/docker-cache/app.tar
             echo "Docker image cache restored and loaded."
           else
             echo "No cache found, building from scratch."
