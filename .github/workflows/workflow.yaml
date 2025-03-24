@@ -5,6 +5,12 @@ on:
 jobs:
   workflow:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      BUILDKIT_INLINE_CACHE: 1
+      CACHE_FROM: type=local,src=/tmp/docker-cache/.buildx-cache
+      CACHE_TO: type=local,dest=/tmp/docker-cache/.buildx-cache,mode=max
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
