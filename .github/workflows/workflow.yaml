@@ -5,11 +5,6 @@ on:
 jobs:
   workflow:
     runs-on: ubuntu-latest
-    env:
-      DOCKER_BUILDKIT: 1
-      BUILDKIT_INLINE_CACHE: 1
-      CACHE_FROM: type=local,src=/tmp/docker-cache/buildx-cache
-      CACHE_TO: type=local,dest=/tmp/docker-cache/buildx-cache,mode=max
 
     steps:
       - name: Checkout repository
@@ -17,27 +12,16 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Cache Docker image
-        uses: actions/cache@v4
-        with:
-          path: /tmp/docker-cache
-          key: ${{ runner.os }}-docker
-          restore-keys: |
-            ${{ runner.os }}-docker
-
-      - run: ls -lah /tmp/docker-cache || true
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
 
-      - name: Save Docker image cache
-        run: |
-          docker save -o /tmp/docker-cache/app.tar first2know:latest
-
-      - name: Cache Docker image
-        uses: actions/cache@v4
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          path: /tmp/docker-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-
-      - run: ls -lah /tmp/docker-cache || true
+          context: .
+          push: false
+          cache-from: type=registry,ref=user/app:buildcache
+          cache-to: type=registry,ref=user/app:buildcache,mode=max
