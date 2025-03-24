@@ -25,6 +25,7 @@ jobs:
       - name: Set Docker cache environment variables
         run: |
           mkdir -p /tmp/docker-cache
+          ls -lah /tmp/docker-cache
           echo "CACHE_FROM=type=local,src=/tmp/docker-cache/.buildx-cache" >> $GITHUB_ENV
           echo "CACHE_TO=type=local,dest=/tmp/docker-cache/.buildx-cache,mode=max" >> $GITHUB_ENV
 
