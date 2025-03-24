@@ -18,8 +18,6 @@ jobs:
           path: /tmp/github-cache
           key: ${{ runner.os }}-github
 
-      - run: ls -lah /tmp/github-cache || true
-
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
 
