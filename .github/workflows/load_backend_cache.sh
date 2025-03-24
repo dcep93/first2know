@@ -6,9 +6,13 @@ cd ../../backend
 
 mkdir -p /tmp/github-cache
 ls -lah /tmp/github-cache || true
-test ! -f /tmp/github-cache/backend.tar || (docker load -i /tmp/github-cache/backend.tar && echo loaded)
+
+docker buildx build --cache-to=type=registry,ref=myrepo/myimage-cache --tag myimage --push . || echo failed
+
+rm /tmp/github-cache/*
+
 docker image ls
 docker history first2know
 make dockerbuild
-docker save -o /tmp/github-cache/backend.tar first2know:latest
+# docker save -o /tmp/github-cache/backend.tar first2know:latest
 ls -lah /tmp/github-cache || true
