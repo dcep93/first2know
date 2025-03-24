@@ -26,5 +26,3 @@ jobs:
       #   with:
       #     path: /tmp/github-cache
       #     key: ${{ runner.os }}-github-${{ github.sha }}
-
-      - run: ls -lah /tmp/github-cache || true
