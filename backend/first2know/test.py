@@ -122,7 +122,7 @@ class TestScreenshot(unittest.TestCase):
             )
         )
         self.assertNotIn(
-            "Press & Hold to confirm you are\na human (and not a bot).\nHaving a problem?\n",
+            "Press & Hold to confirm you are\na human (and not a bot).",
             screenshot_response.evaluation,
         )
 
@@ -137,7 +137,7 @@ class TestScreenshot(unittest.TestCase):
             )
         )
         self.assertIn(
-            "Press & Hold to confirm you are\na human (and not a bot).\nHaving a problem?\n",
+            "Press & Hold to confirm you are\na human (and not a bot).",
             screenshot_response.evaluation,
         )
 
