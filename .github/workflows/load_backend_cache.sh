@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+cd "$(dirname "$0")"
+
 cd ../../backend
 
 mkdir -p /tmp/github-cache
