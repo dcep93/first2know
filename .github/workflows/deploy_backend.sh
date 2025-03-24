@@ -19,6 +19,10 @@ else
   echo "$DIFF"
 fi
 
+echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+echo "CACHE_FROM=type=local,src=/tmp/docker-cache/.buildx-cache" >> $GITHUB_ENV
+echo "CACHE_TO=type=local,dest=/tmp/docker-cache/.buildx-cache,mode=max" >> $GITHUB_ENV
+
 bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
 bash ./record_secret.sh "$SECRETS_JSON"
 # bash ./test_backend.sh
