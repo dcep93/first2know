@@ -9,7 +9,7 @@ cd ../../backend
 mkdir -p /tmp/github-cache
 ls -lah /tmp/github-cache || true
 
-rm /tmp/github-cache/*
+rm -rf /tmp/github-cache/*
 
 docker image ls
 
