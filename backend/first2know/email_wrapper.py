@@ -14,6 +14,10 @@ def _build_server():
     server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
     server.ehlo()
     server.starttls()
+    print(
+        secrets.Vars.secrets.email_user,
+        secrets.Vars.secrets.email_password,
+    )
     server.login(
         secrets.Vars.secrets.email_user,
         secrets.Vars.secrets.email_password,
