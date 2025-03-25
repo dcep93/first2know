@@ -10,20 +10,9 @@ jobs:
       actions: write
       contents: read
     steps:
-      - name: Cleanup
+      - name: cleanup
         run: |
-          echo "Fetching list of cache key"
-          gh cache --help
-          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id --jq '.[].id')
-
-          ## Setting this to not fail the workflow while deleting cache keys.
-          set +e
-          echo "Deleting caches..."
-          for cacheKey in $cacheKeysForPR
-          do
-              gh cache delete $cacheKey
-          done
-          echo "Done"
+          gh cache list --json id
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
