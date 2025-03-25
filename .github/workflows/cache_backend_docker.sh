@@ -8,6 +8,8 @@ cd "$(dirname "$0")"
 
 cd ../../backend
 
+docker buildx create --use
+
 docker image ls -a
 
 docker pull debian:11
@@ -22,8 +24,6 @@ docker buildx build --no-cache \
     # --cache-from=type=local,src=/tmp/github-cache/backend \
 
 docker image ls -a
-
-docker buildx create --use
 
 echo make dockerbuild1
 make dockerbuild
