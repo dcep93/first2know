@@ -16,6 +16,8 @@ docker buildx build \
 docker history first2know || echo qwer
 docker history first2know:latest || echo uio
 
+docker info
+
 echo asdfasdf
 
 docker image ls -a
