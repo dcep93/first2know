@@ -14,7 +14,7 @@ jobs:
         run: |
           set -euo pipefail
           for id in $(gh cache list --json id --jq '.[].id' | tail -n +2); do
-            echo "id" "$id"
+            gh cache delete "$id"
           done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
