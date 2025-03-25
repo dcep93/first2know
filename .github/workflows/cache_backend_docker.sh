@@ -17,9 +17,8 @@ docker buildx build \
     # --cache-to=type=local,dest=/tmp/github-cache/backend \
     # --cache-from=type=local,src=/tmp/github-cache/backend \
 
-docker history first2know
-
-
 docker image ls -a
 
 make dockerbuild
+
+docker history first2know
