@@ -14,7 +14,7 @@ function c() {
 DIFF="$(git diff HEAD^ ../../backend)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
-  # c && exit 0 || true
+  c && exit 0 || true
 else
   echo "$DIFF"
 fi
