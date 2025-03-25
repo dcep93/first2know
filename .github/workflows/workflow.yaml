@@ -44,12 +44,6 @@ jobs:
             ${{ runner.os }}
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
+      - run: bash .github/workflows/cache_backend_docker.sh
+      - run: bash .github/workflows/cache_backend_docker.sh
       # - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
-      - run: bash .github/workflows/load_backend_cache.sh
-      - run: bash .github/workflows/load_backend_cache.sh
-
-      - name: write cache
-        uses: actions/cache/save@v4
-        with:
-          path: /tmp/github-cache
-          key: ${{ steps.cache.outputs.cache-primary-key }}
