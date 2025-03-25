@@ -13,10 +13,7 @@ docker buildx build \
     --cache-from=type=local,src=/tmp/github-cache/backend \
     --load --platform linux/amd64 -t first2know:latest .
 
-docker history first2know || echo qwer
-docker history first2know:latest || echo uio
-
-docker info
+docker history first2know
 
 echo asdfasdf
 
