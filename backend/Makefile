@@ -4,7 +4,7 @@ local_image_tag=$(service_name):latest
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 dockerbuild:
-	docker build -t $(local_image_tag) .
+	docker build --debug -t $(local_image_tag) .
 
 # ARGS=test make dockerexec
 dockerexec: dockerbuild
