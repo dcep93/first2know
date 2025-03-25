@@ -6,9 +6,10 @@ WORKDIR /var/www
 # RUN apt-add-repository non-free
 # RUN apt-add-repository contrib
 
-### debug below
 
-# RUN apt-get update
+RUN apt-get update
+
+### debug below
 # RUN apt-get install -y software-properties-common
 # RUN apt install -y curl git python-is-python3 python3.9 python3-pip
 
