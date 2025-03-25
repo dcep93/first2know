@@ -22,4 +22,6 @@ docker image ls -a
 echo make dockerbuild
 make dockerbuild
 
+docker image ls -a
+
 docker history first2know
