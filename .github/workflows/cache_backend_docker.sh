@@ -10,6 +10,10 @@ cd ../../backend
 
 docker image ls -a
 
+docker pull debian:11
+
+docker image ls -a
+
 docker buildx build --no-cache \
     --load --platform linux/amd64 -t first2know:buildx .
 
