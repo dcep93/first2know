@@ -17,11 +17,9 @@ echo asdfasdf
 
 docker image ls -a
 
-# make dockerbuild
+make dockerbuild
 
 rm /tmp/github-cache/butt* || true
-
-touch "/tmp/github-cache/butt_$(date +%s)"
 
 # docker save -o /tmp/github-cache/backend.tar first2know:latest
 ls -lah /tmp/github-cache || true
