@@ -13,6 +13,9 @@ docker buildx build \
     --cache-from=type=local,src=/tmp/github-cache/backend \
     --load -t first2know:latest .
 
+docker history first2know || echo qwer
+docker history first2know || echo uio
+
 echo asdfasdf
 
 docker image ls -a
