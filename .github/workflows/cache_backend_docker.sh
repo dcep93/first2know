@@ -19,6 +19,8 @@ docker buildx build --no-cache \
 
 docker image ls -a
 
+docker buildx create --use
+
 echo make dockerbuild1
 make dockerbuild
 echo make dockerbuild2
