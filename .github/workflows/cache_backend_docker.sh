@@ -19,6 +19,7 @@ docker buildx build \
 
 docker image ls -a
 
+echo make dockerbuild
 make dockerbuild
 
 docker history first2know
