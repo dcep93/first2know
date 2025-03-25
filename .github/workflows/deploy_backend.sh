@@ -14,12 +14,12 @@ function c() {
 DIFF="$(git diff HEAD^ ../../backend)"
 if [[ -z "$DIFF" ]]; then
   echo "no diff"
-  c && exit 0 || true
+  # c && exit 0 || true
 else
   echo "$DIFF"
 fi
 
-bash ./load_backend_cache.sh
+bash ./cache_backend_docker.sh
 bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/recorded_sha.py"
 bash ./record_secret.sh "$SECRETS_JSON"
 bash ./test_backend.sh
