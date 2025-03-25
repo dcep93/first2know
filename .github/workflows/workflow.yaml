@@ -3,6 +3,31 @@ on:
     branches:
       - master
 jobs:
+  clean_cache:
+    runs-on: ubuntu-latest
+    needs: workflow
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Cleanup
+        run: |
+          echo "Fetching list of cache key"
+          gh cache --help
+          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id --jq '.[].id')
+
+          ## Setting this to not fail the workflow while deleting cache keys.
+          set +e
+          echo "Deleting caches..."
+          for cacheKey in $cacheKeysForPR
+          do
+              gh cache delete $cacheKey
+          done
+          echo "Done"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
   workflow:
     runs-on: ubuntu-latest
 
@@ -17,12 +42,13 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: read cache
-        id: cache
-        uses: actions/cache/restore@v4
+      - name: cache
+        uses: actions/cache@v4
         with:
           path: /tmp/github-cache
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
       # - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
