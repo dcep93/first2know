@@ -12,8 +12,6 @@ docker buildx create --use
 
 docker image ls -a
 
-docker pull debian:5c028c19adaab78491711830600749729a8276b9839416716d5d7339ec3d7216
-
 docker image ls -a
 
 docker buildx build --no-cache \
