@@ -14,7 +14,7 @@ docker buildx build \
     --load -t first2know:latest .
 
 docker history first2know || echo qwer
-docker history first2know || echo uio
+docker history first2know:latest || echo uio
 
 echo asdfasdf
 
