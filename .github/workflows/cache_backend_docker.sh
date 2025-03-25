@@ -11,7 +11,7 @@ cd ../../backend
 docker image ls -a
 
 docker buildx build \
-    --load --platform linux/amd64 -t first2know:latest .
+    --load --platform linux/amd64 -t first2know:buildx .
 
 
     # --cache-to=type=local,dest=/tmp/github-cache/backend \
