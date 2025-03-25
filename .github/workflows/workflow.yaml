@@ -13,7 +13,7 @@ jobs:
       - name: clean_cache
         run: |
           set -euo pipefail
-          for id in $(gh cache list --json id --jq '.[].id' | tail -n +1); do
+          for id in $(gh cache list --json id --jq '.[].id' | tail -n +2); do
             gh cache delete "$id"
           done
         env:
