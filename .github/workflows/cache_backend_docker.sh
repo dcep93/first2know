@@ -19,7 +19,9 @@ docker buildx build \
 
 docker image ls -a
 
-echo make dockerbuild
+echo make dockerbuild1
+make dockerbuild
+echo make dockerbuild2
 make dockerbuild
 
 docker image ls -a
