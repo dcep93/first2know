@@ -209,7 +209,7 @@ def handle(
         error=None,
     )
 
-    text = "\n".join(
+    text = "\n\n\n".join(
         [
             to_handle.data_input.url,
             f"https://first2know.web.app/{to_handle.key}",
