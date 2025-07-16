@@ -18,7 +18,7 @@ RUN pip3 install --upgrade pip
 RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >>/etc/apt/sources.list.d/fonts.list
 
 RUN pip3 install playwright==1.36
-RUN playwright install-deps chromium
+# RUN playwright install-deps chromium
 RUN playwright install chromium
 
 COPY requirements.txt ./
