@@ -20,6 +20,7 @@ RUN echo "deb http://ftp.us.debian.org/debian buster main non-free" >>/etc/apt/s
 RUN pip3 install playwright==1.36
 # RUN playwright install-deps chromium
 RUN playwright install chromium
+RUN playwright install-deps
 
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt
