@@ -5,7 +5,7 @@ const FETCH_INTERVAL_MS = 10 * 1000;
 
 export const url = IS_LOCAL
   ? "http://localhost:8000"
-  : "https://upheld-dragon-453918-n4.appspot.com";
+  : "https://chromatic-realm-466116-n0.appspot.com/";
 
 export function sfetch(url: string, options?: any) {
   return fetch(url, options)

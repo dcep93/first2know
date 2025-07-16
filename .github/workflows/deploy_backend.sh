@@ -8,7 +8,7 @@ SECRETS_JSON="$2"
 cd "$(dirname "$0")"
 
 function c() {
-  curl --fail https://upheld-dragon-453918-n4.appspot.com/
+  curl --fail https://chromatic-realm-466116-n0.appspot.com/
 }
 
 DIFF="$(git diff HEAD^ ../../backend)"
