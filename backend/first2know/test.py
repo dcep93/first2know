@@ -10,7 +10,6 @@ from . import screenshot
 
 class TestScreenshot(unittest.TestCase):
     def test_screenshot(self):
-        return
         data_input = firebase_wrapper.DataInput(url="https://example.org")
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
@@ -20,7 +19,7 @@ class TestScreenshot(unittest.TestCase):
         )
         self.assertEqual(
             screenshot_response.md5,
-            "c5ab4b20641f3de2ca9bdb0ed6a88f9a",
+            "72e9afeb37cd66e579ba16edac80f493",
         )
 
     def test_manager(self):
@@ -47,7 +46,6 @@ class TestScreenshot(unittest.TestCase):
         self.assertLess(elapsed, total)
 
     def test_selector(self):
-        return
         data_input = firebase_wrapper.DataInput(
             url="https://example.org",
             selector="h1 >> nth=0",
@@ -60,7 +58,7 @@ class TestScreenshot(unittest.TestCase):
         )
         self.assertEqual(
             screenshot_response.md5,
-            "814ff58bd2a6352eb89e8deffbf03510",
+            "bbc1c4e4570a955433f2cecbc33d994f",
         )
 
     def test_evaluate(self):
