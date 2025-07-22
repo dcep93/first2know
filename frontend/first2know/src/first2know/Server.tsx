@@ -31,7 +31,7 @@ export function clog<T>(t: T): T {
 }
 
 export default function Server() {
-  const [resp, update] = useState<string | null>(null);
+  const [resp, update] = useState<any>(null);
   useEffect(() => {
     sfetch(url)
       .then((resp) => resp.json())
