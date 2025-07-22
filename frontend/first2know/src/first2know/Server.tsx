@@ -34,9 +34,9 @@ export default function Server() {
   const [resp, update] = useState<string | null>(null);
   useEffect(() => {
     sfetch(url)
-      .then((resp) => resp.text())
+      .then((resp) => resp.json())
       .then(update)
       .then(iter);
   }, []);
-  return <pre>{resp}</pre>;
+  return <pre>{JSON.stringify(resp, null, 2)}</pre>;
 }
