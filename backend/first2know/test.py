@@ -11,7 +11,7 @@ from . import screenshot
 
 class TestScreenshot(unittest.TestCase):
     def test_screenshot(self):
-        data_input = firebase_wrapper.DataInput(url="https://example.org")
+        data_input = firebase_wrapper.DataInput(url="https://example.com")
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
                 data_input=data_input,
@@ -24,7 +24,7 @@ class TestScreenshot(unittest.TestCase):
         )
 
     def test_manager(self):
-        data_input = firebase_wrapper.DataInput(url="https://example.org")
+        data_input = firebase_wrapper.DataInput(url="https://example.com")
         num_to_run = 2
         r = screenshot.Request(
             data_input=data_input,
@@ -48,7 +48,7 @@ class TestScreenshot(unittest.TestCase):
 
     def test_selector(self):
         data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
+            url="https://example.com",
             selector="h1 >> nth=0",
         )
         screenshot_response = screenshot.Screenshot()(
@@ -64,7 +64,7 @@ class TestScreenshot(unittest.TestCase):
 
     def test_evaluate(self):
         data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
+            url="https://example.com",
             evaluate="document.body.innerHTML.substring(0, 20)",
         )
         screenshot_response = screenshot.Screenshot()(
@@ -80,7 +80,7 @@ class TestScreenshot(unittest.TestCase):
 
     def test_evaluation_to_img(self):
         data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
+            url="https://example.com",
             evaluate="document.body.innerHTML",
             evaluation_to_img=True,
         )
@@ -97,7 +97,7 @@ class TestScreenshot(unittest.TestCase):
 
     def test_chain_evaluation(self):
         data_input = firebase_wrapper.DataInput(
-            url="https://example.org",
+            url="https://example.com",
             evaluate="(prev) => JSON.parse(prev) + 1",
         )
         screenshot_response = screenshot.Screenshot()(
@@ -166,7 +166,7 @@ class TestScreenshot(unittest.TestCase):
 
     def test_ignore_short_circuit(self):
         data_input = firebase_wrapper.DataInput(
-            url="https://example.org/",
+            url="https://example.com/",
             evaluate=cron.IGNORE,
             selector=".invalid_selector",
         )
