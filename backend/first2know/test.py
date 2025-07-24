@@ -164,7 +164,7 @@ class TestScreenshot(unittest.TestCase):
         #         '81e7d2419ef16e535e3112b0090f7d3e',
         #     )
 
-    def test_ignore_short_circuit():
+    def test_ignore_short_circuit(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.org/",
             evaluate=cron.IGNORE,
