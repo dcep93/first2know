@@ -167,7 +167,7 @@ class TestScreenshot(unittest.TestCase):
     def test_ignore_short_circuit(self):
         data_input = firebase_wrapper.DataInput(
             url="https://example.com/",
-            evaluate=cron.IGNORE,
+            evaluate='"first2know_ignore"',
             selector=".invalid_selector",
         )
         screenshot.Screenshot()(
