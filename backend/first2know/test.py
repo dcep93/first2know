@@ -3,6 +3,7 @@ import json
 import time
 import unittest
 
+from . import cron
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
@@ -162,3 +163,15 @@ class TestScreenshot(unittest.TestCase):
         #         screenshot_response.md5,
         #         '81e7d2419ef16e535e3112b0090f7d3e',
         #     )
+
+    def test_ignore_short_circuit():
+        data_input = firebase_wrapper.DataInput(
+            url="https://example.org/",
+            evaluate=cron.IGNORE,
+            selector=".invalid_selector",
+        )
+        screenshot.Screenshot()(
+            screenshot.Request(
+                data_input=data_input,
+            )
+        )

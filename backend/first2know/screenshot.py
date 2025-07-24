@@ -12,6 +12,7 @@ from pydantic import BaseModel  # type: ignore
 
 from PIL import Image, ImageDraw  # type: ignore
 
+from . import cron
 from . import logger
 from . import exceptions
 from . import firebase_wrapper
@@ -136,7 +137,7 @@ class Screenshot:
             else json.dumps(raw_evaluation)
         )
 
-        if request.data_input.evaluation_to_img:
+        if request.data_input.evaluation_to_img or raw_evaluation == cron.IGNORE:
             img_data = str_to_binary_data(str_evaluation)
         else:
             if request.data_input.selector is None:
