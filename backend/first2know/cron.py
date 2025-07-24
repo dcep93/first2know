@@ -18,7 +18,7 @@ from . import logger
 IGNORE = "first2know_ignore"
 
 # update version to clear errors
-VERSION = "6.0.0"
+VERSION = "6.1.0"
 
 NUM_SCREENSHOTTERS = 1
 
