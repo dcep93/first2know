@@ -110,6 +110,7 @@ class Screenshot:
 
         context = await self.browser.new_context()
         page = await context.new_page()
+        page.set_default_timeout(30001)
         C()
         if request.data_input.raw_proxy:
             proxy_result = proxy.proxy(
@@ -143,7 +144,6 @@ class Screenshot:
             if request.data_input.selector is None:
                 to_screenshot = page
             else:
-                page.set_default_timeout(30001)
                 to_screenshot = page.locator(request.data_input.selector)
             dest = f"screenshot_{self.id}.png"
 
