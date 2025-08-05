@@ -20,7 +20,7 @@ IGNORE = "first2know_ignore"
 # update version to clear errors
 VERSION = "6.2.0"
 
-NUM_SCREENSHOTTERS = 1
+NUM_SCREENSHOTTERS = 2
 
 DEBOUNCE_SECONDS = 5 * 60
 
