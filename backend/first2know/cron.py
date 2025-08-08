@@ -24,6 +24,8 @@ NUM_SCREENSHOTTERS = 2
 
 DEBOUNCE_SECONDS = 5 * 60
 
+LOOP_SLEEP_SECONDS = 60
+
 firebase_wrapper.init()
 firebase_wrapper.wait_10s_for_data()
 
@@ -84,7 +86,7 @@ def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
             return True
 
         resp = run(screenshot_manager)
-        time.sleep(1)
+        time.sleep(LOOP_SLEEP_SECONDS)
 
 
 # refresh token is not actually used to auth anymore
