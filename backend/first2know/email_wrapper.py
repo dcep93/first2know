@@ -21,10 +21,6 @@ def _build_server():
     return server
 
 
-class Vars:
-    server = _build_server()
-
-
 def send_email(
     email_to: str,
     subject: str,
@@ -56,7 +52,8 @@ def send_email(
     )
 
     try:
-        Vars.server.send_message(msg)
+        with _build_server() as server:
+            server.send_message(msg)
     except Exception as e:
         print("email_wrapper.send_message", e)
         os.exit(1)
