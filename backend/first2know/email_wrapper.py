@@ -1,6 +1,6 @@
 import base64
 import smtplib
-import os
+import sys
 from email.message import EmailMessage
 
 from . import secrets
@@ -56,4 +56,4 @@ def send_email(
             server.send_message(msg)
     except Exception as e:
         print("email_wrapper.send_message", e)
-        os.exit(1)
+        sys.exit(1)
