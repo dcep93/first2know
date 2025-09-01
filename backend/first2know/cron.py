@@ -24,7 +24,7 @@ NUM_SCREENSHOTTERS = 2
 
 DEBOUNCE_SECONDS = 5 * 60
 
-LOOP_SLEEP_SECONDS = 60
+LOOP_SLEEP_SECONDS = 10
 
 firebase_wrapper.init()
 firebase_wrapper.wait_10s_for_data()

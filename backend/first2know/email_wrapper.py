@@ -1,6 +1,6 @@
 import base64
 import smtplib
-import typing
+import os
 from email.message import EmailMessage
 
 from . import secrets
@@ -55,4 +55,8 @@ def send_email(
         img_bytes, maintype="image", subtype="png", cid=img_cid
     )
 
-    Vars.server.send_message(msg)
+    try:
+        Vars.server.send_message(msg)
+    except Exception as e:
+        print("email_wrapper.send_message", e)
+        os.exit(1)
