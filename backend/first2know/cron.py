@@ -35,6 +35,7 @@ class Vars:
     _token: str
     is_just_cron = sys.argv[-1].endswith("cron.py")
     count = 0
+    write_count = 0
     latest_time = 0.0
     latest_result: typing.Optional[list[str]] = None
 
@@ -224,6 +225,8 @@ def handle(
             ),
         ]
     )
+    
+    Vars.write_count += 1
 
     email_wrapper.send_email(
         to_handle.user.email,
