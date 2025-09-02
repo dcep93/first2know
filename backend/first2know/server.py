@@ -15,6 +15,7 @@ from . import recorded_sha
 from . import screenshot
 
 NUM_SCREENSHOTTERS = 2
+MAX_CRON_AGE = 300
 
 
 class Vars:
@@ -52,7 +53,7 @@ def get_():
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
     return JSONResponse(
-        status_code=200 if cron_age < 300 else 599,
+        status_code=200 if cron_age < MAX_CRON_AGE else 599,
         content={
             "write_count": cron.Vars.write_count,
             "alive_age_s": alive_age_s,

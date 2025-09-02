@@ -24,7 +24,7 @@ cron:
 	python3 -u -m first2know.cron
 
 mypy:
-	mypy first2know
+	mypy first2know --disallow-untyped-defs
 
 test:
 	python3 -m unittest first2know.test
