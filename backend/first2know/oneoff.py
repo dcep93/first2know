@@ -9,13 +9,13 @@ from . import manager
 from . import screenshot
 
 
-def main():
+def main() -> None:
     handle_from_x()
     # cron.main(1)
     print("oneoff complete")
 
 
-def handle_from_x():
+def handle_from_x() -> None:
     data = json.loads(
         """
     {
@@ -49,7 +49,7 @@ def handle_from_x():
     print(result)
 
 
-def screenshot_from_request():
+def screenshot_from_request() -> screenshot.Response:
     url = "https://fantasy.espn.com/football/recentactivity?leagueId=203836968"
     request = screenshot.Request(
         evaluation=None,

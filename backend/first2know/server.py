@@ -24,7 +24,7 @@ class Vars:
     health = 0
 
 
-def init():
+def init() -> None:
     Vars.screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
@@ -48,7 +48,7 @@ web_app.add_middleware(
 
 
 @web_app.get("/")
-def get_():
+def get_() -> JSONResponse:
     now = time.time()
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
@@ -68,14 +68,14 @@ def get_():
 
 
 @web_app.get("/liveness_check")
-def get_health():
+def get_health() -> JSONResponse:
     logger.log("get_health.liveness_check")
     Vars.health += 1
     return get_()
 
 
 @web_app.get("/start_time")
-def get_start_time(request: Request):
+def get_start_time(request: Request) -> Response:
     return Response(Vars.start_time)
 
 
@@ -104,7 +104,7 @@ class ScreenshotPayload(firebase_wrapper.DataInput):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: ScreenshotPayload):
+def post_screenshot(payload: ScreenshotPayload) -> HTMLResponse:
     logger.log("server.screenshot.receive")
     # payload.reencrypt_cookie()
     try:
@@ -123,7 +123,7 @@ def post_screenshot(payload: ScreenshotPayload):
 
 
 @web_app.post("/encrypt")
-def post_encrypt(payload: firebase_wrapper.DataInput):
+def post_encrypt(payload: firebase_wrapper.DataInput) -> HTMLResponse:
     logger.log("server.encrypt.receive")
     json_str = payload.model_dump_json()
     encrypted = firebase_wrapper.encrypt(json_str)
@@ -131,7 +131,7 @@ def post_encrypt(payload: firebase_wrapper.DataInput):
 
 
 @web_app.post("/proxy")
-def post_proxy(payload: proxy.Request):
+def post_proxy(payload: proxy.Request) -> HTMLResponse:
     try:
         resp = proxy.proxy(payload)
         return HTMLResponse(resp)
@@ -141,7 +141,7 @@ def post_proxy(payload: proxy.Request):
 
 
 @web_app.get("/proxy/{url:path}")
-def get_proxy(url: str):
+def get_proxy(url: str) -> HTMLResponse:
     payload = proxy.Request(url=url)
     try:
         resp = proxy.proxy(payload)
@@ -152,7 +152,7 @@ def get_proxy(url: str):
 
 
 @web_app.get("/run_cron")
-def get_cron():
+def get_cron() -> Response:
     try:
         s = time.time()
         results = cron.run(Vars.screenshot_manager)

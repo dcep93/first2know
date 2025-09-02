@@ -40,18 +40,18 @@ class Vars:
     latest_result: typing.Optional[list[str]] = None
 
 
-def main():
+def main() -> None:
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
     try:
-        resp = run(screenshot_manager)
+        run(screenshot_manager)
     finally:
         screenshot_manager.close()
 
 
-def get_memory_mb():
+def get_memory_mb() -> float:
     return Vars._process.memory_info().rss / 1000000
 
 
@@ -225,7 +225,7 @@ def handle(
             ),
         ]
     )
-    
+
     Vars.write_count += 1
 
     email_wrapper.send_email(

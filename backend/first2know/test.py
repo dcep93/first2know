@@ -3,14 +3,13 @@ import json
 import time
 import unittest
 
-from . import cron
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
 
 
 class TestScreenshot(unittest.TestCase):
-    def test_screenshot(self):
+    def test_screenshot(self) -> None:
         data_input = firebase_wrapper.DataInput(url="https://example.com")
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
@@ -23,7 +22,7 @@ class TestScreenshot(unittest.TestCase):
             "72e9afeb37cd66e579ba16edac80f493",
         )
 
-    def test_manager(self):
+    def test_manager(self) -> None:
         data_input = firebase_wrapper.DataInput(url="https://example.com")
         num_to_run = 2
         r = screenshot.Request(
@@ -46,7 +45,7 @@ class TestScreenshot(unittest.TestCase):
         total = sum([i.elapsed for i in responses])
         self.assertLess(elapsed, total)
 
-    def test_selector(self):
+    def test_selector(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://example.com",
             selector="h1 >> nth=0",
@@ -62,7 +61,7 @@ class TestScreenshot(unittest.TestCase):
             "bbc1c4e4570a955433f2cecbc33d994f",
         )
 
-    def test_evaluate(self):
+    def test_evaluate(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://example.com",
             evaluate="document.body.innerHTML.substring(0, 20)",
@@ -78,7 +77,7 @@ class TestScreenshot(unittest.TestCase):
             screenshot_response.evaluation,
         )
 
-    def test_evaluation_to_img(self):
+    def test_evaluation_to_img(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://example.com",
             evaluate="document.body.innerHTML",
@@ -95,7 +94,7 @@ class TestScreenshot(unittest.TestCase):
             "80636eee396ece73b5ef8183b675013e",
         )
 
-    def test_chain_evaluation(self):
+    def test_chain_evaluation(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://example.com",
             evaluate="(prev) => JSON.parse(prev) + 1",
@@ -111,7 +110,7 @@ class TestScreenshot(unittest.TestCase):
             "421",
         )
 
-    def test_user_agent_hack(self):
+    def test_user_agent_hack(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://streeteasy.com/",
             evaluate="document.body.innerText",
@@ -128,7 +127,7 @@ class TestScreenshot(unittest.TestCase):
         #     screenshot_response.evaluation,
         # )
 
-    def test_street_easy_requires_user_agent_hack(self):
+    def test_street_easy_requires_user_agent_hack(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://streeteasy.com/",
             evaluate="document.body.innerText",
@@ -138,6 +137,7 @@ class TestScreenshot(unittest.TestCase):
                 data_input=data_input,
             )
         )
+        assert screenshot_response.evaluation is not None
         self.assertIn(
             "Press & Hold to confirm you are\na human (and not a bot).",
             screenshot_response.evaluation,
@@ -164,7 +164,7 @@ class TestScreenshot(unittest.TestCase):
         #         '81e7d2419ef16e535e3112b0090f7d3e',
         #     )
 
-    def test_ignore_short_circuit(self):
+    def test_ignore_short_circuit(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://example.com/",
             evaluate='"first2know_ignore"',

@@ -67,14 +67,14 @@ class Vars:
 
 class Creds(firebase_creds.ApplicationDefault):
 
-    def get_credential(self):
+    def get_credential(self) -> auth_creds.AnonymousCredentials:
         return auth_creds.AnonymousCredentials()
 
 
 project = "first2know"
 
 
-def init():
+def init() -> None:
     creds = Creds()
     firebase_admin.initialize_app(
         creds,
@@ -84,7 +84,7 @@ def init():
         },
     )
 
-    def listenF(event: db.Event):
+    def listenF(event: db.Event) -> None:
         if Vars._raw_all_to_handle is None:
             logger.log("firebase_wrapper.init.listenF")
             Vars._raw_all_to_handle = event.data
@@ -98,7 +98,7 @@ def init():
     logger.log("firebase_wrapper.init.initialized")
 
 
-def wait_10s_for_data():
+def wait_10s_for_data() -> None:
     now = time.time()
     while time.time() - now <= 10:
         if Vars._raw_all_to_handle is not None:
@@ -160,8 +160,8 @@ def write_data(key: str, data_output: DataOutput) -> None:
 def write_token(token: str) -> None:
     ref = db.reference("token")
 
-    def f():
-        return ref.set(token)
+    def f() -> None:
+        ref.set(token)
 
     for _ in range(3):
         try:

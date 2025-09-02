@@ -29,7 +29,7 @@ class Manager(typing.Generic[T, U]):
         for _ in range(self.num):
             self.response_queues.put_nowait(queue.Queue(1))
 
-    def close(self):
+    def close(self) -> None:
         for _ in range(self.num):
             self.request_queue.put_nowait((None, None))
 

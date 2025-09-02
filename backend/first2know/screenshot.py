@@ -39,13 +39,13 @@ class Response(BaseModel):
 # https://playwright.dev/python/docs/intro
 class Screenshot:
 
-    def __init__(self):
+    def __init__(self) -> None:
         nest_asyncio.apply()
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
 
     @classmethod
-    async def async_retry(cls, f: typing.Callable, retries: int):
+    async def async_retry(cls, f: typing.Callable, retries: int) -> None:
         try:
             return await asyncio.wait_for(f(), timeout=60)
         except Exception as e:
@@ -57,30 +57,23 @@ class Screenshot:
     async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
         from playwright.async_api import async_playwright as _p  # type: ignore # noqa
 
-        async def helper():
-            p = _p()
+        p = _p()
 
-            entered = await p.__aenter__()
-            browser = await entered.chromium.launch()
-            return p, browser
+        entered = await p.__aenter__()
+        browser = await entered.chromium.launch()
 
-        # p, browser = await self.async_retry(helper, 3)
-        p, browser = await helper()
         return p, browser
 
-    async def close(self):
+    async def close(self) -> None:
         await self.browser.close()
         await self.p.__aexit__()
 
-    def log(self, s: str):
+    def log(self, s: str) -> None:
         logger.log(f"screenshot.log.log {self.id} {s}")
 
     def __call__(self, request: Request) -> Response:
 
-        async def helper():
-            return await self.__acall__(request)
-
-        r = asyncio.run(helper())
+        r = asyncio.run(self.__acall__(request))
         return r
 
     async def __acall__(
@@ -93,7 +86,7 @@ class Screenshot:
             c = 0
             now = s
 
-            def __init__(self):
+            def __init__(self) -> None:
                 C.c += 1
                 now = time.time()
                 diff = now - C.now

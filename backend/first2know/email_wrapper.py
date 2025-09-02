@@ -10,7 +10,7 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
 
-def _build_server():
+def _build_server() -> smtplib.SMTP:
     server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
     server.ehlo()
     server.starttls()
@@ -26,7 +26,7 @@ def send_email(
     subject: str,
     text: str,
     img_data: str,
-):
+) -> None:
     msg = EmailMessage()
     msg["From"] = secrets.Vars.secrets.email_user
     msg["To"] = email_to
