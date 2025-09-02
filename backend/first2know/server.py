@@ -49,12 +49,14 @@ web_app.add_middleware(
 @web_app.get("/")
 def get_():
     now = time.time()
-    alive_age = now - Vars.start_time
+    alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
     return JSONResponse(
         status_code=200 if cron_age < 300 else 599,
         content={
-            "alive_age": alive_age,
+            "write_count": cron.Vars.write_count,
+            "alive_age_s": alive_age_s,
+            "alive_age_h": alive_age_s / 3600,
             "health_count": Vars.health,
             "cron_age": cron_age,
             "cron_count": cron.Vars.count,
