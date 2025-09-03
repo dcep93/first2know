@@ -46,6 +46,11 @@ def main() -> None:
         NUM_SCREENSHOTTERS,
     )
     try:
+        email_wrapper.send_text_email(
+            "dcep93@gmail.com",
+            "startup",
+            str(time.time()),
+        )
         run(screenshot_manager)
     finally:
         screenshot_manager.close()

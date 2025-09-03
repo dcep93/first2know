@@ -21,6 +21,31 @@ def _build_server() -> smtplib.SMTP:
     return server
 
 
+def send_text_email(email_to: str, subject: str, text: str) -> None:
+    msg = EmailMessage()
+    msg["From"] = secrets.Vars.secrets.email_user
+    msg["To"] = email_to
+    msg["Subject"] = subject
+
+    html_content = f"""
+    <html>
+        <body>
+            <pre>{text}</pre>
+        </body>
+    </html>
+    """
+
+    msg.set_content(text)
+    msg.add_alternative(html_content, subtype="html")
+
+    try:
+        with _build_server() as server:
+            server.send_message(msg)
+    except Exception as e:
+        print("email_wrapper.send_text_email", e)
+        sys.exit(1)
+
+
 def send_email(
     email_to: str,
     subject: str,
