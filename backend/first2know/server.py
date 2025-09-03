@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from fastapi.responses import JSONResponse, HTMLResponse  # type: ignore
 
 from . import cron
+from . import email_wrapper
 from . import logger
 from . import firebase_wrapper
 from . import manager
@@ -28,6 +29,11 @@ def init() -> None:
     Vars.screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
+    )
+    email_wrapper.send_text_email(
+        "dcep93@gmail.com",
+        "startup",
+        str(time.time()),
     )
 
 
