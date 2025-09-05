@@ -228,10 +228,12 @@ def handle(
 
     Vars.write_count += 1
 
+    logger.log(f"text swallowed: {text}")
+
     email_wrapper.send_email(
         to_handle.user.email,
         subject,
-        text,
+        str(time.time()),
         screenshot_response.img_data,
     )
 
