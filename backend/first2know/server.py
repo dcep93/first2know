@@ -74,8 +74,10 @@ def get_() -> JSONResponse:
 
 
 @web_app.get("/liveness_check")
-def get_health() -> JSONResponse:
-    logger.log(f"get_health.liveness_check {time.time()}")
+def get_health(request: Request) -> JSONResponse:
+    logger.log(
+        f"get_health.liveness_check {time.time()} {Vars.health} {request.client.host}"
+    )
     Vars.health += 1
     return get_()
 
