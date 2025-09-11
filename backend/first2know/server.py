@@ -150,7 +150,8 @@ async def login(request: Request) -> Response:
     token = data.get("token")
     decoded = auth.verify_id_token(token)
     email = decoded["email"]
-    fernet_key_str = crypt.get_fernet_key_str(email)
+    fernet_key_bytes = crypt.get_fernet_key_bytes(email)
+    fernet_key_str = fernet_key_bytes.decode("utf-8")
     return JSONResponse(
         status_code=200,
         content={
