@@ -38,7 +38,6 @@ def init() -> None:
         "startup",
         str(time.time()),
     )
-    firebase_admin.initialize_app(options={"projectId": "first2know20250716"})
 
 
 web_app = FastAPI()
