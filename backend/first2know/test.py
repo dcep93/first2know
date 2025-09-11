@@ -184,9 +184,9 @@ class TestFirst2Know(unittest.TestCase):
         self.assertIsNotNone(encrypyted)
 
     def test_decryption(self) -> None:
-        # crypt.encrypt("hello world", "0" * 32)
+        # encrypted = crypt.encrypt("hello world", "0" * 32)
         encrypted = "Z0FBQUFBQm93dzFOYkcwbFlKTnZEUk0wYzJGMTZsQlZNWW9rNERiM0k2dzE5c2luLVE2VEgwR2N5aWRaazl4bVpSMG43LWoyN3lUUUFXaFRXcy01SEVUMFVTbHNKT3hEREE9PQ=="
-        decrypted = crypt.decrypt(encrypted, "39ad74f58d0821c6ecb5d537247c87b0")
+        decrypted = crypt.decrypt(encrypted, "0" * 32)
         self.assertEqual(decrypted, "hello world")
 
     def test_encrypt_decrypt(self) -> None:
