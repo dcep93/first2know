@@ -10,10 +10,7 @@ function encrypt(unencrypted_string: string, secret: typeof Secret): string {
   return token.encode(unencrypted_string);
 }
 
-function decrypt(
-  encrypted_string: string,
-  secret: typeof Secret
-): string | null {
+function decrypt(encrypted_string: string, secret: typeof Secret): string {
   const token = new Token({ secret, token: encrypted_string });
   return token.decode();
 }

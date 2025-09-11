@@ -1,8 +1,8 @@
 import concurrent.futures
-import json
 import time
 import unittest
 
+from . import crypt
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
@@ -175,3 +175,15 @@ class TestScreenshot(unittest.TestCase):
                 data_input=data_input,
             )
         )
+
+    def test_encryption(self) -> None:
+        encrypyted = crypt.encrypt("hello world", "0" * 32)
+        self.assertIsNotNone(encrypyted)
+
+    def test_decryption(self) -> None:
+        # crypt.encrypt("hello world", "0" * 32)
+        encrypted = "Z0FBQUFBQm93dzFOYkcwbFlKTnZEUk0wYzJGMTZsQlZNWW9rNERiM0k2dzE5c2luLVE2VEgwR2N5aWRaazl4bVpSMG43LWoyN3lUUUFXaFRXcy01SEVUMFVTbHNKT3hEREE9PQ=="
+        encrypted = "gAAAAABowwAl-O2kS_kIP0uT4U6rYX10jZLR-EY6S6hC6nus5uxVbN4bcXlxGu8WPf0Tem_i-nkqgEovQkxcuSMK8pXmypkA9My4clDvt_yhtVW_GvXq_GTtll0kTbvjgw-3o5uh0l_3Eg2KFAyiXyuTBEwE-k8Wig=="
+        decrypted = crypt.decrypt(encrypted, "39ad74f58d0821c6ecb5d537247c87b0")
+        self.assertEqual(decrypted, "hello world")
+        print(decrypted)

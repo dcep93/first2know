@@ -99,7 +99,7 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
                   try {
                     return {
                       ...JSON.parse(
-                        crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)!
+                        crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)
                       ),
                       key,
                     };
