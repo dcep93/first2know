@@ -22,7 +22,7 @@ export type DataOutputType = {
 
 export type UserType = {
   email: string;
-  // encrypted: string;
+  encryptKey: string;
 };
 
 export type DataInputType = {

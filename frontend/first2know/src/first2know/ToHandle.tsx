@@ -100,15 +100,6 @@ function ToHandle(props: {
             type="checkbox"
           />
         </div>
-        {/* <div title={"will be encrypted"}>
-          cookie: <input ref={cookieRef} type="text" />
-        </div>
-        {props.toHandle && (
-          <div>
-            delete old cookie?
-            <input ref={deleteOldCookieRef} type="checkbox" />
-          </div>
-        )} */}
         <div>
           user agent hack:{" "}
           <input

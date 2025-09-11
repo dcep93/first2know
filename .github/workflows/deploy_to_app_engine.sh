@@ -42,7 +42,7 @@ liveness_check:
   check_interval_sec: 10
 
 resources:
-  cpu: 3
+  cpu: 4
   memory_gb: 4
 
 manual_scaling:
