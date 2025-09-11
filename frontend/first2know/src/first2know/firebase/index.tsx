@@ -35,15 +35,23 @@ export type ToHandleType = {
   user: string;
 };
 
-function encryptToHandle(toHandle: ToHandleType) {
-  const filtered = Object.fromEntries(
-    Object.entries(toHandle)
+function filterDict(d: Record<string, any>): Record<string, any> {
+  return Object.fromEntries(
+    Object.entries(d)
       .map(([k, v]) => ({ k, v }))
       .filter(({ v }) => v)
       .map(({ k, v }) => [k, v])
   );
+}
+
+function encryptToHandle(toHandle: ToHandleType) {
   const encrypted = crypt.encrypt(
-    JSON.stringify(filtered),
+    JSON.stringify({
+      ...filterDict({
+        ...toHandle,
+        data_input: filterDict(toHandle.data_input),
+      }),
+    }),
     LOCAL_USER!.fernet_secret
   );
   return { email: LOCAL_USER!.email, encrypted };
@@ -87,10 +95,11 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
                 .filter(({ obj }) => obj.email === LOCAL_USER?.email)
                 .map(({ key, obj }) => ({
                   ...JSON.parse(
-                    crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)
+                    crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)!
                   ),
                   key,
                 }))
+                .filter((toHandle: ToHandleType) => toHandle.user)
             )
             .then((state: ToHandleType[]) =>
               FirebaseWrapper.firebaseWrapperComponent.setState.bind(

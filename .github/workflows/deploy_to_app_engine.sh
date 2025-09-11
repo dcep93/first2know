@@ -43,7 +43,7 @@ liveness_check:
 
 resources:
   cpu: 4
-  memory_gb: 4
+  memory_gb: 6
 
 manual_scaling:
   instances: 1
