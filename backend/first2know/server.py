@@ -74,37 +74,15 @@ def get_() -> JSONResponse:
 
 
 @web_app.get("/liveness_check")
-def get_health(request: Request) -> JSONResponse:
-    logger.log(
-        f"get_health.liveness_check {time.time()} {Vars.health} {request.client.host if request.client is not None else 'no-host'} {request.headers.get('x-forwarded-for')}"
-    )
+def get_health() -> JSONResponse:
+    logger.log("get_health.liveness_check")
     Vars.health += 1
     return get_()
 
 
 @web_app.get("/start_time")
-def get_start_time(request: Request) -> Response:
+def get_start_time() -> Response:
     return Response(Vars.start_time)
-
-
-# class PostInputPayload(firebase_wrapper.DataInput):
-#     old_encrypted: typing.Optional[str]
-#     evaluation: typing.Any
-
-#     def reencrypt_cookie(self):
-#         if self.old_encrypted is not None:
-#             decrypted = firebase_wrapper.decrypt(self.old_encrypted)
-#             data_input = firebase_wrapper.DataInput(**json.loads(decrypted))
-#             decrypted_params = {} \
-#                 if data_input.params is None \
-#                 else data_input.params
-#             cookie = decrypted_params.get("cookie")
-#             if cookie is not None:
-#                 params = {} \
-#                     if self.params is None \
-#                     else self.params
-#                 params["cookie"] = cookie
-#                 self.params = params
 
 
 class ScreenshotPayload(firebase_wrapper.DataInput):
@@ -114,7 +92,6 @@ class ScreenshotPayload(firebase_wrapper.DataInput):
 @web_app.post("/screenshot")
 def post_screenshot(payload: ScreenshotPayload) -> HTMLResponse:
     logger.log("server.screenshot.receive")
-    # payload.reencrypt_cookie()
     try:
         screenshot_response = Vars.screenshot_manager.run(
             screenshot.Request(
