@@ -13,16 +13,16 @@ def encrypt(unencrypted_string: str, encryption_key: str) -> str:
     cipher_suite = _get_cipher_suite(encryption_key)
     encoded = unencrypted_string.encode("utf-8")
     encrypted_bytes = cipher_suite.encrypt(encoded)
-    encoded_string = base64.b64encode(encrypted_bytes)
-    encrypted_string = encoded_string.decode("utf-8")
+    encoded_bytes = base64.b64encode(encrypted_bytes)
+    encrypted_string = encoded_bytes.decode("utf-8")
     return encrypted_string
 
 
 @lru_cache
 def decrypt(encrypted_string: str, encryption_key: str) -> str:
     cipher_suite = _get_cipher_suite(encryption_key)
-    encoded_string = encrypted_string.encode("utf-8")
-    encrypted_bytes = base64.b64decode(encoded_string)
+    encoded_bytes = encrypted_string.encode("utf-8")
+    encrypted_bytes = base64.b64decode(encoded_bytes)
     encoded_string = cipher_suite.decrypt(encrypted_bytes)
     unencrypted_string = encoded_string.decode("utf-8")
     return unencrypted_string
