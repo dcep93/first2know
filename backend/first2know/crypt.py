@@ -40,7 +40,6 @@ def get_fernet_key_bytes(encryption_key: str) -> bytes:
 def _get_cipher_suite(encryption_key: str) -> Fernet:
     fernet_key_bytes = get_fernet_key_bytes(encryption_key)
     fernet_key = base64.b64encode(fernet_key_bytes)
-    print([encryption_key, fernet_key_bytes, fernet_key])
     return Fernet(fernet_key)
 
 
