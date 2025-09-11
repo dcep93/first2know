@@ -97,7 +97,7 @@ class Screenshot:
 
         C()
 
-        params = dict(request.data_input.params)
+        params = dict(request.data_input.params or {})
 
         if request.data_input.user_agent_hack:
             params["user-agent"] = GOOD_USER_AGENT
