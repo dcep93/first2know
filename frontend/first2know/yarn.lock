@@ -4760,11 +4760,6 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "2.1.1"
 
-fernet-nodejs@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.npmjs.org/fernet-nodejs/-/fernet-nodejs-1.0.6.tgz"
-  integrity sha512-KXh8DfPm3kWP3lR4dyiUfS4vs/dVTNB836+qQnLVXIUfI3+irGSRXDstfSDlUVqe2xDrcb0epiCh2SEBOySrtA==
-
 file-entry-cache@^6.0.1:
   version "6.0.1"
   resolved "https://registry.npmjs.org/file-entry-cache/-/file-entry-cache-6.0.1.tgz"
