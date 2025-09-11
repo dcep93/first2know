@@ -26,8 +26,10 @@ DEBOUNCE_SECONDS = 5 * 60
 
 LOOP_SLEEP_SECONDS = 10
 
-firebase_wrapper.init()
-firebase_wrapper.wait_10s_for_data()
+
+def init():
+    firebase_wrapper.init()
+    firebase_wrapper.wait_10s_for_data()
 
 
 class Vars:
@@ -41,6 +43,7 @@ class Vars:
 
 
 def main() -> None:
+    init()
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
