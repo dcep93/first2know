@@ -75,7 +75,7 @@ def get_() -> JSONResponse:
 
 @web_app.get("/liveness_check")
 def get_health() -> JSONResponse:
-    logger.log("get_health.liveness_check")
+    logger.log(f"get_health.liveness_check {Vars.health}")
     Vars.health += 1
     return get_()
 
@@ -105,14 +105,6 @@ def post_screenshot(payload: ScreenshotPayload) -> HTMLResponse:
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(f"<pre>{err}</pre>", 500)
-
-
-@web_app.post("/encrypt")
-def post_encrypt(payload: firebase_wrapper.DataInput) -> HTMLResponse:
-    logger.log("server.encrypt.receive")
-    json_str = payload.model_dump_json()
-    encrypted = firebase_wrapper.encrypt(json_str)
-    return HTMLResponse(encrypted)
 
 
 @web_app.post("/proxy")

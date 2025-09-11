@@ -66,24 +66,4 @@ function RoutedEdit(props: {
   );
 }
 
-// export function encrypt(
-//   data_input: DataInputType,
-//   user: UserType,
-//   old_encrypted: string | null
-// ): Promise<string> {
-//   const body = JSON.stringify({
-//     ...data_input,
-//     user,
-//     old_encrypted,
-//   });
-//   delete data_input.params!["cookie"];
-//   return sfetch(`${url}/encrypt`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body,
-//   }).then((resp) => resp.text());
-// }
-
 export default Edit;
