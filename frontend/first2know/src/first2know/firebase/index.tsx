@@ -102,6 +102,7 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
                         crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)
                       ),
                       key,
+                      ...obj,
                     };
                   } catch (err) {
                     return null;

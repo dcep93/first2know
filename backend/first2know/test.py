@@ -190,4 +190,7 @@ class TestFirst2Know(unittest.TestCase):
         self.assertEqual(decrypted, "hello world")
 
     def test_encrypt_decrypt(self) -> None:
-        pass
+        return
+        encrypted = "gAAAAABow0wBZ4nZcu9VDY9XXYh3B3tMnaXyc_K_oVNanN2nlMmjAsSCoGiyd9EMuIIP-YdHU_ZxkGMeHKtQfl7UatvsidoCTULtkYXR-N3xygv-tiDAgjW1x2r3dHYzqWQYfCpoF3G4INnnmgjEljBlh6U-fMVZvVoRmZHbYKFo3C9jTb9gthb07KrS_gEf1TRJNfYcrNUV"
+        decrypted = crypt.decrypt(encrypted, "dcep93@gmail.com")
+        print(decrypted)

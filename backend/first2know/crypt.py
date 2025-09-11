@@ -32,14 +32,15 @@ def decrypt(encrypted_string: str, encryption_key: str) -> str:
 def get_fernet_key_bytes(encryption_key: str) -> bytes:
     small_key = str_to_md5(secrets.Vars.secrets.email_password + encryption_key)
     big_key = small_key * 32
-    fernet_key_str = big_key.encode("utf-8")[:32]
-    return fernet_key_str
+    fernet_key_bytes = big_key.encode("utf-8")[:32]
+    return fernet_key_bytes
 
 
 @lru_cache
 def _get_cipher_suite(encryption_key: str) -> Fernet:
-    fernet_key_str = get_fernet_key_bytes(encryption_key)
-    fernet_key = base64.b64encode(fernet_key_str)
+    fernet_key_bytes = get_fernet_key_bytes(encryption_key)
+    fernet_key = base64.b64encode(fernet_key_bytes)
+    print([encryption_key, fernet_key_bytes, fernet_key])
     return Fernet(fernet_key)
 
 
