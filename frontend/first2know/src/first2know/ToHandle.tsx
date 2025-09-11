@@ -181,8 +181,6 @@ function getData(): DataInputType {
   const params = paramsJson ? JSON.parse(paramsJson) : {};
   const cookiesJson = cookiesRef.current!.value || null;
   const cookies = cookiesJson ? JSON.parse(cookiesJson) : {};
-  // const cookie = cookieRef.current!.value || null;
-  // if (cookie) params.cookie = cookie;
   return {
     url: urlRef.current!.value,
     params,

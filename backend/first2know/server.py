@@ -2,11 +2,12 @@ import time
 import traceback
 import typing
 
-from fastapi import FastAPI, Request, Response  # type: ignore
+from fastapi import FastAPI, Response  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from fastapi.responses import JSONResponse, HTMLResponse  # type: ignore
 
 from . import cron
+from . import crypt
 from . import email_wrapper
 from . import logger
 from . import firebase_wrapper
@@ -139,3 +140,16 @@ def get_cron() -> Response:
     except Exception:
         err = traceback.format_exc()
         return HTMLResponse(f"<pre>{err}</pre>", 500)
+
+
+@web_app.post("/login")
+def login() -> Response:
+    email = "email"
+    fernet_key_str = crypt.get_fernet_key_str(email)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "email": email,
+            "fernet_key_str": fernet_key_str,
+        },
+    )

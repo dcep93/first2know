@@ -36,7 +36,10 @@ export type ToHandleType = {
 };
 
 function encryptToHandle(toHandle: ToHandleType) {
-  const encrypted = crypt.encrypt(JSON.stringify(toHandle), LOCAL_USER!.key);
+  const encrypted = crypt.encrypt(
+    JSON.stringify(toHandle),
+    LOCAL_USER!.fernet_key
+  );
   return { email: LOCAL_USER!.email, encrypted };
 }
 
@@ -73,11 +76,13 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
         (rawToHandle: Record<string, { email: string; encrypted: string }>) =>
           Promise.resolve()
             .then(() =>
-              Object.entries(rawToHandle)
+              Object.entries(rawToHandle || {})
                 .map(([key, obj]) => ({ key, obj }))
                 .filter(({ obj }) => obj.email === LOCAL_USER?.email)
                 .map(({ key, obj }) => ({
-                  ...JSON.parse(crypt.decrypt(obj.encrypted, LOCAL_USER!.key)),
+                  ...JSON.parse(
+                    crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_key)
+                  ),
                   key,
                 }))
             )

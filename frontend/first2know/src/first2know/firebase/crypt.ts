@@ -1,8 +1,8 @@
-function encrypt(unencryptedString: string, encryptionKey: string): string {
+function encrypt(unencrypted_string: string, fernet_key: string): string {
   return "";
 }
 
-function decrypt(encryptedString: string, encryptionKey: string): string {
+function decrypt(encrypted_string: string, fernet_key: string): string {
   return "";
 }
 

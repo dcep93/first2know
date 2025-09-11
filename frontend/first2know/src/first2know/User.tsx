@@ -4,7 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { sfetch, url } from "./Server";
 
 export const USER_STORAGE_KEY = "user.v1";
-type LocalUserType = { email: string; key: string };
+type LocalUserType = { email: string; fernet_key: string };
 export const LOCAL_USER: LocalUserType | null = JSON.parse(
   localStorage.getItem(USER_STORAGE_KEY)!
 );
@@ -53,9 +53,10 @@ function User() {
               }
               return resp;
             })
-            .then((resp) =>
-              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(resp))
-            )
+            .then((resp) => {
+              localStorage.clear();
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(resp));
+            })
             .then(() => window.location.reload())
             .catch((err) => alert(err))
         }
