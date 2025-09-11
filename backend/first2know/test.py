@@ -8,7 +8,7 @@ from . import manager
 from . import screenshot
 
 
-class TestScreenshot(unittest.TestCase):
+class TestFirst2Know(unittest.TestCase):
     def test_screenshot(self) -> None:
         data_input = firebase_wrapper.DataInput(url="https://example.com")
         screenshot_response = screenshot.Screenshot()(
@@ -183,7 +183,8 @@ class TestScreenshot(unittest.TestCase):
     def test_decryption(self) -> None:
         # crypt.encrypt("hello world", "0" * 32)
         encrypted = "Z0FBQUFBQm93dzFOYkcwbFlKTnZEUk0wYzJGMTZsQlZNWW9rNERiM0k2dzE5c2luLVE2VEgwR2N5aWRaazl4bVpSMG43LWoyN3lUUUFXaFRXcy01SEVUMFVTbHNKT3hEREE9PQ=="
-        encrypted = "gAAAAABowwAl-O2kS_kIP0uT4U6rYX10jZLR-EY6S6hC6nus5uxVbN4bcXlxGu8WPf0Tem_i-nkqgEovQkxcuSMK8pXmypkA9My4clDvt_yhtVW_GvXq_GTtll0kTbvjgw-3o5uh0l_3Eg2KFAyiXyuTBEwE-k8Wig=="
         decrypted = crypt.decrypt(encrypted, "39ad74f58d0821c6ecb5d537247c87b0")
         self.assertEqual(decrypted, "hello world")
-        print(decrypted)
+
+    def test_encrypt_decrypt(self) -> None:
+        pass
