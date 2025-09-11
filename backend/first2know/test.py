@@ -7,6 +7,7 @@ from . import firebase_wrapper
 from . import logger
 from . import manager
 from . import screenshot
+from . import secrets
 
 logger.logger.disabled = True
 
@@ -179,19 +180,27 @@ class TestFirst2Know(unittest.TestCase):
             )
         )
 
+    def test_encryption_key_not_none(self) -> None:
+        self.assertIsNotNone(secrets.Vars.secrets.email_password)
+
     def test_encryption(self) -> None:
-        encrypyted = crypt.encrypt("hello world", "0" * 32)
+        encrypyted = crypt.encrypt("hello world", "")
         self.assertIsNotNone(encrypyted)
 
     def test_decryption(self) -> None:
-        return
-        # encrypted = crypt.encrypt("hello world", "0" * 32)
-        encrypted = "Z0FBQUFBQm93dzFOYkcwbFlKTnZEUk0wYzJGMTZsQlZNWW9rNERiM0k2dzE5c2luLVE2VEgwR2N5aWRaazl4bVpSMG43LWoyN3lUUUFXaFRXcy01SEVUMFVTbHNKT3hEREE9PQ=="
-        decrypted = crypt.decrypt(encrypted, "0" * 32)
+        # encrypted = crypt.encrypt("hello world", "")
+        encrypted = "Z0FBQUFBQm93MUJ5a0laTHpJd3VSZU5EZlduWDE3NlQ0S010RDFMblVmLU5lY0JCMDExa2h4WDV6UFpmRE93Q2p3aUJpNG84SmZPOXFqYWt2clIzb2lqWFBnMzN1VFlLVnc9PQ=="
+        decrypted = crypt.decrypt(encrypted, "")
         self.assertEqual(decrypted, "hello world")
 
+    def test_encryption_uses_arg(self) -> None:
+        a = crypt.encrypt("hello world", "")
+        b = crypt.encrypt("hello world", "")
+        self.assertEqual(a, b)
+        c = crypt.encrypt("hello world", "c")
+        self.assertNotEqual(a, c)
+
     def test_encrypt_decrypt(self) -> None:
-        return
-        encrypted = "gAAAAABow0wBZ4nZcu9VDY9XXYh3B3tMnaXyc_K_oVNanN2nlMmjAsSCoGiyd9EMuIIP-YdHU_ZxkGMeHKtQfl7UatvsidoCTULtkYXR-N3xygv-tiDAgjW1x2r3dHYzqWQYfCpoF3G4INnnmgjEljBlh6U-fMVZvVoRmZHbYKFo3C9jTb9gthb07KrS_gEf1TRJNfYcrNUV"
+        encrypted = "gAAAAABow1HzRLQP8va8Vx6SKky1-yFlVqdLOI-OXPWIqlBcTCfF8mkqLWbsGqoq1xulQ_Xm50DuSPFbMKqklLF3CeuBkTJzbb5uWte8OaNoYK52HiFW5b1_ibVGweId1wWSyQV0UO6E8dX2w8ipKoJ35Puq-svrvzbgTaCaiZu2CJzspdaCi3s="
         decrypted = crypt.decrypt(encrypted, "dcep93@gmail.com")
         print(decrypted)
