@@ -18,19 +18,6 @@ function decrypt(
   return token.decode();
 }
 
-const s = getSecret("12341234123412341234123412341234");
-console.log(s);
-const e = encrypt("helloworld", s);
-const now = Date.now();
-console.log(new Date());
-const int = setInterval(() => {
-  const d = decrypt(e, s);
-  if (!d) {
-    console.log(Date.now() - now);
-    clearInterval(int);
-  }
-}, 100);
-
 function getSecret(fernet_key_str: string): typeof Secret {
   return new Secret(fernet_key_str);
 }
