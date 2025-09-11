@@ -38,7 +38,7 @@ export type ToHandleType = {
 function encryptToHandle(toHandle: ToHandleType) {
   const encrypted = crypt.encrypt(
     JSON.stringify(toHandle),
-    LOCAL_USER!.fernet_key
+    LOCAL_USER!.fernet_secret
   );
   return { email: LOCAL_USER!.email, encrypted };
 }
@@ -81,7 +81,7 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
                 .filter(({ obj }) => obj.email === LOCAL_USER?.email)
                 .map(({ key, obj }) => ({
                   ...JSON.parse(
-                    crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_key)
+                    crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)
                   ),
                   key,
                 }))

@@ -144,6 +144,8 @@ def get_cron() -> Response:
 
 @web_app.post("/login")
 def login() -> Response:
+    # todo get email
+    # todo lru memoize _get_cipher_suite
     email = "email"
     fernet_key_str = crypt.get_fernet_key_str(email)
     return JSONResponse(

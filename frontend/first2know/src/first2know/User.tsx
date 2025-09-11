@@ -1,13 +1,21 @@
 import firebase from "./firebase/firebase";
 
+import { Secret } from "fernet";
 import { FcGoogle } from "react-icons/fc";
 import { sfetch, url } from "./Server";
+import crypt from "./firebase/crypt";
 
 export const USER_STORAGE_KEY = "user.v1";
-type LocalUserType = { email: string; fernet_key: string };
+type LocalUserType = {
+  email: string;
+  fernet_key_str: string;
+  fernet_secret: Secret;
+};
 export const LOCAL_USER: LocalUserType | null = JSON.parse(
   localStorage.getItem(USER_STORAGE_KEY)!
 );
+if (LOCAL_USER)
+  LOCAL_USER.fernet_secret = crypt.getSecret(LOCAL_USER.fernet_key_str);
 
 function User() {
   return LOCAL_USER ? (
