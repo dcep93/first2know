@@ -6,7 +6,6 @@ import {
   DataInputType,
   ScreenshotDataType,
   ToHandleType,
-  UserType,
 } from "./firebase";
 import loading from "./loading.gif";
 
@@ -23,7 +22,7 @@ const cssSelectorRef = createRef<HTMLInputElement>();
 type SubmitType = (data_input: DataInputType) => Promise<string>;
 
 function ToHandle(props: {
-  user: UserType;
+  user: string;
   toHandle?: ToHandleType;
   submit: SubmitType;
   allToHandle: AllToHandleType;

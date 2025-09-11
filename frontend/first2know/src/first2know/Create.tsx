@@ -1,9 +1,9 @@
-import firebase, { AllToHandleType, DataInputType, UserType } from "./firebase";
+import firebase, { AllToHandleType, DataInputType } from "./firebase";
 
 import ToHandle from "./ToHandle";
 
 function Create(props: {
-  user: UserType;
+  user: string;
   allToHandle: AllToHandleType;
 }): JSX.Element {
   return (
@@ -17,7 +17,7 @@ function Create(props: {
   );
 }
 
-function submitNew(data_input: DataInputType, user: UserType): Promise<string> {
+function submitNew(data_input: DataInputType, user: string): Promise<string> {
   return firebase.pushToHandle(data_input, user);
 }
 

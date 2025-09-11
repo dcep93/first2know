@@ -1,18 +1,18 @@
-import { UserType } from "./firebase";
-
 import firebase from "./firebase/firebase";
 
 import { FcGoogle } from "react-icons/fc";
-import { url } from "./Server";
+import { sfetch, url } from "./Server";
+
+export const USER_STORAGE_KEY = "user.v1";
 
 function User(props: {
-  user: UserType | null;
-  update: (user: UserType | null) => void;
+  user: string | null;
+  update: (user: string | null) => void;
 }) {
   return props.user ? (
     <div>
       <div>
-        {props.user.email}
+        {props.user}
         <button
           onClick={() => {
             localStorage.removeItem("login");
@@ -39,17 +39,21 @@ function User(props: {
             .then(() =>
               firebase.signInWithPopup(firebase.auth, firebase.provider)
             )
-            .then((result) => ({
-              email: result.user.email!,
-            }))
-            .then((user) => {
-              if (!user.email) {
+            .then((result) =>
+              sfetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: result.user.getIdToken() }),
+              }).then((resp) => resp.json())
+            )
+            .then((resp: { email: string; key: string }) => {
+              if (!resp.email) {
                 throw new Error("no email");
               }
-              return user;
+              return resp;
             })
-            .then((user: UserType) =>
-              localStorage.setItem("login", JSON.stringify(user))
+            .then((resp) =>
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(resp))
             )
             .then(() => window.location.reload())
             .catch((err) => alert(err))
@@ -62,8 +66,8 @@ function User(props: {
   );
 }
 
-export function isAdmin(user: UserType): boolean {
-  return ["dcep93@gmail.com"].includes(user.email);
+export function isAdmin(user: string): boolean {
+  return ["dcep93@gmail.com"].includes(user);
 }
 
 export function hashCode(s: string): number {

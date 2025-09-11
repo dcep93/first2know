@@ -1,6 +1,5 @@
 // https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
-import to_md5_f from "md5";
 import React from "react";
 import firebase from "./firebase";
 
@@ -20,11 +19,6 @@ export type DataOutputType = {
   error: { version: string; time: number; message: string } | null;
 };
 
-export type UserType = {
-  email: string;
-  encryptKey: string;
-};
-
 export type DataInputType = {
   url: string;
   params: { [s: string]: any };
@@ -38,25 +32,26 @@ export type DataInputType = {
 export type ToHandleType = {
   data_input: DataInputType;
   data_output: DataOutputType | null;
-  user: UserType;
+  user: string;
 };
 
-function _FBToHandle(toHandle: ToHandleType): any {
-  const to_md5 = JSON.stringify([toHandle.data_input]);
-  const md5 = to_md5_f(to_md5);
-  console.log({ md5, to_md5 });
-  return {
-    ...toHandle,
-    md5,
-    user: {
-      ...toHandle.user,
-    },
-  };
+function _FBToHandle(toHandle: ToHandleType): string {
+  return "TODO";
+  // const to_md5 = JSON.stringify([toHandle.data_input]);
+  // const md5 = to_md5_f(to_md5);
+  // console.log({ md5, to_md5 });
+  // return {
+  //   ...toHandle,
+  //   md5,
+  //   user: {
+  //     ...toHandle.user,
+  //   },
+  // };
 }
 
 function pushToHandle(
   data_input: DataInputType,
-  user: UserType
+  user: string
 ): Promise<string> {
   const toHandle: ToHandleType = {
     data_input,

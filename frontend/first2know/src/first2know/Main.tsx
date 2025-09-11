@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Edit from "./Edit";
-import { AllToHandleType, FirebaseWrapper, UserType } from "./firebase";
+import { AllToHandleType, FirebaseWrapper } from "./firebase";
 import Home from "./Home";
 import { recorded_sha } from "./recorded_sha";
 import Server from "./Server";
-import User, { isAdmin } from "./User";
+import User, { USER_STORAGE_KEY } from "./User";
 
 console.log(recorded_sha);
 
@@ -26,17 +26,16 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 }
 
 function Helper(props: { allToHandle: AllToHandleType }) {
-  const local = localStorage.getItem("login");
+  const local = localStorage.getItem(USER_STORAGE_KEY);
   var u = null;
   if (local) {
     u = JSON.parse(local);
   }
 
-  const [user, update] = useState<UserType | null>(u);
+  const [user, update] = useState<string | null>(u);
   const filteredAllToHandle = Object.fromEntries(
     Object.entries(props.allToHandle).filter(
-      ([_, toHandle]) =>
-        toHandle.user.email === user?.email || (user && isAdmin(user))
+      ([_, toHandle]) => toHandle.user === user
     )
   );
   return (
@@ -63,7 +62,7 @@ function Helper(props: { allToHandle: AllToHandleType }) {
   );
 }
 
-function RoutedEdit(props: { user: UserType; allToHandle: AllToHandleType }) {
+function RoutedEdit(props: { user: string; allToHandle: AllToHandleType }) {
   let params = useParams();
   const k = params.key!;
   return <Edit k={k} user={props.user} allToHandle={props.allToHandle} />;

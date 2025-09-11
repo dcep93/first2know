@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import firebase, { AllToHandleType, ToHandleType, UserType } from "./firebase";
+import firebase, { AllToHandleType, ToHandleType } from "./firebase";
 import { RenderToHandle } from "./Show";
 import ToHandle from "./ToHandle";
 
 function Edit(props: {
   k: string;
-  user: UserType;
+  user: string;
   allToHandle: AllToHandleType;
 }) {
   const toHandle = props.allToHandle[props.k];
@@ -25,7 +25,7 @@ function Edit(props: {
 }
 
 function RoutedEdit(props: {
-  user: UserType;
+  user: string;
   k: string;
   toHandle: ToHandleType;
   allToHandle: AllToHandleType;

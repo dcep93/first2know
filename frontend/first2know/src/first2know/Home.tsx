@@ -1,8 +1,8 @@
 import Create from "./Create";
-import { AllToHandleType, UserType } from "./firebase";
+import { AllToHandleType } from "./firebase";
 import Show from "./Show";
 
-function Home(props: { user: UserType; allToHandle: AllToHandleType }) {
+function Home(props: { user: string; allToHandle: AllToHandleType }) {
   return (
     <>
       <Create user={props.user} allToHandle={props.allToHandle} />

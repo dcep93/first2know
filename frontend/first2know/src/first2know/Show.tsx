@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { AllToHandleType, ToHandleType, UserType } from "./firebase";
+import { AllToHandleType, ToHandleType } from "./firebase";
 import styles from "./index.module.css";
 
 function Show(props: {
-  user: UserType;
+  user: string;
   allToHandle: AllToHandleType;
 }): JSX.Element {
   return (
