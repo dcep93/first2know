@@ -105,15 +105,17 @@ def _extract_to_handle(
     key: str,
     d: typing.Dict[str, str],
 ) -> ToHandle:
-    decrypted = crypt.decrypt(d["to_handle"], d["user"])
+    decrypted = crypt.decrypt(d["encrypted"], d["user"])
     loaded = json.loads(decrypted)
     loaded["key"] = key
     return ToHandle.parse_obj(loaded)
 
 
 def write_data(to_handle: ToHandle) -> None:
-    encoded = crypt.encrypt(to_handle.json(), to_handle.user)
-    db.reference(f"to_handle/{to_handle.key}").set(encoded)
+    encrypted = crypt.encrypt(to_handle.json(), to_handle.user)
+    db.reference(f"to_handle/{to_handle.key}").set(
+        {"encrypted": encrypted, "user": to_handle.user}
+    )
 
 
 def write_token(token: str) -> None:

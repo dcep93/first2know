@@ -35,6 +35,8 @@ export type ToHandleType = {
   user: string;
 };
 
+type WrappedToHandleType = { user: string; encrypted: string };
+
 function filterDict(d: Record<string, any>): Record<string, any> {
   return Object.fromEntries(
     Object.entries(d)
@@ -44,7 +46,7 @@ function filterDict(d: Record<string, any>): Record<string, any> {
   );
 }
 
-function encryptToHandle(toHandle: ToHandleType) {
+function encryptToHandle(toHandle: ToHandleType): WrappedToHandleType {
   const encrypted = crypt.encrypt(
     JSON.stringify({
       ...filterDict({
@@ -54,7 +56,7 @@ function encryptToHandle(toHandle: ToHandleType) {
     }),
     LOCAL_USER!.fernet_secret
   );
-  return { email: LOCAL_USER!.email, encrypted };
+  return { user: LOCAL_USER!.email, encrypted };
 }
 
 function pushToHandle(data_input: DataInputType): Promise<string> {
@@ -87,12 +89,12 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
       if (title !== null) document.title = title;
       firebase._connect(
         this.getFirebasePath(),
-        (rawToHandle: Record<string, { email: string; encrypted: string }>) =>
+        (rawToHandle: Record<string, WrappedToHandleType>) =>
           Promise.resolve()
             .then(() =>
               Object.entries(rawToHandle || {})
                 .map(([key, obj]) => ({ key, obj }))
-                .filter(({ obj }) => obj.email === LOCAL_USER?.email)
+                .filter(({ obj }) => obj.user === LOCAL_USER?.email)
                 .map(({ key, obj }) => ({
                   ...JSON.parse(
                     crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)!
