@@ -36,7 +36,6 @@ def get_fernet_key_str(encryption_key: str) -> bytes:
     return fernet_key_str
 
 
-# for now, the email password is also the encryption key
 @lru_cache
 def _get_cipher_suite(encryption_key: str) -> Fernet:
     fernet_key_str = get_fernet_key_str(encryption_key)

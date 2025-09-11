@@ -49,18 +49,20 @@ function User() {
               firebase.signInWithPopup(firebase.auth, firebase.provider)
             )
             .then((result) =>
-              sfetch("/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token: result.user.getIdToken() }),
-              })
-                .then((resp) => resp.json())
-                .then((resp: LocalUserType) => {
-                  if (resp.email !== result.user.email) {
-                    throw new Error("email");
-                  }
-                  return resp;
+              result.user.getIdToken().then((token) =>
+                sfetch("/login", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ token }),
                 })
+                  .then((resp) => resp.json())
+                  .then((resp: LocalUserType) => {
+                    if (resp.email !== result.user.email) {
+                      throw new Error("email");
+                    }
+                    return resp;
+                  })
+              )
             )
             .then((resp) => {
               localStorage.clear();

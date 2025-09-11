@@ -2,9 +2,11 @@ import time
 import traceback
 import typing
 
-from fastapi import FastAPI, Response  # type: ignore
+from fastapi import FastAPI, Request, Response  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from fastapi.responses import JSONResponse, HTMLResponse  # type: ignore
+
+import firebase_admin  # type: ignore
 
 from . import cron
 from . import crypt
@@ -36,6 +38,7 @@ def init() -> None:
         "startup",
         str(time.time()),
     )
+    firebase_admin.initialize_app(options={"projectId": "first2know20250716"})
 
 
 web_app = FastAPI()
@@ -143,10 +146,11 @@ def get_cron() -> Response:
 
 
 @web_app.post("/login")
-def login() -> Response:
-    # todo get email
-    # todo lru memoize _get_cipher_suite
-    email = "email"
+async def login(request: Request) -> Response:
+    data = await request.json()
+    token = data.get("token")
+    decoded = firebase_admin.auth.verify_id_token(token)
+    email = decoded["email"]
     fernet_key_str = crypt.get_fernet_key_str(email)
     return JSONResponse(
         status_code=200,
