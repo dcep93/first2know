@@ -95,13 +95,19 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
               Object.entries(rawToHandle || {})
                 .map(([key, obj]) => ({ key, obj }))
                 .filter(({ obj }) => obj.user === LOCAL_USER?.email)
-                .map(({ key, obj }) => ({
-                  ...JSON.parse(
-                    crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)!
-                  ),
-                  key,
-                }))
-                .filter((toHandle: ToHandleType) => toHandle.user)
+                .map(({ key, obj }) => {
+                  try {
+                    return {
+                      ...JSON.parse(
+                        crypt.decrypt(obj.encrypted, LOCAL_USER!.fernet_secret)!
+                      ),
+                      key,
+                    };
+                  } catch (err) {
+                    return null;
+                  }
+                })
+                .filter(Boolean)
             )
             .then((state: ToHandleType[]) =>
               FirebaseWrapper.firebaseWrapperComponent.setState.bind(
