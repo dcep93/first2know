@@ -4,8 +4,11 @@ import unittest
 
 from . import crypt
 from . import firebase_wrapper
+from . import logger
 from . import manager
 from . import screenshot
+
+logger.logger.disabled = True
 
 
 class TestFirst2Know(unittest.TestCase):
