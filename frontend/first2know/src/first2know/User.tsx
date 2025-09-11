@@ -67,8 +67,8 @@ function User() {
   );
 }
 
-export function isAdmin(user: string): boolean {
-  return ["dcep93@gmail.com"].includes(user);
+export function isAdmin(email: string): boolean {
+  return ["dcep93@gmail.com"].includes(email);
 }
 
 export function hashCode(s: string): number {
