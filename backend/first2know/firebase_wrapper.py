@@ -1,7 +1,5 @@
 # https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
-import base64
-import hashlib
 import json
 import threading
 import time
@@ -9,15 +7,13 @@ import typing
 
 from pydantic import BaseModel  # type: ignore
 
-from cryptography.fernet import Fernet  # type: ignore
-
 from google.auth import credentials as auth_creds  # type: ignore
 import firebase_admin  # type: ignore
 from firebase_admin import credentials as firebase_creds  # type: ignore
 from firebase_admin import db  # type: ignore
 
+from . import crypt
 from . import logger
-from . import secrets
 
 
 class ErrorType(BaseModel):
@@ -47,22 +43,16 @@ class DataInput(BaseModel):
     raw_proxy: typing.Optional[bool] = None
 
 
-class User(BaseModel):
-    email: str
-
-
 class ToHandle(BaseModel):
     data_input: DataInput
-    user: User
+    user: str
     md5: str
     key: str
     data_output: typing.Optional[DataOutput] = None
 
 
 class Vars:
-    _raw_all_to_handle: typing.Optional[
-        typing.Dict[str, typing.Dict[str, typing.Any]]
-    ] = None
+    _raw_all_to_handle: typing.Optional[typing.Dict[str, typing.Dict[str, str]]] = None
 
 
 class Creds(firebase_creds.ApplicationDefault):
@@ -109,52 +99,22 @@ def wait_10s_for_data() -> None:
 def get_to_handle() -> typing.List[ToHandle]:
     if Vars._raw_all_to_handle is None:
         return []
-    return [
-        i
-        for i in [_extract_to_handle(k, v) for k, v in Vars._raw_all_to_handle.items()]
-        if i
-    ]
+    return [_extract_to_handle(k, v) for k, v in Vars._raw_all_to_handle.items()]
 
 
 def _extract_to_handle(
     key: str,
-    d: typing.Dict[str, typing.Any],
-) -> typing.Optional[ToHandle]:
-    d = dict(d)
-    encrypted = d.pop("encrypted", None)
-
-    if encrypted:
-        decrypted = decrypt(encrypted)
-        d["data_input"] = json.loads(decrypted)
-
-    to_handle = ToHandle(
-        key=key,
-        **d,
-    )
-
-    to_md5 = json.dumps(
-        [
-            dict(to_handle.data_input),
-        ],
-        separators=(",", ":"),
-    )
-    md5 = str_to_md5(to_md5)
-    if md5 != to_handle.md5:
-        logger.log(f"firebase_wrapper._extract_to_handle.user {to_handle.user}")
-        logger.log(f"firebase_wrapper._extract_to_handle.key_md5 {key} {md5}")
-        return None
-
-    return to_handle
+    d: typing.Dict[str, str],
+) -> ToHandle:
+    decrypted = crypt.decrypt(d["to_handle"], d["user"])
+    loaded = json.loads(decrypted)
+    loaded["key"] = key
+    return ToHandle.parse_obj(loaded)
 
 
-def str_to_md5(b: str) -> str:
-    return hashlib.md5(b.encode("utf-8")).hexdigest()
-
-
-def write_data(key: str, data_output: DataOutput) -> None:
-    if key == "":
-        return
-    db.reference(f"to_handle/{key}/data_output").set(data_output.dict())
+def write_data(to_handle: ToHandle) -> None:
+    encoded = crypt.encrypt(to_handle.json(), to_handle.user)
+    db.reference(f"to_handle/{to_handle.key}").set(encoded)
 
 
 def write_token(token: str) -> None:
@@ -177,28 +137,3 @@ def get_token() -> str:
     raw = db.reference("token").get()
     token: str = raw  # type: ignore
     return token
-
-
-def encrypt(a: str) -> str:
-    cipher_suite = _get_cipher_suite()
-    b = a.encode("utf-8")
-    c = cipher_suite.encrypt(b)
-    d = base64.b64encode(c)
-    e = d.decode("utf-8")
-    return e
-
-
-def decrypt(e: str) -> str:
-    cipher_suite = _get_cipher_suite()
-    d = e.encode("utf-8")
-    c = base64.b64decode(d)
-    b = cipher_suite.decrypt(c)
-    a = b.decode("utf-8")
-    return a
-
-
-# for now, the email password is also the encryption key
-def _get_cipher_suite() -> Fernet:
-    client_secret = secrets.Vars.secrets.email_password * 32
-    key = base64.b64encode(client_secret.encode("utf-8")[:32])
-    return Fernet(key)

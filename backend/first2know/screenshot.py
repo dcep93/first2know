@@ -13,9 +13,10 @@ from pydantic import BaseModel  # type: ignore
 from PIL import Image, ImageDraw  # type: ignore
 
 from . import cron
-from . import logger
+from . import crypt
 from . import exceptions
 from . import firebase_wrapper
+from . import logger
 from . import proxy
 
 import nest_asyncio  # type: ignore
@@ -160,11 +161,11 @@ class Screenshot:
         C()
 
         if raw_evaluation is None:
-            md5 = firebase_wrapper.str_to_md5(img_data)
+            md5 = crypt.str_to_md5(img_data)
             evaluation = None
         else:
             evaluation = str_evaluation
-            md5 = firebase_wrapper.str_to_md5(str_evaluation)
+            md5 = crypt.str_to_md5(str_evaluation)
         elapsed = time.time() - s
         self.log(
             " ".join(

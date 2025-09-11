@@ -163,13 +163,12 @@ def handle(
         if not ignorable_exception is None:
             return str(ignorable_exception)
         traceback_err = traceback.format_exc()
-        to_write = data_output
-        to_write.error = firebase_wrapper.ErrorType(
-            version=VERSION,
-            time=time.time(),
-            message=f"{type(e)}: {e}\n{traceback_err}",
+        err_str = f"{type(e)}: {e}\n{traceback_err}"
+        data_output.error = firebase_wrapper.ErrorType(
+            version=VERSION, time=time.time(), message=err_str
         )
-        firebase_wrapper.write_data(to_handle.key, to_write)
+        to_handle.data_output = data_output
+        firebase_wrapper.write_data(to_handle)
         text = "\n".join(
             [
                 str(type(e)),
@@ -177,12 +176,11 @@ def handle(
                 f"https://first2know.web.app/{to_handle.key}",
             ]
         )
-        err_str = to_write.error.message
         err_img_data = screenshot.str_to_binary_data(err_str)
         if Vars.is_just_cron:
             return "error"
         email_wrapper.send_email(
-            to_handle.user.email,
+            to_handle.user,
             subject,
             text,
             err_img_data,
@@ -198,12 +196,16 @@ def handle(
     if screenshot_response.md5 == old_md5:
         if data_output.error is not None:
             data_output.error = None
-            firebase_wrapper.write_data(to_handle.key, data_output)
+            to_handle.data_output = data_output
+            firebase_wrapper.write_data(to_handle)
         return "old_md5"
 
     logger.log(f"cron.log.md5 {screenshot_response.md5} {old_md5}")
 
-    to_write = firebase_wrapper.DataOutput(
+    old_data_str = (
+        to_handle.data_output.model_dump_json() if to_handle.data_output else ""
+    )
+    to_handle.data_output = firebase_wrapper.DataOutput(
         screenshot_data=firebase_wrapper.ScreenshotData(
             md5=screenshot_response.md5,
             evaluation=screenshot_response.evaluation,
@@ -217,10 +219,7 @@ def handle(
             to_handle.data_input.url,
             f"https://first2know.web.app/{to_handle.key}",
             json.dumps(
-                {
-                    "to_handle": to_handle.model_dump_json(),
-                    "to_write": to_write.model_dump_json(),
-                },
+                {"to_handle": to_handle.model_dump_json(), "old_data": old_data_str},
                 indent=2,
             ),
         ]
@@ -231,17 +230,19 @@ def handle(
     logger.log(f"text swallowed: {text}")
 
     email_wrapper.send_email(
-        to_handle.user.email,
+        to_handle.user,
         subject,
         str(time.time()),
         screenshot_response.img_data,
     )
 
-    logger.log(f"cron.log.handled {to_handle.key} {to_write.model_dump_json()}")
+    logger.log(
+        f"cron.log.handled {to_handle.key} {to_handle.data_output.model_dump_json()}"
+    )
 
-    firebase_wrapper.write_data(to_handle.key, to_write)
+    firebase_wrapper.write_data(to_handle)
 
-    return "to_write"
+    return "write_data"
 
 
 if __name__ == "__main__":
