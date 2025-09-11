@@ -19,7 +19,8 @@ export type DataOutputType = {
 
 export type DataInputType = {
   url: string;
-  params: { [s: string]: any };
+  params: { [s: string]: any } | null;
+  cookies: { [domain: string]: string } | null;
   selector: string | null;
   evaluate: string | null;
   evaluation_to_img: boolean | null;

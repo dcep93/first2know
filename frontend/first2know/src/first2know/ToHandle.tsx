@@ -6,13 +6,12 @@ import loading from "./loading.gif";
 
 const urlRef = createRef<HTMLInputElement>();
 const rawProxyRef = createRef<HTMLInputElement>();
-// const cookieRef = createRef<HTMLInputElement>();
+const cookiesRef = createRef<HTMLInputElement>();
 const userAgentRef = createRef<HTMLInputElement>();
 const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
-// const deleteOldCookieRef = createRef<HTMLInputElement>();
 
 type SubmitType = (data_input: DataInputType) => Promise<string>;
 
@@ -23,6 +22,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
   const navigate = useNavigate();
 
   const defaultParamsValue = props.toHandle?.data_input.params;
+  const defaultCookiesValue = props.toHandle?.data_input.cookies;
   return (
     <div>
       <button
@@ -110,6 +110,18 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
           />
         </div>
         <div>
+          cookies:{" "}
+          <input
+            ref={cookiesRef}
+            defaultValue={
+              defaultCookiesValue === null
+                ? undefined
+                : JSON.stringify(defaultCookiesValue)
+            }
+            type="text"
+          />
+        </div>
+        <div>
           css_selector:{" "}
           <input
             ref={cssSelectorRef}
@@ -167,11 +179,14 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
 function getData(): DataInputType {
   const paramsJson = paramsRef.current!.value || null;
   const params = paramsJson ? JSON.parse(paramsJson) : {};
+  const cookiesJson = cookiesRef.current!.value || null;
+  const cookies = cookiesJson ? JSON.parse(cookiesJson) : {};
   // const cookie = cookieRef.current!.value || null;
   // if (cookie) params.cookie = cookie;
   return {
     url: urlRef.current!.value,
     params,
+    cookies,
     selector: cssSelectorRef.current!.value || null,
     evaluate: evaluateRef.current!.value || null,
     evaluation_to_img: evaluationToImgRef.current!.checked || false,
