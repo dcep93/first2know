@@ -11,7 +11,7 @@
     "@types/node": "^16.11.36",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
-    "fernet": "^0.3.3",
+    "fernet-nodejs": "^1.0.6",
     "firebase": "^9.8.3",
     "md5": "^2.3.0",
     "react": "^18.1.0",
