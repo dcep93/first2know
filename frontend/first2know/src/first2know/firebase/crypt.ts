@@ -14,12 +14,8 @@ function decrypt(
   encrypted_string: string,
   secret: typeof Secret
 ): string | null {
-  try {
-    const token = new Token({ secret, token: encrypted_string });
-    return token.decode();
-  } catch (err) {
-    return null;
-  }
+  const token = new Token({ secret, token: encrypted_string });
+  return token.decode();
 }
 
 const s = getSecret("12341234123412341234123412341234");
