@@ -189,7 +189,7 @@ class TestFirst2Know(unittest.TestCase):
 
     def test_decryption(self) -> None:
         # encrypted = crypt.encrypt("hello world", "")
-        encrypted = "Z0FBQUFBQm93MUJ5a0laTHpJd3VSZU5EZlduWDE3NlQ0S010RDFMblVmLU5lY0JCMDExa2h4WDV6UFpmRE93Q2p3aUJpNG84SmZPOXFqYWt2clIzb2lqWFBnMzN1VFlLVnc9PQ=="
+        encrypted = "gAAAAABow16nuligFFFbX2RkIMZvxSTbIBDGLy05gCYkUAmulqQOWLyf2TkeSfeIzluUiJgeTkhwcfyDCojD7wvrMdkznNOLvg=="
         decrypted = crypt.decrypt(encrypted, "")
         self.assertEqual(decrypted, "hello world")
 
@@ -199,8 +199,3 @@ class TestFirst2Know(unittest.TestCase):
         self.assertEqual(a, b)
         c = crypt.encrypt("hello world", "c")
         self.assertNotEqual(a, c)
-
-    def test_encrypt_decrypt(self) -> None:
-        encrypted = "gAAAAABow1HzRLQP8va8Vx6SKky1-yFlVqdLOI-OXPWIqlBcTCfF8mkqLWbsGqoq1xulQ_Xm50DuSPFbMKqklLF3CeuBkTJzbb5uWte8OaNoYK52HiFW5b1_ibVGweId1wWSyQV0UO6E8dX2w8ipKoJ35Puq-svrvzbgTaCaiZu2CJzspdaCi3s="
-        decrypted = crypt.decrypt(encrypted, "dcep93@gmail.com")
-        print(decrypted)

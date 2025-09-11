@@ -12,10 +12,10 @@ from . import secrets
 def encrypt(unencrypted_string: str, encryption_key: str) -> str:
     fernet_key_bytes = get_fernet_key_bytes(encryption_key)
     cipher_suite = Fernet(fernet_key_bytes)
-    encoded = unencrypted_string.encode("utf-8")
-    encrypted_bytes = cipher_suite.encrypt(encoded)
-    encoded_bytes = base64.b64encode(encrypted_bytes)
-    encrypted_string = encoded_bytes.decode("utf-8")
+
+    unencrypted_bytes = unencrypted_string.encode("utf-8")
+    encrypted_bytes = cipher_suite.encrypt(unencrypted_bytes)
+    encrypted_string = encrypted_bytes.decode("utf-8")
     return encrypted_string
 
 
@@ -23,10 +23,10 @@ def encrypt(unencrypted_string: str, encryption_key: str) -> str:
 def decrypt(encrypted_string: str, encryption_key: str) -> str:
     fernet_key_bytes = get_fernet_key_bytes(encryption_key)
     cipher_suite = Fernet(fernet_key_bytes)
-    encoded_bytes = encrypted_string.encode("utf-8")
-    encrypted_bytes = base64.b64decode(encoded_bytes)
-    encoded_string = cipher_suite.decrypt(encrypted_bytes)
-    unencrypted_string = encoded_string.decode("utf-8")
+
+    encrypted_bytes = encrypted_string.encode("utf-8")
+    unencrypted_bytes = cipher_suite.decrypt(encrypted_bytes)
+    unencrypted_string = unencrypted_bytes.decode("utf-8")
     return unencrypted_string
 
 
