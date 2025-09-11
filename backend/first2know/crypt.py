@@ -1,11 +1,14 @@
 import base64
 import hashlib
 
+from functools import lru_cache
+
 from cryptography.fernet import Fernet  # type: ignore
 
 from . import secrets
 
 
+@lru_cache
 def encrypt(unencrypted_string: str, encryption_key: str) -> str:
     cipher_suite = _get_cipher_suite(encryption_key)
     encoded = unencrypted_string.encode("utf-8")
@@ -15,6 +18,7 @@ def encrypt(unencrypted_string: str, encryption_key: str) -> str:
     return encrypted_string
 
 
+@lru_cache
 def decrypt(encrypted_string: str, encryption_key: str) -> str:
     cipher_suite = _get_cipher_suite(encryption_key)
     encoded_string = encrypted_string.encode("utf-8")
@@ -24,6 +28,7 @@ def decrypt(encrypted_string: str, encryption_key: str) -> str:
     return unencrypted_string
 
 
+@lru_cache
 def get_fernet_key_str(encryption_key: str) -> bytes:
     small_key = str_to_md5(secrets.Vars.secrets.email_password + encryption_key)
     big_key = small_key * 32
@@ -32,11 +37,13 @@ def get_fernet_key_str(encryption_key: str) -> bytes:
 
 
 # for now, the email password is also the encryption key
+@lru_cache
 def _get_cipher_suite(encryption_key: str) -> Fernet:
     fernet_key_str = get_fernet_key_str(encryption_key)
     fernet_key = base64.b64encode(fernet_key_str)
     return Fernet(fernet_key)
 
 
+@lru_cache
 def str_to_md5(b: str) -> str:
     return hashlib.md5(b.encode("utf-8")).hexdigest()
