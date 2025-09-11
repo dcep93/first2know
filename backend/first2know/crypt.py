@@ -10,7 +10,8 @@ from . import secrets
 
 @lru_cache
 def encrypt(unencrypted_string: str, encryption_key: str) -> str:
-    cipher_suite = _get_cipher_suite(encryption_key)
+    fernet_key_bytes = get_fernet_key_bytes(encryption_key)
+    cipher_suite = Fernet(fernet_key_bytes)
     encoded = unencrypted_string.encode("utf-8")
     encrypted_bytes = cipher_suite.encrypt(encoded)
     encoded_bytes = base64.b64encode(encrypted_bytes)
@@ -20,7 +21,8 @@ def encrypt(unencrypted_string: str, encryption_key: str) -> str:
 
 @lru_cache
 def decrypt(encrypted_string: str, encryption_key: str) -> str:
-    cipher_suite = _get_cipher_suite(encryption_key)
+    fernet_key_bytes = get_fernet_key_bytes(encryption_key)
+    cipher_suite = Fernet(fernet_key_bytes)
     encoded_bytes = encrypted_string.encode("utf-8")
     encrypted_bytes = base64.b64decode(encoded_bytes)
     encoded_string = cipher_suite.decrypt(encrypted_bytes)
@@ -33,14 +35,8 @@ def get_fernet_key_bytes(encryption_key: str) -> bytes:
     small_key = str_to_md5(secrets.Vars.secrets.email_password + encryption_key)
     big_key = small_key * 32
     fernet_key_bytes = big_key.encode("utf-8")[:32]
-    return fernet_key_bytes
-
-
-@lru_cache
-def _get_cipher_suite(encryption_key: str) -> Fernet:
-    fernet_key_bytes = get_fernet_key_bytes(encryption_key)
-    fernet_key = base64.b64encode(fernet_key_bytes)
-    return Fernet(fernet_key)
+    encoded_bytes = base64.urlsafe_b64encode(fernet_key_bytes)
+    return encoded_bytes
 
 
 @lru_cache
