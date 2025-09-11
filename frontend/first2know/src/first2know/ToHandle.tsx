@@ -1,12 +1,7 @@
 import { createRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { clog, sfetch, url } from "./Server";
-import {
-  AllToHandleType,
-  DataInputType,
-  ScreenshotDataType,
-  ToHandleType,
-} from "./firebase";
+import { DataInputType, ScreenshotDataType, ToHandleType } from "./firebase";
 import loading from "./loading.gif";
 
 const urlRef = createRef<HTMLInputElement>();
@@ -21,12 +16,7 @@ const cssSelectorRef = createRef<HTMLInputElement>();
 
 type SubmitType = (data_input: DataInputType) => Promise<string>;
 
-function ToHandle(props: {
-  user: string;
-  toHandle?: ToHandleType;
-  submit: SubmitType;
-  allToHandle: AllToHandleType;
-}) {
+function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
   const [resp_data, update] = useState<ScreenshotDataType | null | undefined>(
     undefined
   );

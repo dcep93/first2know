@@ -1,11 +1,9 @@
 // https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
 import React from "react";
+import { LOCAL_USER } from "../User";
+import crypt from "./crypt";
 import firebase from "./firebase";
-
-export type AllToHandleType = {
-  [key: string]: ToHandleType;
-};
 
 export type ScreenshotDataType = {
   md5: string;
@@ -30,43 +28,33 @@ export type DataInputType = {
 };
 
 export type ToHandleType = {
+  key: string;
   data_input: DataInputType;
   data_output: DataOutputType | null;
   user: string;
 };
 
-function _FBToHandle(toHandle: ToHandleType): string {
-  return "TODO";
-  // const to_md5 = JSON.stringify([toHandle.data_input]);
-  // const md5 = to_md5_f(to_md5);
-  // console.log({ md5, to_md5 });
-  // return {
-  //   ...toHandle,
-  //   md5,
-  //   user: {
-  //     ...toHandle.user,
-  //   },
-  // };
+function encryptToHandle(toHandle: ToHandleType) {
+  const encrypted = crypt.encrypt(JSON.stringify(toHandle), LOCAL_USER!.key);
+  return { email: LOCAL_USER!.email, encrypted };
 }
 
-function pushToHandle(
-  data_input: DataInputType,
-  user: string
-): Promise<string> {
+function pushToHandle(data_input: DataInputType): Promise<string> {
   const toHandle: ToHandleType = {
     data_input,
     data_output: null,
-    user,
+    user: LOCAL_USER!.email,
+    key: "",
   };
-  return firebase._push(`/to_handle/`, _FBToHandle(toHandle));
+  return firebase._push(`/to_handle/`, encryptToHandle(toHandle));
 }
 
 function deleteToHandle(key: string): Promise<void> {
   return firebase._delete(`/to_handle/${key}`);
 }
 
-function updateToHandle(key: string, toHandle: ToHandleType): Promise<void> {
-  return firebase._set(`/to_handle/${key}`, _FBToHandle(toHandle));
+function updateToHandle(toHandle: ToHandleType): Promise<void> {
+  return firebase._set(`/to_handle/${toHandle.key}`, encryptToHandle(toHandle));
 }
 
 export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
@@ -79,10 +67,24 @@ export class FirebaseWrapper<T> extends React.Component<{}, { state: T }> {
     } else {
       const title = this.getTitle();
       if (title !== null) document.title = title;
-      firebase._connect(this.getFirebasePath(), (state) =>
-        FirebaseWrapper.firebaseWrapperComponent.setState.bind(
-          FirebaseWrapper.firebaseWrapperComponent
-        )({ state })
+      firebase._connect(
+        this.getFirebasePath(),
+        (rawToHandle: Record<string, { email: string; encrypted: string }>) =>
+          Promise.resolve()
+            .then(() =>
+              Object.entries(rawToHandle)
+                .map(([key, obj]) => ({ key, obj }))
+                .filter(({ obj }) => obj.email === LOCAL_USER?.email)
+                .map(({ key, obj }) => ({
+                  ...JSON.parse(crypt.decrypt(obj.encrypted, LOCAL_USER!.key)),
+                  key,
+                }))
+            )
+            .then((state: ToHandleType[]) =>
+              FirebaseWrapper.firebaseWrapperComponent.setState.bind(
+                FirebaseWrapper.firebaseWrapperComponent
+              )({ state })
+            )
       );
     }
   }

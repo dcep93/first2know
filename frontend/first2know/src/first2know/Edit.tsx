@@ -1,22 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import firebase, { AllToHandleType, ToHandleType } from "./firebase";
+import firebase, { ToHandleType } from "./firebase";
 import { RenderToHandle } from "./Show";
 import ToHandle from "./ToHandle";
 
-function Edit(props: {
-  k: string;
-  user: string;
-  allToHandle: AllToHandleType;
-}) {
-  const toHandle = props.allToHandle[props.k];
+function Edit(props: { toHandle: ToHandleType }) {
   return (
     <>
-      <RoutedEdit
-        k={props.k}
-        user={props.user}
-        toHandle={toHandle}
-        allToHandle={props.allToHandle}
-      />
+      <RoutedEdit toHandle={props.toHandle} />
       <div>
         <Link to="/">Home</Link>
       </div>
@@ -24,43 +14,41 @@ function Edit(props: {
   );
 }
 
-function RoutedEdit(props: {
-  user: string;
-  k: string;
-  toHandle: ToHandleType;
-  allToHandle: AllToHandleType;
-}) {
+function RoutedEdit(props: { toHandle: ToHandleType }) {
   const navigate = useNavigate();
-  if (!props.toHandle) return <pre>key not found: {props.k}</pre>;
   return (
     <>
       <ToHandle
-        user={props.user}
         toHandle={props.toHandle}
         submit={(data_input) =>
           firebase
-            .updateToHandle(props.k, {
+            .updateToHandle({
+              ...props.toHandle,
               data_input,
               data_output:
                 props.toHandle.data_output === null
                   ? null
                   : { ...props.toHandle.data_output, error: null },
-              user: props.user,
             })
-            .then(() => props.k)
+            .then(() => props.toHandle.key)
         }
-        allToHandle={props.allToHandle}
       />
       <button
         onClick={() => {
-          if (window.confirm(`Do you really want to delete ${props.k}?`))
-            firebase.deleteToHandle(props.k).then(() => navigate("/"));
+          if (
+            window.confirm(
+              `Do you really want to delete ${props.toHandle.key}?`
+            )
+          )
+            firebase
+              .deleteToHandle(props.toHandle.key)
+              .then(() => navigate("/"));
         }}
       >
-        Delete {props.k}
+        Delete {props.toHandle.key}
       </button>
       <div>
-        <RenderToHandle k={props.k} toHandle={props.toHandle} />
+        <RenderToHandle toHandle={props.toHandle} />
       </div>
     </>
   );

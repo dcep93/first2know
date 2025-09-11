@@ -1,18 +1,15 @@
 import { Link } from "react-router-dom";
-import { AllToHandleType, ToHandleType } from "./firebase";
+import { ToHandleType } from "./firebase";
 import styles from "./index.module.css";
 
-function Show(props: {
-  user: string;
-  allToHandle: AllToHandleType;
-}): JSX.Element {
+function Show(props: { toHandles: ToHandleType[] }): JSX.Element {
   return (
     <div>
-      {Object.entries(props.allToHandle).map(([k, toHandle]) => (
-        <div key={k}>
-          <RenderToHandle k={k} toHandle={toHandle} />
+      {props.toHandles.map((toHandle) => (
+        <div key={toHandle.key}>
+          <RenderToHandle toHandle={toHandle} />
           <div>
-            <Link to={`/${k}`}>Edit {k}</Link>
+            <Link to={`/${toHandle.key}`}>Edit {toHandle.key}</Link>
           </div>
         </div>
       ))}
@@ -20,7 +17,7 @@ function Show(props: {
   );
 }
 
-export function RenderToHandle(props: { k: string; toHandle: ToHandleType }) {
+export function RenderToHandle(props: { toHandle: ToHandleType }) {
   return (
     <div>
       <pre className={styles.toHandlePre}>

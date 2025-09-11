@@ -4,25 +4,26 @@ import { FcGoogle } from "react-icons/fc";
 import { sfetch, url } from "./Server";
 
 export const USER_STORAGE_KEY = "user.v1";
+type LocalUserType = { email: string; key: string };
+export const LOCAL_USER: LocalUserType | null = JSON.parse(
+  localStorage.getItem(USER_STORAGE_KEY)!
+);
 
-function User(props: {
-  user: string | null;
-  update: (user: string | null) => void;
-}) {
-  return props.user ? (
+function User() {
+  return LOCAL_USER ? (
     <div>
       <div>
-        {props.user}
+        {LOCAL_USER.email}
         <button
           onClick={() => {
-            localStorage.removeItem("login");
-            props.update(null);
+            localStorage.removeItem(USER_STORAGE_KEY);
+            window.location.reload();
           }}
           className="button"
         >
           Log out
         </button>
-        {isAdmin(props.user) ? (
+        {isAdmin(LOCAL_USER.email) ? (
           <span>
             {" "}
             <a href={url}>admin</a>
@@ -46,7 +47,7 @@ function User(props: {
                 body: JSON.stringify({ token: result.user.getIdToken() }),
               }).then((resp) => resp.json())
             )
-            .then((resp: { email: string; key: string }) => {
+            .then((resp: LocalUserType) => {
               if (!resp.email) {
                 throw new Error("no email");
               }

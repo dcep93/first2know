@@ -1,15 +1,14 @@
-import { useState } from "react";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Edit from "./Edit";
-import { AllToHandleType, FirebaseWrapper } from "./firebase";
+import { FirebaseWrapper, ToHandleType } from "./firebase";
 import Home from "./Home";
 import { recorded_sha } from "./recorded_sha";
 import Server from "./Server";
-import User, { USER_STORAGE_KEY } from "./User";
+import User, { LOCAL_USER } from "./User";
 
 console.log(recorded_sha);
 
-class Main extends FirebaseWrapper<AllToHandleType> {
+class Main extends FirebaseWrapper<ToHandleType[]> {
   getTitle(): string {
     return "first2know";
   }
@@ -20,40 +19,22 @@ class Main extends FirebaseWrapper<AllToHandleType> {
 
   render() {
     if (this.state === null) return <>Loading...</>;
-    const allToHandle = this.state.state || {};
-    return <Helper allToHandle={allToHandle} />;
+    return <Helper toHandles={this.state.state || []} />;
   }
 }
 
-function Helper(props: { allToHandle: AllToHandleType }) {
-  const local = localStorage.getItem(USER_STORAGE_KEY);
-  var u = null;
-  if (local) {
-    u = JSON.parse(local);
-  }
-
-  const [user, update] = useState<string | null>(u);
-  const filteredAllToHandle = Object.fromEntries(
-    Object.entries(props.allToHandle).filter(
-      ([_, toHandle]) => toHandle.user === user
-    )
-  );
+function Helper(props: { toHandles: ToHandleType[] }) {
   return (
     <div>
-      <User user={user} update={update} />
-      {user && (
+      <User />
+      {LOCAL_USER && (
         <BrowserRouter>
           <Routes>
             <Route
               path=":key"
-              element={
-                <RoutedEdit user={user} allToHandle={filteredAllToHandle} />
-              }
+              element={<MainRoutedEdit toHandles={props.toHandles} />}
             />
-            <Route
-              index
-              element={<Home user={user} allToHandle={filteredAllToHandle} />}
-            />
+            <Route index element={<Home toHandles={props.toHandles} />} />
           </Routes>
         </BrowserRouter>
       )}
@@ -62,10 +43,13 @@ function Helper(props: { allToHandle: AllToHandleType }) {
   );
 }
 
-function RoutedEdit(props: { user: string; allToHandle: AllToHandleType }) {
+function MainRoutedEdit(props: { toHandles: ToHandleType[] }) {
   let params = useParams();
-  const k = params.key!;
-  return <Edit k={k} user={props.user} allToHandle={props.allToHandle} />;
+  const toHandle = props.toHandles.find(
+    (toHandle) => toHandle.key === params.key
+  );
+  if (!toHandle) return <pre>key not found: {params.key}</pre>;
+  return <Edit toHandle={toHandle} />;
 }
 
 export default Main;
