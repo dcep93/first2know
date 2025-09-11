@@ -32,7 +32,6 @@ def handle_from_x() -> None:
         },
         "time": 1686424278.642834
       },
-      "md5": "8de637f8392faa41114f3a335ed113e0",
       "user": {
         "email": "dcep93@gmail.com"
       }

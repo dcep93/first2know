@@ -36,8 +36,14 @@ export type ToHandleType = {
 };
 
 function encryptToHandle(toHandle: ToHandleType) {
+  const filtered = Object.fromEntries(
+    Object.entries(toHandle)
+      .map(([k, v]) => ({ k, v }))
+      .filter(({ v }) => v)
+      .map(({ k, v }) => [k, v])
+  );
   const encrypted = crypt.encrypt(
-    JSON.stringify(toHandle),
+    JSON.stringify(filtered),
     LOCAL_USER!.fernet_secret
   );
   return { email: LOCAL_USER!.email, encrypted };

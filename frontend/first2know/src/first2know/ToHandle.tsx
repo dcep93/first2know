@@ -178,16 +178,16 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
 
 function getData(): DataInputType {
   const paramsJson = paramsRef.current!.value || null;
-  const params = paramsJson ? JSON.parse(paramsJson) : {};
+  const params = paramsJson ? JSON.parse(paramsJson) : null;
   const cookiesJson = cookiesRef.current!.value || null;
-  const cookies = cookiesJson ? JSON.parse(cookiesJson) : {};
+  const cookies = cookiesJson ? JSON.parse(cookiesJson) : null;
   return {
     url: urlRef.current!.value,
     params,
     cookies,
     selector: cssSelectorRef.current!.value || null,
     evaluate: evaluateRef.current!.value || null,
-    evaluation_to_img: evaluationToImgRef.current!.checked || false,
+    evaluation_to_img: evaluationToImgRef.current!.checked || null,
     user_agent_hack: userAgentRef.current!.checked || null,
     raw_proxy: rawProxyRef.current!.checked || null,
   };
