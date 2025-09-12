@@ -111,6 +111,12 @@ def _extract_to_handle(
     return ToHandle.parse_obj(loaded)
 
 
+def minimize_dict(d: typing.Any) -> typing.Any:
+    if type(d) is dict:
+        return {k: minimize_dict(v) for k, v in d.items() if v}
+    return
+
+
 def write_data(to_handle: ToHandle) -> None:
     d = to_handle.dict()
     dd = {k: v for k, v in d.items() if v}
