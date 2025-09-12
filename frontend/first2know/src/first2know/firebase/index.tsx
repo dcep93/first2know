@@ -14,6 +14,7 @@ export type ScreenshotDataType = {
 
 export type DataOutputType = {
   screenshot_data?: ScreenshotDataType;
+  time: number | null;
   error: { version: string; time: number; message: string } | null;
 };
 
@@ -37,13 +38,16 @@ export type ToHandleType = {
 
 type WrappedToHandleType = { user: string; encrypted: string };
 
-function filterDict(d: Record<string, any>): Record<string, any> {
-  return Object.fromEntries(
-    Object.entries(d)
-      .map(([k, v]) => ({ k, v }))
-      .filter(({ v }) => v)
-      .map(({ k, v }) => [k, v])
-  );
+function filterDict(d: any): any {
+  if (Object.prototype.toString.call(d) === "[object Object]") {
+    return Object.fromEntries(
+      Object.entries(d)
+        .map(([k, v]) => ({ k, v }))
+        .filter(({ v }) => v)
+        .map(({ k, v }) => [k, filterDict(v)])
+    );
+  }
+  return d;
 }
 
 function encryptToHandle(toHandle: ToHandleType): WrappedToHandleType {
