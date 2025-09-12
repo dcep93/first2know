@@ -103,6 +103,17 @@ class Screenshot:
             params["user-agent"] = GOOD_USER_AGENT
 
         context = await self.browser.new_context()
+        if request.data_input.cookies:
+            await context.add_cookies(
+                [
+                    {
+                        "name": k,
+                        "value": v,
+                        "url": "https://lm-api-reads.fantasy.espn.com/",
+                    }
+                    for k, v in request.data_input.cookies.items()
+                ]
+            )
         page = await context.new_page()
         page.set_default_timeout(30001)
         C()
