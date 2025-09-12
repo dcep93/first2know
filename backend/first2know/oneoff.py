@@ -15,7 +15,11 @@ def main() -> None:
 
 
 def test_fetch_wrapped() -> None:
-    results = fetch_wrapped.fetch_wrapped()
+    screenshot_manager = manager.Manager(
+        screenshot.Screenshot,
+        1,
+    )
+    results = fetch_wrapped.fetch_wrapped(screenshot_manager)
     print(json.dumps(results))
 
 

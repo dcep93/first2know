@@ -167,7 +167,7 @@ async def login(request: Request) -> Response:
 def server_fetch_wrapped() -> Response:
     try:
         s = time.time()
-        results = fetch_wrapped.fetch_wrapped()
+        results = fetch_wrapped.fetch_wrapped(Vars.screenshot_manager)
         e = time.time()
         duration = e - s
         return JSONResponse({"results": results, "duration": duration})
