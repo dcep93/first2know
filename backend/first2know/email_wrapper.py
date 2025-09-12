@@ -3,6 +3,7 @@ import smtplib
 import sys
 from email.message import EmailMessage
 
+from . import logger
 from . import secrets
 
 
@@ -42,7 +43,7 @@ def send_text_email(email_to: str, subject: str, text: str) -> None:
         with _build_server() as server:
             server.send_message(msg)
     except Exception as e:
-        print("email_wrapper.send_text_email", e)
+        logger.log(f"email_wrapper.send_text_email {e}")
         sys.exit(1)
 
 
@@ -80,5 +81,5 @@ def send_email(
         with _build_server() as server:
             server.send_message(msg)
     except Exception as e:
-        print("email_wrapper.send_message", e)
+        logger.log(f"email_wrapper.send_message {e}")
         sys.exit(1)

@@ -59,7 +59,5 @@ class Manager(typing.Generic[T, U]):
         (response, is_successful) = register.get()
         self.response_queues.put_nowait(register)
         if not is_successful:
-            # print(f"raising {response}")
-            # traceback.print_tb(response.__traceback__)
             raise response
         return response

@@ -181,7 +181,6 @@ class TestFirst2Know(unittest.TestCase):
         )
 
     def test_encryption_key_hash(self) -> None:
-        print([secrets.Vars.secrets.email_password])
         hashed = crypt.str_to_md5(secrets.Vars.secrets.email_password)
         self.assertEqual(hashed, "c8fa65a59e40b4d8e670f44801fa499b")
 
@@ -189,10 +188,15 @@ class TestFirst2Know(unittest.TestCase):
         encrypyted = crypt.encrypt("hello world", "")
         self.assertIsNotNone(encrypyted)
 
+    def test_keygen(self) -> None:
+        fernet_key_bytes = crypt.get_fernet_key_bytes("email@email.email")
+        decoded = fernet_key_bytes.decode("utf-8")
+        self.assertEqual(decoded, "N2Q3NGY5YjAyZTZhMjdjZGIxODc5NjMxNDYwYjBhMTc=")
+
     def test_decryption(self) -> None:
         # encrypted = crypt.encrypt("hello world", "")
-        encrypted = "gAAAAABow2f-NhHu8Xqc0R_fBI_xl9R457raMuOBnKx1BfagLMKEXxht90aRSxjNx0ssZ0UZsFDwV8HqoMI4DFh1ojOnExgc6MtZZ6DMrXniFY34iL5RDgIANBUWuwKKeqEUCyeaukZALoLNQ3iOvZ1F5yWSPFDTfH6uUewZe3soZ9LBkmygbNg="
-        decrypted = crypt.decrypt(encrypted, "dcep93@gmail.com")
+        encrypted = "gAAAAABow3MNXwk16B-wx7KTCmZoOC7k8YMe0fFkB1NTg8c0AKoMyS_JLSRy3aWfHZzF0RHbfpnF9ZA3yBhqNoi8HlcqI-HP7g=="
+        decrypted = crypt.decrypt(encrypted, "")
         self.assertEqual(decrypted, "hello world")
 
     def test_encryption_uses_arg(self) -> None:
