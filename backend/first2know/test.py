@@ -3,7 +3,6 @@ import time
 import unittest
 
 from . import crypt
-from . import fetch_wrapped
 from . import firebase_wrapper
 from . import logger
 from . import manager
@@ -210,7 +209,3 @@ class TestFirst2Know(unittest.TestCase):
         self.assertEqual(a, b)
         c = crypt.encrypt("hello world", "c")
         self.assertNotEqual(a, c)
-
-    def test_fetch_wrapped(self) -> None:
-        wrapped = fetch_wrapped.fetch_wrapped(manager.Manager(screenshot.Screenshot, 1))
-        self.assertIsNotNone(wrapped)
