@@ -72,6 +72,7 @@ def get_() -> JSONResponse:
             "cron_age": cron_age,
             "cron_count": cron.Vars.count,
             "cron_results": cron.Vars.latest_result,
+            "cron_runnign": cron.Vars.running,
             "recorded_sha": recorded_sha.recorded_sha,
         },
     )
