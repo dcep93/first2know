@@ -21,6 +21,7 @@ def encrypt(unencrypted_string: str, encryption_key: str) -> str:
 
 @lru_cache
 def decrypt(encrypted_string: str, encryption_key: str) -> str:
+    print([encrypted_string, encryption_key])
     fernet_key_bytes = get_fernet_key_bytes(encryption_key)
     cipher_suite = Fernet(fernet_key_bytes)
 
