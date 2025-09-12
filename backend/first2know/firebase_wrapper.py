@@ -114,7 +114,7 @@ def _extract_to_handle(
 def minimize_dict(d: typing.Any) -> typing.Any:
     if type(d) is dict:
         return {k: minimize_dict(v) for k, v in d.items() if v}
-    return
+    return d
 
 
 def write_data(to_handle: ToHandle) -> None:
