@@ -36,7 +36,7 @@ class DataOutput(BaseModel):
 class DataInput(BaseModel):
     url: typing.Optional[str] = None
     params: typing.Optional[typing.Dict[str, typing.Any]] = None
-    cookies: typing.Optional[typing.Dict[str, str]] = None
+    cookies: typing.Optional[typing.Dict[str, typing.Dict[str, str]]] = None
     selector: typing.Optional[str] = None
     evaluate: typing.Optional[str] = None
     evaluation_to_img: typing.Optional[bool] = False

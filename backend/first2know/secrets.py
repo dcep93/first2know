@@ -7,7 +7,6 @@ from pydantic import BaseModel  # type: ignore
 class Secrets(BaseModel):
     email_user: str
     email_password: str
-    espn_s2: str
 
 
 local_secret_path = os.path.join(

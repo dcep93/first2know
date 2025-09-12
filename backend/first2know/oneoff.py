@@ -3,24 +3,14 @@ import json
 import pydantic  # type: ignore
 
 from . import cron
-from . import fetch_wrapped
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
 
 
 def main() -> None:
-    test_fetch_wrapped()
+    # test_fetch_wrapped()
     print("oneoff complete")
-
-
-def test_fetch_wrapped() -> None:
-    screenshot_manager = manager.Manager(
-        screenshot.Screenshot,
-        1,
-    )
-    results = fetch_wrapped.fetch_wrapped(screenshot_manager)
-    print(results)
 
 
 def handle_from_x() -> None:

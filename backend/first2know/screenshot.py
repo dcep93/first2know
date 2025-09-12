@@ -107,11 +107,12 @@ class Screenshot:
             await context.add_cookies(
                 [
                     {
-                        "name": k,
-                        "value": v,
-                        "url": "https://lm-api-reads.fantasy.espn.com/",
+                        "name": k2,
+                        "value": v2,
+                        "url": k1,
                     }
-                    for k, v in request.data_input.cookies.items()
+                    for k1, v1 in request.data_input.cookies.items()
+                    for k2, v2 in v1.items()
                 ]
             )
         page = await context.new_page()

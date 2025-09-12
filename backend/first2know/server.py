@@ -11,7 +11,6 @@ from firebase_admin import auth  # type: ignore
 from . import cron
 from . import crypt
 from . import email_wrapper
-from . import fetch_wrapped
 from . import logger
 from . import firebase_wrapper
 from . import manager
@@ -161,16 +160,3 @@ async def login(request: Request) -> Response:
             "fernet_key_str": fernet_key_str,
         },
     )
-
-
-@web_app.get("/fetch_wrapped")
-def server_fetch_wrapped() -> Response:
-    try:
-        s = time.time()
-        results = fetch_wrapped.fetch_wrapped(Vars.screenshot_manager)
-        e = time.time()
-        duration = e - s
-        return JSONResponse({"results": results, "duration": duration})
-    except Exception:
-        err = traceback.format_exc()
-        return HTMLResponse(f"<pre>{err}</pre>", 500)
