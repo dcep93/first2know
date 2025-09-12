@@ -180,7 +180,8 @@ class TestFirst2Know(unittest.TestCase):
             )
         )
 
-    def test_encryption_key_not_none(self) -> None:
+    def test_encryption_key_hash(self) -> None:
+        print([secrets.Vars.secrets.email_password])
         hashed = crypt.str_to_md5(secrets.Vars.secrets.email_password)
         self.assertEqual(hashed, "c8fa65a59e40b4d8e670f44801fa499b")
 
@@ -190,8 +191,8 @@ class TestFirst2Know(unittest.TestCase):
 
     def test_decryption(self) -> None:
         # encrypted = crypt.encrypt("hello world", "")
-        encrypted = "gAAAAABow16nuligFFFbX2RkIMZvxSTbIBDGLy05gCYkUAmulqQOWLyf2TkeSfeIzluUiJgeTkhwcfyDCojD7wvrMdkznNOLvg=="
-        decrypted = crypt.decrypt(encrypted, "")
+        encrypted = "gAAAAABow2f-NhHu8Xqc0R_fBI_xl9R457raMuOBnKx1BfagLMKEXxht90aRSxjNx0ssZ0UZsFDwV8HqoMI4DFh1ojOnExgc6MtZZ6DMrXniFY34iL5RDgIANBUWuwKKeqEUCyeaukZALoLNQ3iOvZ1F5yWSPFDTfH6uUewZe3soZ9LBkmygbNg="
+        decrypted = crypt.decrypt(encrypted, "dcep93@gmail.com")
         self.assertEqual(decrypted, "hello world")
 
     def test_encryption_uses_arg(self) -> None:
