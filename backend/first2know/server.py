@@ -63,7 +63,7 @@ def get_() -> JSONResponse:
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
     return JSONResponse(
-        status_code=200 if cron_age < MAX_CRON_AGE else 599,
+        status_code=200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 599,
         content={
             "write_count": cron.Vars.write_count,
             "alive_age_s": alive_age_s,

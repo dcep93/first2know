@@ -35,6 +35,7 @@ def init() -> None:
 class Vars:
     _process = psutil.Process(os.getpid())
     _token: str
+    running = False
     is_just_cron = sys.argv[-1].endswith("cron.py")
     count = 0
     write_count = 0
@@ -63,8 +64,12 @@ def loop() -> bool:
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    rval = loop_with_manager(screenshot_manager)
-    screenshot_manager.close()
+    Vars.running = True
+    try:
+        rval = loop_with_manager(screenshot_manager)
+    finally:
+        Vars.running = False
+        screenshot_manager.close()
     return rval
 
 
