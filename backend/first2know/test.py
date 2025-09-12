@@ -212,6 +212,6 @@ class TestFirst2Know(unittest.TestCase):
         self.assertNotEqual(a, c)
 
     def test_fetch_wrapped(self) -> None:
-        wrapped = fetch_wrapped.fetch_wrapped()
+        wrapped = fetch_wrapped.fetch_wrapped(manager.Manager(screenshot.Screenshot, 1))
         self.assertIsNotNone(wrapped)
         print(wrapped)

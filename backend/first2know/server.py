@@ -164,10 +164,10 @@ async def login(request: Request) -> Response:
 
 
 @web_app.get("/fetch_wrapped")
-def server_fetch_wrapped() -> HTMLResponse:
+def server_fetch_wrapped() -> Response:
     try:
         s = time.time()
-        wrapped = fetch_wrapped.fetch_wrapped()
+        wrapped = fetch_wrapped.fetch_wrapped(Vars.screenshot_manager)
         e = time.time()
         duration = e - s
         return JSONResponse({"wrapped": wrapped, "duration": duration})
