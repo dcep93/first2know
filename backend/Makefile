@@ -30,7 +30,7 @@ test:
 	python3 -m unittest first2know.test
 
 test_single:
-	python3 -m unittest first2know.test.TestFirst2Know.test_encryption_key_hash
+	python3 -m unittest first2know.test.TestFirst2Know.test_fetch_wrapped
 
 list:  # Meta target to list other targets.
 	@$(MAKE) -pRrq -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
