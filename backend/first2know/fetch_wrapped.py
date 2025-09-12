@@ -11,14 +11,16 @@ with open(Path(__file__).parent / "fetchWrapped.js") as fh:
 data_input = firebase_wrapper.DataInput.parse_obj(
     {
         "cookies": {"espn_s2": secrets.Vars.secrets.espn_s2},
-        # "evaluate": contents,
+        "evaluate": contents,
     }
 )
 
 
-def fetch_wrapped(screenshot_manager: manager.Manager) -> None:
-    screenshot_response = screenshot_manager.run(
+def fetch_wrapped(screenshot_manager: manager.Manager) -> str | None:
+    screenshot_response: screenshot.Response = screenshot_manager.run(
         screenshot.Request(
             data_input=data_input,
         )
     )
+
+    return screenshot_response.evaluation

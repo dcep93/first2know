@@ -20,7 +20,7 @@ def test_fetch_wrapped() -> None:
         1,
     )
     results = fetch_wrapped.fetch_wrapped(screenshot_manager)
-    print(json.dumps(results))
+    print(results)
 
 
 def handle_from_x() -> None:
