@@ -3,7 +3,7 @@ import json
 import pydantic  # type: ignore
 
 from . import cron
-from . import email_wrapper
+from . import fetch_wrapped
 from . import firebase_wrapper
 from . import manager
 from . import screenshot
@@ -13,8 +13,10 @@ def main() -> None:
     test_fetch_wrapped()
     print("oneoff complete")
 
+
 def test_fetch_wrapped() -> None:
-    pass
+    results = fetch_wrapped.fetch_wrapped()
+    print(json.dumps(results))
 
 
 def handle_from_x() -> None:
