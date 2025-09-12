@@ -496,7 +496,6 @@ Promise.resolve().then(() => {
           )
           .then((players) => ({ players, timestamp: Date.now() })),
       ])
-      .then((ps) => ps.map((p) => p.catch((e) => console.error(e))))
       .then((ps) => Promise.all(ps))
       .then(
         ([year, nflPlayers, ffTeams, ffMatchups, nflTeams, fantasyCalc]) => ({
