@@ -10,9 +10,11 @@ from . import screenshot
 
 
 def main() -> None:
-    handle_from_x()
-    # cron.main(1)
+    test_fetch_wrapped()
     print("oneoff complete")
+
+def test_fetch_wrapped() -> None:
+    pass
 
 
 def handle_from_x() -> None:
