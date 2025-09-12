@@ -181,7 +181,8 @@ class TestFirst2Know(unittest.TestCase):
         )
 
     def test_encryption_key_not_none(self) -> None:
-        self.assertIsNotNone(secrets.Vars.secrets.email_password)
+        hashed = crypt.str_to_md5(secrets.Vars.secrets.email_password)
+        self.assertEqual(hashed, "c8fa65a59e40b4d8e670f44801fa499b")
 
     def test_encryption(self) -> None:
         encrypyted = crypt.encrypt("hello world", "")
