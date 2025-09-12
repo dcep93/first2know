@@ -107,6 +107,8 @@ class Screenshot:
         page.set_default_timeout(30001)
         C()
         if request.data_input.raw_proxy:
+            if not request.data_input.url:
+                raise Exception("raw_proxy.url.false")
             proxy_result = proxy.proxy(
                 proxy.Request(
                     url=request.data_input.url,

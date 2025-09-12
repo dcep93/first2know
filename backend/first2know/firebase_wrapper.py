@@ -34,7 +34,7 @@ class DataOutput(BaseModel):
 
 
 class DataInput(BaseModel):
-    url: str
+    url: typing.Optional[str] = None
     params: typing.Optional[typing.Dict[str, typing.Any]] = None
     selector: typing.Optional[str] = None
     evaluate: typing.Optional[str] = None

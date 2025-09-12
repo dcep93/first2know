@@ -154,6 +154,10 @@ def handle(
         evaluation=evaluation,
     )
 
+    url_message = (
+        "no_url" if not to_handle.data_input.url else f"url: {to_handle.data_input.url}"
+    )
+
     try:
         screenshot_response: screenshot.Response = screenshot_manager.run(
             request,
@@ -175,7 +179,7 @@ def handle(
         text = "\n".join(
             [
                 str(type(e)),
-                to_handle.data_input.url,
+                url_message,
                 f"https://first2know.web.app/{to_handle.key}",
             ]
         )
@@ -219,7 +223,7 @@ def handle(
 
     text = "\n\n\n".join(
         [
-            to_handle.data_input.url,
+            url_message,
             f"https://first2know.web.app/{to_handle.key}",
             json.dumps(
                 {"to_handle": to_handle.model_dump_json(), "old_data": old_data_str},
