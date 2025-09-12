@@ -120,7 +120,8 @@ def minimize_dict(d: typing.Any) -> typing.Any:
 def write_data(to_handle: ToHandle) -> None:
     d = to_handle.dict()
     dd = minimize_dict(d)
-    encrypted = crypt.encrypt(dd, to_handle.user)
+    ddd = json.dumps(dd)
+    encrypted = crypt.encrypt(ddd, to_handle.user)
     db.reference(f"to_handle/{to_handle.key}").set(
         {"encrypted": encrypted, "user": to_handle.user}
     )
