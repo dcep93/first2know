@@ -5,6 +5,6 @@ WORKDIR /var/www
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY dockerbuild.sh ./
-RUN dockerbuild.sh
+RUN bash dockerbuild.sh
 
 COPY . ./
