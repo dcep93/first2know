@@ -62,15 +62,20 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
                 body,
               })
             )
-            .then((resp) => resp.json())
-            .then(clog)
-            .then((resp_data: ScreenshotDataType) => update(resp_data))
-            .catch((err) => {
-              update(undefined);
-              const e = `${err}`;
-              alert(e.slice(Math.max(0, e.length - 1000)));
-              throw err;
-            })
+            .then((resp) =>
+              !resp.ok
+                ? resp.text().then(alert)
+                : resp
+                    .json()
+                    .then(clog)
+                    .then((resp_data: ScreenshotDataType) => update(resp_data))
+                    .catch((err) => {
+                      update(undefined);
+                      const e = `${err}`;
+                      alert(e.slice(Math.max(0, e.length - 1000)));
+                      throw err;
+                    })
+            )
         }
       >
         <div>
@@ -125,6 +130,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
           css_selector:{" "}
           <input
             ref={cssSelectorRef}
+            disabled={evaluationToImgRef.current?.checked}
             defaultValue={props.toHandle?.data_input.selector || undefined}
             type="text"
           />
@@ -132,10 +138,6 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
         <div>
           js_evaluate: {"("}transform evaluation to img
           <input
-            onChange={() =>
-              (cssSelectorRef.current!.disabled =
-                evaluationToImgRef.current!.checked)
-            }
             defaultChecked={
               props.toHandle?.data_input.evaluation_to_img || false
             }

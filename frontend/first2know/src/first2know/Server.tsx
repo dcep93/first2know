@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 const IS_LOCAL = window.location.search.includes("local");
-const FETCH_INTERVAL_MS = 3 * 1000;
+const FETCH_INTERVAL_MS = 1000;
 
 export const url = IS_LOCAL
   ? "http://localhost:8000"

@@ -110,10 +110,10 @@ def post_screenshot(payload: ScreenshotPayload) -> HTMLResponse:
         )
         resp = screenshot_response.model_dump_json()
         logger.log("server.screenshot.respond")
-        return HTMLResponse(resp)
+        return JSONResponse(resp)
     except Exception:
         err = traceback.format_exc()
-        return HTMLResponse(f"<pre>{err}</pre>", 500)
+        return JSONResponse({"err": err}, 500)
 
 
 @web_app.post("/proxy")
