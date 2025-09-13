@@ -109,7 +109,7 @@ class Screenshot:
                     {
                         "name": k2,
                         "value": v2,
-                        "url": k1,
+                        "domain": k1,
                     }
                     for k1, v1 in request.data_input.cookies.items()
                     for k2, v2 in v1.items()
