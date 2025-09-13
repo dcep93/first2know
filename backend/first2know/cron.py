@@ -16,8 +16,6 @@ from . import screenshot
 from . import email_wrapper
 from . import logger
 
-IGNORE = "first2know_ignore"
-
 # update version to clear errors
 VERSION = "6.2.0"
 
@@ -216,8 +214,8 @@ def handle(
         )
         raise e
 
-    if screenshot_response.evaluation == IGNORE:
-        return IGNORE
+    if screenshot_response.evaluation == exceptions.IGNORE:
+        return screenshot_response.evaluation
 
     old_md5 = (
         None if data_output.screenshot_data is None else data_output.screenshot_data.md5

@@ -4,6 +4,8 @@ import typing
 import asyncio
 import playwright  # type: ignore
 
+IGNORE = "first2know_ignore"
+
 
 class IgnorableException(Exception):
     pass

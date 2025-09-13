@@ -2,7 +2,9 @@ import concurrent.futures
 import time
 import unittest
 
+from . import cron
 from . import crypt
+from . import email_wrapper
 from . import firebase_wrapper
 from . import logger
 from . import manager
@@ -13,6 +15,36 @@ logger.logger.disabled = True
 
 
 class TestFirst2Know(unittest.TestCase):
+    def test_cron_handle(self) -> None:
+        sent_messages = []
+
+        class ContextManager:
+            __enter__ = lambda self: MockServer()
+            __exit__ = lambda *args: None
+
+        class MockServer:
+            send_message = sent_messages.append
+
+        email_wrapper._build_server = lambda: ContextManager()
+        written_data = []
+        firebase_wrapper.write_data = written_data.append
+
+        to_handle = firebase_wrapper.ToHandle(
+            data_input=firebase_wrapper.DataInput(
+                url="https://example.com",
+            ),
+            user="user@email.com",
+            key="",
+        )
+        rval = cron.handle(to_handle, manager.Manager(screenshot.Screenshot, 1))
+        self.assertEqual(rval, "write_data")
+        self.assertEqual(len(written_data), 1)
+        self.assertEqual(
+            written_data[0].data_output.screenshot_data.md5,
+            "72e9afeb37cd66e579ba16edac80f493",
+        )
+        self.assertEqual(sent_messages[0]["To"], "user@email.com")
+
     def test_screenshot(self) -> None:
         data_input = firebase_wrapper.DataInput(url="https://example.com")
         screenshot_response = screenshot.Screenshot()(
