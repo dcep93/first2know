@@ -17,6 +17,7 @@ from . import crypt
 from . import exceptions
 from . import firebase_wrapper
 from . import logger
+from . import manager
 from . import proxy
 
 import nest_asyncio  # type: ignore
@@ -35,6 +36,9 @@ class Response(BaseModel):
     evaluation: typing.Optional[str]
     md5: str
     elapsed: float
+
+
+Manager = manager.Manager[Request, Response]
 
 
 # https://playwright.dev/python/docs/intro

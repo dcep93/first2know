@@ -88,7 +88,9 @@ def running_decorator(f: F) -> F:
 
 
 @running_decorator
-def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
+def loop_with_manager(
+    screenshot_manager: screenshot.Manager,
+) -> bool:
     logger.log("loop_with_manager.looping")
     Vars._token = refresh_access_token()
 

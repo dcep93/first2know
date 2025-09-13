@@ -25,7 +25,7 @@ MAX_CRON_AGE = 300
 
 class Vars:
     start_time = time.time()
-    screenshot_manager: manager.Manager[screenshot.Request, screenshot.Response]
+    screenshot_manager: screenshot.Manager
     health = 0
 
 
