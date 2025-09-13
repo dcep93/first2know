@@ -18,6 +18,7 @@ export default function Server() {
   const iter = useCallback(() => {
     fetch(url)
       .then((resp) => resp.json())
+      .catch((err) => err)
       .then(update)
       .then(() => setTimeout(iter, FETCH_INTERVAL_MS));
   }, []);
