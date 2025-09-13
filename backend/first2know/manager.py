@@ -2,8 +2,6 @@ import queue
 import threading
 import typing
 
-from . import screenshot
-
 T = typing.TypeVar("T")
 U = typing.TypeVar("U")
 
@@ -54,9 +52,7 @@ class Manager(typing.Generic[T, U]):
                 continue
             register.put((response, True))
 
-    # non generic
-    # should be fixed!
-    def run(self, request: T) -> screenshot.Response:
+    def run(self, request: T) -> U:
         register = self.response_queues.get()
         self.request_queue.put_nowait((request, register))
         (response, is_successful) = register.get()

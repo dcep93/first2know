@@ -1,29 +1,41 @@
-dcep93@gmail.comLog out admin
-Submit
-url: 
-raw proxy ?
-user agent hack: 
-params: 
-css_selector: 
-js_evaluate: (transform evaluation to img)
-{
-  "data_input": {
-    "evaluate": "new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(\"first2know_ignore\")\n    const e = document.getElementsByClassName(\"auction-report-page\")[0]\n    if (e) {\n      Array.from(document.getElementsByTagName(\"div\"))\n        .filter(e => e.getAttribute(\"data-box-type\"))\n        .forEach(e => (e.hidden = true))\n      const ee = e.getElementsByClassName(\"dropdown\")[0]\n      return resolve(ee.innerText)\n  }\n  setTimeout(() => helper(i - 10), 10)\n}\nhelper(20000)\n})",
-    "evaluation_to_img": false,
-    "selector": ".auction-report-page",
-    "url": "xhttps://fantasy.espn.com/football/league/offerreport?leagueId=203836968&seasonId=2025"
-  },
-  "md5": "8a047beca82c462630e37d7d7453b588",
-  "user": {
-    "email": "dcep93@gmail.com"
+https://fantasy.espn.com/football/league/offerreport?leagueId=203836968&seasonId=2025
+
+.auction-report-page
+
+new Promise((resolve, reject) => {
+function helper(i) {
+  if (i < 0) return resolve("first2know_ignore")
+    const e = document.getElementsByClassName("auction-report-page")[0]
+    if (e) {
+      Array.from(document.getElementsByTagName("div"))
+        .filter(e => e.getAttribute("data-box-type"))
+        .forEach(e => (e.hidden = true))
+      const ee = e.getElementsByClassName("dropdown")[0]
+      return resolve(ee.innerText)
   }
+  setTimeout(() => helper(i - 10), 10)
 }
-Edit -NdiGi9CWXDULA7KGvl7
-{
-  "data_input": {
-    "evaluate": "new Promise((resolve, reject) => {\nfunction helper(i) {\n  if (i < 0) return resolve(\"first2know_ignore\")\n  const e = document.getElementsByClassName(\"projected-standings\")[0]\n  if (e) {\nArray.from(document.getElementsByClassName(\"tda-team-name\")).forEach(x => (x.style.width = \"auto\"))\n    return resolve(e.innerText)\n  }\n  setTimeout(() => helper(i - 10), 10)\n}\nhelper(20000)\n})",
-    "evaluation_to_img": false,
-    "selector": ".projected-standings",
-    "url": "xhttps://fantasy.espn.com/football/league?leagueId=203836968"
-  },
+helper(20000)
+})
+
+
+///
+
+https://fantasy.espn.com/football/league?leagueId=203836968"
+
+
+.projected-standings
+
+
+new Promise((resolve, reject) => {
+function helper(i) {
+  if (i < 0) return resolve("first2know_ignore")
+  const e = document.getElementsByClassName("projected-standings")[0]
+  if (e) {
+Array.from(document.getElementsByClassName("tda-team-name")).forEach(x => (x.style.width = "auto"))
+    return resolve(e.innerText)
+  }
+  setTimeout(() => helper(i - 10), 10)
 }
+helper(20000)
+})
