@@ -1,6 +1,6 @@
 import { createRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { clog, sfetch, url } from "./Server";
+import { clog, url } from "./Server";
 import { DataInputType, ScreenshotDataType, ToHandleType } from "./firebase";
 import loading from "./loading.gif";
 
@@ -54,7 +54,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
             }))
             .then((data) => JSON.stringify(data))
             .then((body) =>
-              sfetch(`${url}/screenshot`, {
+              fetch(`${url}/screenshot`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",

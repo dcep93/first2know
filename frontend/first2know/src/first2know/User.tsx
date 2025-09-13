@@ -2,7 +2,7 @@ import firebase from "./firebase/firebase";
 
 import { Secret } from "fernet";
 import { FcGoogle } from "react-icons/fc";
-import { sfetch, url } from "./Server";
+import { url } from "./Server";
 import crypt from "./firebase/crypt";
 
 export const USER_STORAGE_KEY = "user.v1";
@@ -50,7 +50,7 @@ function User() {
             )
             .then((result) =>
               result.user.getIdToken().then((token) =>
-                sfetch(`${url}/login`, {
+                fetch(`${url}/login`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ token }),

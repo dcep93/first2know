@@ -78,7 +78,7 @@ F = typing.TypeVar("F", bound=typing.Callable[..., typing.Any])
 def running_decorator(f: F) -> F:
     @functools.wraps(f)
     def g(*args: typing.Any, **kwargs: typing.Any) -> F:
-        # Vars.running = True
+        Vars.running = True
         try:
             return f(*args, **kwargs)
         finally:
