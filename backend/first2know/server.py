@@ -63,6 +63,7 @@ def get_() -> JSONResponse:
     now = time.time()
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
+    status_code = 200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 530
     content = {
         "write_count": cron.Vars.write_count,
         "alive_age_s": alive_age_s,
@@ -72,11 +73,12 @@ def get_() -> JSONResponse:
         "cron_count": cron.Vars.count,
         "cron_results": cron.Vars.latest_result,
         "cron_running": cron.Vars.running,
+        "status_code": status_code,
         "recorded_sha": recorded_sha.recorded_sha,
     }
     logger.log(f"get_health.liveness_check {json.dumps(content)}")
     return JSONResponse(
-        status_code=200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 530,
+        status_code=status_code,
         content=content,
     )
 
