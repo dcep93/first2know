@@ -76,7 +76,7 @@ def get_() -> JSONResponse:
         "status_code": status_code,
         "recorded_sha": recorded_sha.recorded_sha,
     }
-    logger.log(f"get_health.liveness_check {json.dumps(content)}")
+    logger.log(f"get_ {json.dumps(content)}")
     return JSONResponse(
         status_code=status_code,
         content=content,
