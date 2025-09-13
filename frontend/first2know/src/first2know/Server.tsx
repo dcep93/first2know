@@ -20,6 +20,6 @@ export default function Server() {
       .then(update)
       .then(() => setTimeout(iter, FETCH_INTERVAL_MS));
   }
-  useEffect(iter, []);
+  useEffect(iter, [iter]);
   return <pre>{JSON.stringify(resp, null, 2)}</pre>;
 }
