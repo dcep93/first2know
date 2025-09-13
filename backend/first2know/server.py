@@ -20,7 +20,7 @@ from . import recorded_sha
 from . import screenshot
 
 NUM_SCREENSHOTTERS = 2
-MAX_CRON_AGE = 30
+MAX_CRON_AGE = 300
 
 
 class Vars:
