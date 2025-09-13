@@ -1,3 +1,4 @@
+import functools
 import json
 import time
 import traceback
@@ -64,15 +65,29 @@ def loop() -> bool:
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    Vars.running = True
     try:
         rval = loop_with_manager(screenshot_manager)
     finally:
-        Vars.running = False
         screenshot_manager.close()
     return rval
 
 
+F = typing.TypeVar("F", bound=typing.Callable[..., typing.Any])
+
+
+def running_decorator(f: F) -> F:
+    @functools.wraps(f)
+    def g(*args: typing.Any, **kwargs: typing.Any) -> F:
+        Vars.running = True
+        try:
+            return f(*args, **kwargs)
+        finally:
+            Vars.running = False
+
+    return typing.cast(F, g)
+
+
+@running_decorator
 def loop_with_manager(screenshot_manager: manager.Manager) -> bool:
     logger.log("loop_with_manager.looping")
     Vars._token = refresh_access_token()

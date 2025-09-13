@@ -1,3 +1,4 @@
+import json
 import time
 import traceback
 import typing
@@ -62,25 +63,26 @@ def get_() -> JSONResponse:
     now = time.time()
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
+    content = {
+        "write_count": cron.Vars.write_count,
+        "alive_age_s": alive_age_s,
+        "alive_age_h": alive_age_s / 3600,
+        "health_count": Vars.health,
+        "cron_age": cron_age,
+        "cron_count": cron.Vars.count,
+        "cron_results": cron.Vars.latest_result,
+        "cron_running": cron.Vars.running,
+        "recorded_sha": recorded_sha.recorded_sha,
+    }
+    logger.log(f"get_health.liveness_check {json.dumps(content)}")
     return JSONResponse(
-        status_code=200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 599,
-        content={
-            "write_count": cron.Vars.write_count,
-            "alive_age_s": alive_age_s,
-            "alive_age_h": alive_age_s / 3600,
-            "health_count": Vars.health,
-            "cron_age": cron_age,
-            "cron_count": cron.Vars.count,
-            "cron_results": cron.Vars.latest_result,
-            "cron_runnign": cron.Vars.running,
-            "recorded_sha": recorded_sha.recorded_sha,
-        },
+        status_code=200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 530,
+        content=content,
     )
 
 
 @web_app.get("/liveness_check")
 def get_health() -> JSONResponse:
-    logger.log(f"get_health.liveness_check {Vars.health}")
     Vars.health += 1
     return get_()
 
