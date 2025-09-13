@@ -9,8 +9,8 @@ set -euo pipefail
 # set -e
 # nvm install 16.4.0
 # gcloud services enable compute
-# gcloud services enable appengine
 # gcloud services enable cloudbuild.googleapis.com
+# gcloud services enable run.googleapis.com
 # IAM=deployer-github-cloudrun1
 # gcloud iam service-accounts create $IAM
 # gcloud projects add-iam-policy-binding "$GOOGLE_CLOUD_PROJECT" --member="serviceAccount:$IAM@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com" --role="roles/run.admin"
@@ -42,13 +42,11 @@ IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --f
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"faf9f678e8be1d4df65c2e94d8f5b765aec1d488"
 # gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
 
-echo; echo; echo
-echo deploying
-echo; echo; echo
+echo deploying $GOOGLE_CLOUD_PROJECT cloudrun
 
 gcloud run deploy "first2know" \
   --project "${GOOGLE_CLOUD_PROJECT}" \
-  --region "${REGION}"
+  --region "${REGION}" \
   --image "${IMG_URL}" \
   --platform managed \
   --allow-unauthenticated \
