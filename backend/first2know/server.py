@@ -85,7 +85,7 @@ def get_() -> JSONResponse:
     )
 
 
-@web_app.get("/liveness_check")
+@web_app.get("/health")
 def get_health() -> JSONResponse:
     Vars.health += 1
     return get_()
