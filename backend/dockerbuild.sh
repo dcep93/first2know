@@ -14,6 +14,4 @@ pip install --upgrade pip
 pip install playwright==1.53.0
 playwright install --with-deps chromium
 
-cp requirements.txt ./
-
 pip install -r requirements.txt

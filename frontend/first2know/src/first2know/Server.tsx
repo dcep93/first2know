@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const IS_LOCAL = window.location.search.includes("local");
-const FETCH_INTERVAL_MS = 10 * 1000;
+const FETCH_INTERVAL_MS = 3 * 1000;
 
 export const url = IS_LOCAL
   ? "http://localhost:8000"
@@ -15,12 +15,12 @@ export function clog<T>(t: T): T {
 var initializedIter = false;
 export default function Server() {
   const [resp, update] = useState<any>(null);
-  function iter() {
+  const iter = useCallback(() => {
     fetch(url)
       .then((resp) => resp.json())
       .then(update)
       .then(() => setTimeout(iter, FETCH_INTERVAL_MS));
-  }
+  }, []);
   useEffect(() => {
     if (initializedIter) return;
     initializedIter = true;
