@@ -1,7 +1,11 @@
 import concurrent.futures
 import time
+import types
 import typing
 import unittest
+
+from unittest.mock import patch
+
 
 from . import cron
 from . import crypt
@@ -18,37 +22,50 @@ logger.logger.disabled = True
 class TestFirst2Know(unittest.TestCase):
     def test_cron_handle(self) -> None:
         sent_messages: list[email_wrapper.EmailMessage] = []
-
-        class ContextManager:
-            __enter__ = lambda self: MockServer()
-            __exit__ = lambda *args: None
-
-        class MockServer:
-            send_message = sent_messages.append
-
-        email_wrapper._build_server = lambda: typing.cast(typing.Any, ContextManager())
         written_data: list[firebase_wrapper.ToHandle] = []
-        firebase_wrapper.write_data = typing.cast(
-            typing.Any, lambda th: written_data.append(th)
-        )
 
-        to_handle = firebase_wrapper.ToHandle(
-            data_input=firebase_wrapper.DataInput(
-                url="https://example.com",
-            ),
-            user="user@email.com",
-            key="",
-        )
-        rval = cron.handle(to_handle, manager.Manager(screenshot.Screenshot, 1))
+        class DummyServer:
+            def __enter__(self) -> "DummyServer":
+                return self
+
+            def __exit__(
+                self,
+                exc_type: typing.Optional[typing.Type[BaseException]],
+                exc: typing.Optional[BaseException],
+                tb: typing.Optional[types.TracebackType],
+            ) -> None:
+                return
+
+            def send_message(self, msg: email_wrapper.EmailMessage) -> None:
+                sent_messages.append(msg)
+
+        with patch.object(
+            email_wrapper, "_build_server", return_value=DummyServer()
+        ), patch.object(
+            firebase_wrapper,
+            "write_data",
+            side_effect=lambda th: written_data.append(th),
+        ):
+
+            to_handle = firebase_wrapper.ToHandle(
+                data_input=firebase_wrapper.DataInput(url="https://example.com"),
+                user="user@email.com",
+                key="",
+            )
+
+            rval = cron.handle(to_handle, manager.Manager(screenshot.Screenshot, 1))
+
         self.assertEqual(rval, "write_data")
         self.assertEqual(len(written_data), 1)
-        md5: str = typing.cast(typing.Any, written_data)[
-            0
-        ].data_output.screenshot_data.md5
-        self.assertEqual(
-            md5,
-            "72e9afeb37cd66e579ba16edac80f493",
-        )
+
+        th = written_data[0]
+        data_output = th.data_output
+        self.assertIsNotNone(data_output)
+        assert data_output is not None
+        assert data_output.screenshot_data is not None
+        md5 = data_output.screenshot_data.md5
+
+        self.assertEqual(md5, "72e9afeb37cd66e579ba16edac80f493")
         self.assertEqual(sent_messages[0]["To"], "user@email.com")
 
     def test_screenshot(self) -> None:
