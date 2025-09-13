@@ -35,11 +35,11 @@ def init() -> None:
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    email_wrapper.send_text_email(
-        "dcep93@gmail.com",
-        "startup",
-        recorded_sha.recorded_sha,
-    )
+    # email_wrapper.send_text_email(
+    #     "dcep93@gmail.com",
+    #     "startup",
+    #     recorded_sha.recorded_sha,
+    # )
 
 
 web_app = FastAPI()
@@ -108,9 +108,8 @@ def post_screenshot(payload: ScreenshotPayload) -> JSONResponse:
                 evaluation=payload.evaluation,
             )
         )
-        resp = screenshot_response.model_dump_json()
         logger.log("server.screenshot.respond")
-        return JSONResponse(resp)
+        return JSONResponse(screenshot_response)
     except Exception:
         err = traceback.format_exc()
         return JSONResponse({"err": err}, 500)
