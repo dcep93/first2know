@@ -25,6 +25,8 @@ set -euo pipefail
 
 SA_KEY="$1"
 
+REGION="us-east1"
+
 export GOOGLE_APPLICATION_CREDENTIALS="gac.json"
 echo "$SA_KEY" >"$GOOGLE_APPLICATION_CREDENTIALS"
 npm install google-auth-library
@@ -37,7 +39,8 @@ echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
-gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
+IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"faf9f678e8be1d4df65c2e94d8f5b765aec1d488"
+# gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
 
 echo; echo; echo
 echo deploying
@@ -45,6 +48,7 @@ echo; echo; echo
 
 gcloud run deploy "first2know" \
   --project "${GOOGLE_CLOUD_PROJECT}" \
+  --region "${REGION}"
   --image "${IMG_URL}" \
   --platform managed \
   --allow-unauthenticated \
