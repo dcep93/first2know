@@ -39,10 +39,9 @@ echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
-IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"faf9f678e8be1d4df65c2e94d8f5b765aec1d488"
-# gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
+gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
 
-echo deploying $GOOGLE_CLOUD_PROJECT cloudrun
+echo deploy_to_cloud_run $GOOGLE_CLOUD_PROJECT
 
 gcloud run deploy "first2know" \
   --project "${GOOGLE_CLOUD_PROJECT}" \
