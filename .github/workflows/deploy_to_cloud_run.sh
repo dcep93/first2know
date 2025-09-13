@@ -38,6 +38,7 @@ echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
+# IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"311e5717d123427de8b168b0c2812ae885fff0d7"
 gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
 
 echo deploy_to_cloud_run $GOOGLE_CLOUD_PROJECT
@@ -52,7 +53,8 @@ gcloud run deploy "first2know" \
   --memory 6Gi \
   --min-instances 1 \
   --max-instances 1 \
-  --timeout 300
+  --timeout 300 \
+  --liveness-probe httpGet.path=/health
 
 # # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # # gcloud beta app repair

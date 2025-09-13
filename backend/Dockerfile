@@ -16,6 +16,4 @@ RUN playwright install --with-deps chromium
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-HEALTHCHECK --interval=10s --timeout=10s --retries=1 CMD curl --fail http://localhost/health || exit 1
-
 COPY . ./
