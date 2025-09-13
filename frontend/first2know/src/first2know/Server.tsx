@@ -12,6 +12,7 @@ export function clog<T>(t: T): T {
   return t;
 }
 
+var initializedIter = false;
 export default function Server() {
   const [resp, update] = useState<any>(null);
   function iter() {
@@ -20,6 +21,10 @@ export default function Server() {
       .then(update)
       .then(() => setTimeout(iter, FETCH_INTERVAL_MS));
   }
-  useEffect(iter, [iter]);
+  useEffect(() => {
+    if (initializedIter) return;
+    initializedIter = true;
+    iter();
+  }, [iter]);
   return <pre>{JSON.stringify(resp, null, 2)}</pre>;
 }
