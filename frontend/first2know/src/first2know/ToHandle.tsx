@@ -127,7 +127,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
           css_selector:{" "}
           <input
             ref={cssSelectorRef}
-            disabled={evaluationToImgRef.current?.checked}
+            disabled={props.toHandle?.data_input.evaluation_to_img || false}
             defaultValue={props.toHandle?.data_input.selector || undefined}
             type="text"
           />
@@ -135,6 +135,10 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
         <div>
           js_evaluate: {"("}transform evaluation to img
           <input
+            onChange={() =>
+              (cssSelectorRef.current!.disabled =
+                evaluationToImgRef.current!.checked)
+            }
             defaultChecked={
               props.toHandle?.data_input.evaluation_to_img || false
             }
