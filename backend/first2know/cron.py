@@ -161,7 +161,11 @@ def handle(
     elif previous_time is not None and previous_time > now:
         return "previous_time"
 
-    subject = f"first2know: {to_handle.data_input.url} {to_handle.key}"
+    url_message = (
+        "no_url" if not to_handle.data_input.url else f"url: {to_handle.data_input.url}"
+    )
+
+    subject = f"first2know: {url_message} {to_handle.key}"
 
     evaluation = (
         None
@@ -172,10 +176,6 @@ def handle(
     request = screenshot.Request(
         data_input=to_handle.data_input,
         evaluation=evaluation,
-    )
-
-    url_message = (
-        "no_url" if not to_handle.data_input.url else f"url: {to_handle.data_input.url}"
     )
 
     try:
@@ -241,25 +241,23 @@ def handle(
         error=None,
     )
 
-    text = "\n\n\n".join(
+    text = "\n\n".join(
         [
             url_message,
             f"https://first2know.web.app/{to_handle.key}",
-            json.dumps(
-                {"to_handle": to_handle.model_dump_json(), "old_data": old_data_str},
-                indent=2,
-            ),
+            # json.dumps(
+            #     {"to_handle": to_handle.model_dump_json(), "old_data": old_data_str},
+            #     indent=2,
+            # ),
         ]
     )
 
     Vars.write_count += 1
 
-    logger.log(f"text swallowed: {text}")
-
     email_wrapper.send_email(
         to_handle.user,
         subject,
-        str(time.time()),
+        text,
         screenshot_response.img_data,
     )
 
