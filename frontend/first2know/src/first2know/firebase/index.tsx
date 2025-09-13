@@ -52,12 +52,7 @@ function filterDict(d: any): any {
 
 function encryptToHandle(toHandle: ToHandleType): WrappedToHandleType {
   const encrypted = crypt.encrypt(
-    JSON.stringify({
-      ...filterDict({
-        ...toHandle,
-        data_input: filterDict(toHandle.data_input),
-      }),
-    }),
+    JSON.stringify(filterDict(toHandle)),
     LOCAL_USER!.fernet_secret
   );
   return { user: LOCAL_USER!.email, encrypted };

@@ -108,8 +108,9 @@ def post_screenshot(payload: ScreenshotPayload) -> JSONResponse:
                 evaluation=payload.evaluation,
             )
         )
+        resp = screenshot_response.dict()
         logger.log("server.screenshot.respond")
-        return JSONResponse(screenshot_response)
+        return JSONResponse(resp)
     except Exception:
         err = traceback.format_exc()
         return JSONResponse({"err": err}, 500)
