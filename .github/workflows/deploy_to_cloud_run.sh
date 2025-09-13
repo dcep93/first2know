@@ -43,7 +43,7 @@ IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"674332673f9edc6b
 
 echo deploy_to_cloud_run $GOOGLE_CLOUD_PROJECT
 
-gcloud run deploy "first2know" \
+gcloud beta run deploy "first2know" \
   --project "${GOOGLE_CLOUD_PROJECT}" \
   --region "${REGION}" \
   --image "${IMG_URL}" \
