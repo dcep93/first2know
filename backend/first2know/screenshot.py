@@ -106,11 +106,7 @@ class Screenshot:
         if request.data_input.cookies:
             await context.add_cookies(
                 [
-                    {
-                        "name": k2,
-                        "value": v2,
-                        "domain": k1,
-                    }
+                    {"name": k2, "value": v2, "domain": k1, "path": "/"}
                     for k1, v1 in request.data_input.cookies.items()
                     for k2, v2 in v1.items()
                 ]
