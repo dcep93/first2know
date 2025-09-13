@@ -23,6 +23,6 @@ bash ./record_sha.sh "recorded_sha = '''%s\n%s'''\n" "../../backend/first2know/r
 bash ./record_secret.sh "$SECRETS_JSON"
 bash ./cache_backend_docker.sh
 bash ./test_backend.sh
-bash ./deploy_to_app_engine.sh "$SA_KEY"
+bash ./deploy_to_cloud_run.sh "$SA_KEY"
 
 c || c || c

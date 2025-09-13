@@ -1,6 +1,8 @@
 import base64
 import smtplib
 import sys
+import time
+
 from email.message import EmailMessage
 
 from . import logger
@@ -65,6 +67,7 @@ def send_email(
         <body>
             <img src="cid:{img_cid}" alt="Embedded Image">
             <pre>{text}</pre>
+            <div>{time.time()}</div>
         </body>
     </html>
     """

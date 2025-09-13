@@ -30,31 +30,27 @@ export GOOGLE_APPLICATION_CREDENTIALS="gac.json"
 echo "$SA_KEY" >"$GOOGLE_APPLICATION_CREDENTIALS"
 npm install google-auth-library
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
-GOOGLE_CLOUD_PROJECT="$(cat $GOOGLE_APPLICATION_CREDENTIALS | jq -r .project_id)"
+GOOGLE_CLOUD_PROJECT="$(jq -r .project_id < "$GOOGLE_APPLICATION_CREDENTIALS")"
+REGION="us-east1"
 
 cd ../../backend
-cat <<EOF >app.yaml
-runtime: custom
-env: flex
+echo 'ENTRYPOINT [ "make", "cloudrun_server" ]' >>Dockerfile
 
-liveness_check:
-  path: "/liveness_check"
-  failure_threshold: 6
-  check_interval_sec: 10
-
-resources:
-  cpu: 4
-  memory_gb: 6
-
-manual_scaling:
-  instances: 1
-
-EOF
-echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
 gcloud config set builds/use_kaniko True
 gcloud config set builds/kaniko_cache_ttl 8760
 IMG_URL=us.gcr.io/"${GOOGLE_CLOUD_PROJECT}"/first2know/backend:"$(git log -1 --format=format:%H)"
 gcloud builds submit --project "${GOOGLE_CLOUD_PROJECT}" --tag "${IMG_URL}"
-gcloud app deploy --project "${GOOGLE_CLOUD_PROJECT}" --version 1 --image-url="${IMG_URL}"
+
+gcloud run deploy "${SERVICE}" \
+  --image "${IMG_URL}" \
+  --region "${REGION}" \
+  --platform managed \
+  --allow-unauthenticated \
+  --cpu 4 \
+  --memory 6Gi \
+  --min-instances 1 \
+  --max-instances 1 \
+  --timeout 300
+
 # # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # # gcloud beta app repair

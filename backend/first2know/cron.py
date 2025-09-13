@@ -78,7 +78,7 @@ F = typing.TypeVar("F", bound=typing.Callable[..., typing.Any])
 def running_decorator(f: F) -> F:
     @functools.wraps(f)
     def g(*args: typing.Any, **kwargs: typing.Any) -> F:
-        Vars.running = True
+        # Vars.running = True
         try:
             return f(*args, **kwargs)
         finally:
@@ -229,9 +229,9 @@ def handle(
 
     logger.log(f"cron.log.md5 {screenshot_response.md5} {old_md5}")
 
-    old_data_str = (
-        to_handle.data_output.model_dump_json() if to_handle.data_output else ""
-    )
+    # old_data_str = (
+    #     to_handle.data_output.model_dump_json() if to_handle.data_output else ""
+    # )
     to_handle.data_output = firebase_wrapper.DataOutput(
         screenshot_data=firebase_wrapper.ScreenshotData(
             md5=screenshot_response.md5,
