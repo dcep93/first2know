@@ -99,7 +99,7 @@ class ScreenshotPayload(firebase_wrapper.DataInput):
 
 
 @web_app.post("/screenshot")
-def post_screenshot(payload: ScreenshotPayload) -> HTMLResponse:
+def post_screenshot(payload: ScreenshotPayload) -> JSONResponse:
     logger.log("server.screenshot.receive")
     try:
         screenshot_response = Vars.screenshot_manager.run(

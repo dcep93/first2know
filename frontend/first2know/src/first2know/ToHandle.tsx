@@ -62,20 +62,17 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
                 body,
               })
             )
-            .then((resp) =>
-              !resp.ok
-                ? resp.text().then(alert)
-                : resp
-                    .json()
-                    .then(clog)
-                    .then((resp_data: ScreenshotDataType) => update(resp_data))
-                    .catch((err) => {
-                      update(undefined);
-                      const e = `${err}`;
-                      alert(e.slice(Math.max(0, e.length - 1000)));
-                      throw err;
-                    })
+            .then((resp) => resp.json())
+            .then(clog)
+            .then((resp_data: any) =>
+              resp_data.err ? Promise.reject(resp_data.err) : update(resp_data)
             )
+            .catch((err) => {
+              update(undefined);
+              const e = `${err}`;
+              alert(e.slice(Math.max(0, e.length - 1000)));
+              throw err;
+            })
         }
       >
         <div>
