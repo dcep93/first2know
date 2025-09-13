@@ -1,5 +1,6 @@
 import concurrent.futures
 import time
+import typing
 import unittest
 
 from . import cron
@@ -16,7 +17,7 @@ logger.logger.disabled = True
 
 class TestFirst2Know(unittest.TestCase):
     def test_cron_handle(self) -> None:
-        sent_messages = []
+        sent_messages: list[email_wrapper.EmailMessage] = []
 
         class ContextManager:
             __enter__ = lambda self: MockServer()
@@ -25,9 +26,11 @@ class TestFirst2Know(unittest.TestCase):
         class MockServer:
             send_message = sent_messages.append
 
-        email_wrapper._build_server = lambda: ContextManager()
-        written_data = []
-        firebase_wrapper.write_data = written_data.append
+        email_wrapper._build_server = lambda: typing.cast(typing.Any, ContextManager())
+        written_data: list[firebase_wrapper.ToHandle] = []
+        firebase_wrapper.write_data = typing.cast(
+            typing.Any, lambda th: written_data.append(th)
+        )
 
         to_handle = firebase_wrapper.ToHandle(
             data_input=firebase_wrapper.DataInput(
@@ -39,8 +42,11 @@ class TestFirst2Know(unittest.TestCase):
         rval = cron.handle(to_handle, manager.Manager(screenshot.Screenshot, 1))
         self.assertEqual(rval, "write_data")
         self.assertEqual(len(written_data), 1)
+        md5: str = typing.cast(typing.Any, written_data)[
+            0
+        ].data_output.screenshot_data.md5
         self.assertEqual(
-            written_data[0].data_output.screenshot_data.md5,
+            md5,
             "72e9afeb37cd66e579ba16edac80f493",
         )
         self.assertEqual(sent_messages[0]["To"], "user@email.com")
