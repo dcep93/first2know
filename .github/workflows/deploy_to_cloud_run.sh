@@ -5,7 +5,6 @@ set -euo pipefail
 # # requires billing!
 # # create a new project every 3 months once trial expires
 # # first2know20250716@cloudshell:~
-# # chromatic-realm-466116-n0 # todo infer project_id from json
 # set -e
 # nvm install 16.4.0
 # gcloud services enable compute

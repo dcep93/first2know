@@ -38,7 +38,7 @@ def init() -> None:
     email_wrapper.send_text_email(
         "dcep93@gmail.com",
         "startup",
-        str(time.time()),
+        recorded_sha.recorded_sha,
     )
 
 
