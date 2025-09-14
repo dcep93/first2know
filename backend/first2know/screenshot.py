@@ -106,71 +106,76 @@ class Screenshot:
             params["user-agent"] = GOOD_USER_AGENT
 
         context = await self.browser.new_context()
-        if request.data_input.cookies:
-            await context.add_cookies(
-                [
-                    {"name": k2, "value": v2, "domain": k1, "path": "/"}
-                    for k1, v1 in request.data_input.cookies.items()
-                    for k2, v2 in v1.items()
-                ]
-            )
-        page = await context.new_page()
-        page.set_default_timeout(30001)
-        C()
-        if request.data_input.raw_proxy:
-            if not request.data_input.url:
-                raise Exception("raw_proxy.url.false")
-            proxy_result = proxy.proxy(
-                proxy.Request(
-                    url=request.data_input.url,
-                    params=proxy.Params(**params),
+        try:
+            if request.data_input.cookies:
+                await context.add_cookies(
+                    [
+                        {"name": k2, "value": v2, "domain": k1, "path": "/"}
+                        for k1, v1 in request.data_input.cookies.items()
+                        for k2, v2 in v1.items()
+                    ]
+                )
+            page = await context.new_page()
+            page.set_default_timeout(30001)
+            C()
+            if request.data_input.raw_proxy:
+                if not request.data_input.url:
+                    raise Exception("raw_proxy.url.false")
+                proxy_result = proxy.proxy(
+                    proxy.Request(
+                        url=request.data_input.url,
+                        params=proxy.Params(**params),
+                    )
+                )
+                await page.set_content(proxy_result)
+            elif request.data_input.url:
+                await page.set_extra_http_headers(params)
+                await page.goto(request.data_input.url)
+            raw_evaluation = (
+                None
+                if request.data_input.evaluate is None
+                else await page.evaluate(
+                    request.data_input.evaluate,
+                    request.evaluation,
                 )
             )
-            await page.set_content(proxy_result)
-        elif request.data_input.url:
-            await page.set_extra_http_headers(params)
-            await page.goto(request.data_input.url)
-        raw_evaluation = (
-            None
-            if request.data_input.evaluate is None
-            else await page.evaluate(
-                request.data_input.evaluate,
-                request.evaluation,
+            C()
+            str_evaluation = (
+                raw_evaluation
+                if type(raw_evaluation) is str
+                else json.dumps(raw_evaluation)
             )
-        )
-        C()
-        str_evaluation = (
-            raw_evaluation
-            if type(raw_evaluation) is str
-            else json.dumps(raw_evaluation)
-        )
 
-        if request.data_input.evaluation_to_img or raw_evaluation == exceptions.IGNORE:
-            img_data = str_to_binary_data(str_evaluation)
-        else:
-            if request.data_input.selector is None:
-                to_screenshot = page
+            if (
+                request.data_input.evaluation_to_img
+                or raw_evaluation == exceptions.IGNORE
+            ):
+                img_data = str_to_binary_data(str_evaluation)
             else:
-                to_screenshot = page.locator(request.data_input.selector)
-            dest = f"screenshot_{self.id}.png"
+                if request.data_input.selector is None:
+                    to_screenshot = page
+                else:
+                    to_screenshot = page.locator(request.data_input.selector)
+                dest = f"screenshot_{self.id}.png"
 
-            try:
-                await to_screenshot.screenshot(path=dest, timeout=10001)
-            except Exception as e:
-                ignorable_exception = exceptions.get_ignorable_exception(
-                    e,
-                    exceptions.Src.screenshot_null_location,
-                )
-                if not ignorable_exception is None:
-                    raise ignorable_exception
-                raise e
+                try:
+                    await to_screenshot.screenshot(path=dest, timeout=10001)
+                except Exception as e:
+                    ignorable_exception = exceptions.get_ignorable_exception(
+                        e,
+                        exceptions.Src.screenshot_null_location,
+                    )
+                    if not ignorable_exception is None:
+                        raise ignorable_exception
+                    raise e
 
-            with open(dest, "rb") as fh:
-                binary_data = fh.read()
-            os.remove(dest)
-            encoded = base64.b64encode(binary_data)
-            img_data = encoded.decode("utf-8")
-        await context.close()
+                with open(dest, "rb") as fh:
+                    binary_data = fh.read()
+                os.remove(dest)
+                encoded = base64.b64encode(binary_data)
+                img_data = encoded.decode("utf-8")
+        finally:
+            await context.close()
         C()
 
         if raw_evaluation is None:

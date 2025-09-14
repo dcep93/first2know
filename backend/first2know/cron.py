@@ -1,3 +1,4 @@
+import collections
 import functools
 import time
 import traceback
@@ -39,6 +40,7 @@ class Vars:
     write_count = 0
     latest_time = 0.0
     latest_result: typing.Optional[list[str]] = None
+    counts = collections.defaultdict[str, int](int)
 
 
 def main() -> None:
@@ -136,6 +138,8 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
         )
         results = list(_results)
     Vars.latest_result = results
+    for result in results:
+        Vars.counts[result] += 1
     return results
 
 

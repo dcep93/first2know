@@ -78,6 +78,7 @@ def get_() -> JSONResponse:
         "cron_running": cron.Vars.running,
         "status_code": status_code,
         "mem_mb": mem_mb,
+        "counts": cron.Vars.counts,
         "recorded_sha": recorded_sha.recorded_sha,
     }
     logger.log(f"get_ {json.dumps(content)}")
