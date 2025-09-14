@@ -16,9 +16,9 @@ const cssSelectorRef = createRef<HTMLInputElement>();
 type SubmitType = (data_input: DataInputType) => Promise<string>;
 
 function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
-  const [resp_data, update] = useState<ScreenshotDataType | null | undefined>(
-    undefined
-  );
+  const [resp_data, update] = useState<
+    (ScreenshotDataType & { err?: string }) | null | undefined
+  >(undefined);
   const navigate = useNavigate();
 
   const defaultParamsValue = props.toHandle?.data_input.params;
@@ -68,9 +68,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
               resp_data.err ? Promise.reject(resp_data.err) : update(resp_data)
             )
             .catch((err) => {
-              update(undefined);
-              const e = `${err}`;
-              alert(e.slice(Math.max(0, e.length - 1000)));
+              update({ err: `${err}` } as any);
               throw err;
             })
         }
@@ -148,6 +146,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
           {")"}
           <div>
             <textarea
+              style={{ width: "40em", height: "10em" }}
               defaultValue={props.toHandle?.data_input.evaluate || undefined}
               ref={evaluateRef}
             />
@@ -159,6 +158,8 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
         <div>
           {resp_data === undefined ? undefined : resp_data === null ? (
             <img src={loading} alt="" />
+          ) : resp_data.err ? (
+            <pre>{resp_data.err}</pre>
           ) : (
             <div>
               <img src={`data:image/png;base64,${resp_data.img_data}`} alt="" />
