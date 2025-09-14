@@ -72,6 +72,7 @@ class TestFirst2Know(unittest.TestCase):
         data_input = firebase_wrapper.DataInput(url="https://example.com")
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
                 evaluation=None,
             )
@@ -85,6 +86,7 @@ class TestFirst2Know(unittest.TestCase):
         data_input = firebase_wrapper.DataInput(url="https://example.com")
         num_to_run = 2
         r = screenshot.Request(
+            key="test",
             data_input=data_input,
             evaluation=None,
         )
@@ -111,6 +113,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
                 evaluation=None,
             )
@@ -127,6 +130,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
                 evaluation=None,
             )
@@ -144,6 +148,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
                 evaluation=None,
             )
@@ -160,6 +165,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
                 evaluation="420",
             )
@@ -177,6 +183,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
             )
         )
@@ -193,6 +200,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
             )
         )
@@ -231,6 +239,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         screenshot.Screenshot()(
             screenshot.Request(
+                key="test",
                 data_input=data_input,
             )
         )

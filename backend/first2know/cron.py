@@ -177,6 +177,7 @@ def handle(
     )
 
     request = screenshot.Request(
+        key=to_handle.key or "cron.impossible",
         data_input=to_handle.data_input,
         evaluation=evaluation,
     )

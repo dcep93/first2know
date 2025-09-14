@@ -26,6 +26,7 @@ GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 
 
 class Request(BaseModel):
+    key: str
     data_input: firebase_wrapper.DataInput
     evaluation: typing.Optional[str] = None
 
@@ -96,7 +97,7 @@ class Screenshot:
                 diff = now - C.now
                 C.now = now
                 if diff > C_LOG_SECONDS:
-                    logger.log(f"screenshot.C {C.c} {diff}")
+                    logger.log(f"screenshot.C {C.c} {diff} {request.key}")
 
         C()
 

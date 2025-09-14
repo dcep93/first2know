@@ -49,6 +49,7 @@ def handle_from_x() -> None:
 def screenshot_from_request() -> screenshot.Response:
     url = "https://fantasy.espn.com/football/recentactivity?leagueId=203836968"
     request = screenshot.Request(
+        key="oneoff",
         evaluation=None,
         data_input=firebase_wrapper.DataInput(
             url=url,

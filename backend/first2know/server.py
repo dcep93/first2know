@@ -109,6 +109,7 @@ def post_screenshot(payload: ScreenshotPayload) -> JSONResponse:
     try:
         screenshot_response = Vars.screenshot_manager.run(
             screenshot.Request(
+                key=f"post: {time.time()}",
                 data_input=payload,
                 evaluation=payload.evaluation,
             )
