@@ -22,6 +22,8 @@ from . import screenshot
 NUM_SCREENSHOTTERS = 2
 MAX_CRON_AGE = 300
 
+process = cron.psutil.Process(cron.os.getpid())
+
 
 class Vars:
     start_time = time.time()
@@ -63,6 +65,7 @@ def get_() -> JSONResponse:
     now = time.time()
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
+    mem_mb = process.memory_info().rss / (1024**2)
     status_code = 200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 530
     content = {
         "write_count": cron.Vars.write_count,
@@ -74,6 +77,7 @@ def get_() -> JSONResponse:
         "cron_results": cron.Vars.latest_result,
         "cron_running": cron.Vars.running,
         "status_code": status_code,
+        "mem_mb": mem_mb,
         "recorded_sha": recorded_sha.recorded_sha,
     }
     logger.log(f"get_ {json.dumps(content)}")
