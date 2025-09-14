@@ -162,7 +162,10 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
             <pre>{resp_data.err}</pre>
           ) : (
             <div>
-              <img src={`data:image/png;base64,${resp_data.img_data}`} alt="" />
+              <img
+                src={`data:image/png;base64,${resp_data.img_data}`}
+                alt="img_data"
+              />
               <div>
                 <pre>
                   {JSON.stringify(
