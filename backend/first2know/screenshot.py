@@ -97,7 +97,7 @@ class Screenshot:
                 diff = now - C.now
                 C.now = now
                 if diff > C_LOG_SECONDS:
-                    logger.log(f"screenshot.C {C.c} {diff} {request.key}")
+                    logger.log(f"screenshot.C {C.c} {request.key} {diff}")
 
         C()
 
