@@ -49,8 +49,8 @@ gcloud beta run deploy "first2know" \
   --image "${IMG_URL}" \
   --platform managed \
   --allow-unauthenticated \
-  --cpu 4 \
-  --memory 6Gi \
+  --cpu 6 \
+  --memory 8Gi \
   --scaling 1 \
   --timeout 300 \
   --liveness-probe httpGet.path=/health
