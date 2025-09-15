@@ -39,7 +39,7 @@ class Vars:
     count = 0
     write_count = 0
     latest_time = 0.0
-    latest_result: typing.Optional[list[str]] = None
+    latest_result: list[str] = []
     counts = collections.defaultdict[str, int](int)
 
 
@@ -128,6 +128,7 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
     Vars.latest_time = time.time()
     Vars.count += 1
     to_handle_arr = firebase_wrapper.get_to_handle()
+    Vars.latest_result.append("- run")
     with concurrent.futures.ThreadPoolExecutor(screenshot_manager.num) as executor:
         _results = executor.map(
             lambda to_handle: handle(
@@ -149,7 +150,9 @@ def handle(
     result = helper(to_handle, screenshot_manager)
     Vars.counts[result] += 1
     e = time.time()
-    return f"{result} - {e-s}"
+    rval = f"{result} - {e-s}"
+    Vars.latest_result.append(rval)
+    return rval
 
 
 def helper(
