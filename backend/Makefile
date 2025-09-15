@@ -7,6 +7,14 @@ dockerbuild:
 	docker buildx build --load --output=type=docker -t $(local_image_tag) .
 
 # ARGS=test make dockerexec
+
+dockerexecnotty: dockerbuild
+	docker run \
+		--rm \
+		--name $(service_name) \
+		$(local_image_tag) \
+		make $(ARGS)
+
 dockerexec: dockerbuild
 	docker run \
 		--rm \
