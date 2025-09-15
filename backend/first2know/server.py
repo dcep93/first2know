@@ -14,12 +14,11 @@ from . import crypt
 from . import email_wrapper
 from . import logger
 from . import firebase_wrapper
-from . import manager
 from . import proxy
 from . import recorded_sha
 from . import screenshot
 
-NUM_SCREENSHOTTERS = 1
+NUM_SCREENSHOTTERS = 2
 MAX_CRON_AGE = 300
 
 process = cron.psutil.Process(cron.os.getpid())
@@ -149,6 +148,19 @@ def get_cron() -> Response:
     try:
         s = time.time()
         results = cron.run(Vars.screenshot_manager)
+        e = time.time()
+        duration = e - s
+        return JSONResponse({"results": results, "duration": duration})
+    except Exception:
+        err = traceback.format_exc()
+        return HTMLResponse(f"<pre>{err}</pre>", 500)
+
+
+@web_app.get("/run_cron_key/{key:str}")
+def get_cron_key(key: str) -> Response:
+    try:
+        s = time.time()
+        results = cron.run_key(Vars.screenshot_manager, key)
         e = time.time()
         duration = e - s
         return JSONResponse({"results": results, "duration": duration})

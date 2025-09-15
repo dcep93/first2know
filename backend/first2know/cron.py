@@ -144,6 +144,16 @@ def run(screenshot_manager: screenshot.Manager) -> typing.List[str]:
     return results
 
 
+def run_key(screenshot_manager: screenshot.Manager, key: str) -> typing.List[str]:
+    to_handle_arr = firebase_wrapper.get_to_handle()
+    results = [
+        handle(to_handle, screenshot_manager)
+        for to_handle in to_handle_arr
+        if to_handle.key == key
+    ]
+    return results
+
+
 def handle(
     to_handle: firebase_wrapper.ToHandle,
     screenshot_manager: screenshot.Manager,
@@ -151,7 +161,7 @@ def handle(
     timer = screenshot.Timer(value=[])
     result = helper(to_handle, screenshot_manager, timer)
     Vars.counts[result] += 1
-    rval = f"{to_handle.key} - {sum([v[1] for v in timer.value])} - {result} - {timer.value}"
+    rval = f"{to_handle.key} - {round(sum([v[1] for v in timer.value]),2)} - {result} - {timer.value}"
     Vars.latest_result.append(rval)
     return rval
 
