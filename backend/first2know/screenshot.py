@@ -47,6 +47,7 @@ class Response(BaseModel):
     evaluation: typing.Optional[str]
     md5: str
     elapsed: float
+    timer: Timer
 
 
 Manager = manager.Manager[Request, Response]
@@ -86,6 +87,7 @@ class Screenshot:
         self,
         request: Request,
     ) -> Response:
+        timer = request.timer or Timer(value=[])
         s = time.time()
 
         latest = Register(value=s)
@@ -94,8 +96,7 @@ class Screenshot:
             now = time.time()
             diff = now - latest.value
             latest.value = now
-            if request.timer:
-                request.timer.value.append((key, diff))
+            timer.value.append((key, diff))
             if diff > C_LOG_SECONDS:
                 logger.log(f"screenshot.C {key} {request.key} {diff}")
 
@@ -205,6 +206,7 @@ class Screenshot:
             evaluation=evaluation,
             md5=md5,
             elapsed=elapsed,
+            timer=timer,
         )
 
 
