@@ -2,16 +2,12 @@ import collections
 import functools
 import time
 import traceback
-import os
-import psutil  # type: ignore
-import sys
 
 import concurrent.futures
 import typing
 
 from . import exceptions
 from . import firebase_wrapper
-from . import manager
 from . import screenshot
 from . import email_wrapper
 from . import logger
@@ -32,7 +28,6 @@ def init() -> None:
 
 
 class Vars:
-    _process = psutil.Process(os.getpid())
     _token: str
     running = False
     is_just_cron = False

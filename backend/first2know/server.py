@@ -21,8 +21,6 @@ from . import screenshot
 NUM_SCREENSHOTTERS = 2
 MAX_CRON_AGE = 300
 
-process = cron.psutil.Process(cron.os.getpid())
-
 
 class Vars:
     start_time = time.time()
