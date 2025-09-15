@@ -28,9 +28,8 @@ GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 T = typing.TypeVar("T")
 
 
-class Register(typing.Generic[T]):
-    def __init__(self, value: T) -> None:
-        self.value = value
+class Register(BaseModel, typing.Generic[T]):
+    value: T
 
 
 Timer = Register[list[tuple[str, float]]]
@@ -40,7 +39,7 @@ class Request(BaseModel):
     key: str
     data_input: firebase_wrapper.DataInput
     evaluation: typing.Optional[str] = None
-    timer: typing.Optional[Register[list[tuple[str, float]]]] = None
+    timer: typing.Optional[Timer] = None
 
 
 class Response(BaseModel):
@@ -89,7 +88,7 @@ class Screenshot:
     ) -> Response:
         s = time.time()
 
-        latest = Register(s)
+        latest = Register(value=s)
 
         def C(key: str) -> None:
             now = time.time()

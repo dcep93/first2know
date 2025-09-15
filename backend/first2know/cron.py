@@ -148,7 +148,7 @@ def handle(
     to_handle: firebase_wrapper.ToHandle,
     screenshot_manager: screenshot.Manager,
 ) -> str:
-    timer = screenshot.Timer([])
+    timer = screenshot.Timer(value=[])
     result = helper(to_handle, screenshot_manager, timer)
     Vars.counts[result] += 1
     rval = f"{result} - {timer.value}"
