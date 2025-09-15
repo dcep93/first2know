@@ -35,7 +35,7 @@ class Vars:
     _process = psutil.Process(os.getpid())
     _token: str
     running = False
-    is_just_cron = sys.argv[-1].endswith("cron.py")
+    is_just_cron = False
     count = 0
     write_count = 0
     latest_time = 0.0
@@ -44,6 +44,7 @@ class Vars:
 
 
 def main() -> None:
+    Vars.is_just_cron = True
     init()
     screenshot_manager = manager.Manager(
         screenshot.Screenshot,
@@ -53,6 +54,7 @@ def main() -> None:
         run(screenshot_manager)
     finally:
         screenshot_manager.close()
+    print(Vars.latest_result)
 
 
 def get_memory_mb() -> float:

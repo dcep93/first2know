@@ -131,7 +131,13 @@ class Screenshot:
                 await page.set_content(proxy_result)
             elif request.data_input.url:
                 await page.set_extra_http_headers(params)
-                await page.goto(request.data_input.url)
+                s = time.time()
+                try:
+                    await page.goto(request.data_input.url)
+                except Exception as e:
+                    d = time.time() - s
+                    logger.log(f"debug_duration: {d} {request.data_input.url}")
+                    raise e
             raw_evaluation = (
                 None
                 if request.data_input.evaluate is None
