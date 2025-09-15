@@ -49,16 +49,6 @@ class Screenshot:
         self.id = str(uuid.uuid1())
         self.p, self.browser = asyncio.run(self.async_init())
 
-    @classmethod
-    async def async_retry(cls, f: typing.Callable, retries: int) -> None:
-        try:
-            return await asyncio.wait_for(f(), timeout=60)
-        except Exception as e:
-            if retries > 0:
-                return await cls.async_retry(f, retries - 1)
-            logger.log("screenshot.async_retry.exhausted")
-            raise e
-
     async def async_init(self) -> typing.Tuple[typing.Any, typing.Any]:
         from playwright.async_api import async_playwright as _p  # type: ignore # noqa
 
@@ -134,10 +124,9 @@ class Screenshot:
                 s = time.time()
                 try:
                     await page.goto(request.data_input.url)
-                except Exception as e:
+                finally:
                     d = time.time() - s
                     logger.log(f"debug_duration: {d} {request.data_input.url}")
-                    raise e
             raw_evaluation = (
                 None
                 if request.data_input.evaluate is None
