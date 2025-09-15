@@ -138,12 +138,21 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
         )
         results = list(_results)
     Vars.latest_result = results
-    for result in results:
-        Vars.counts[result] += 1
     return results
 
 
 def handle(
+    to_handle: firebase_wrapper.ToHandle,
+    screenshot_manager: manager.Manager,
+) -> str:
+    s = time.time()
+    result = helper(to_handle, screenshot_manager)
+    Vars.counts[result] += 1
+    e = time.time()
+    return f"{result} - {e-s}"
+
+
+def helper(
     to_handle: firebase_wrapper.ToHandle,
     screenshot_manager: manager.Manager,
 ) -> str:
