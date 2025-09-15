@@ -10,6 +10,7 @@ dockerbuild:
 dockerexec: dockerbuild
 	docker run \
 		--rm \
+		-it \
 		--name $(service_name) \
 		$(local_image_tag) \
 		make $(ARGS)
