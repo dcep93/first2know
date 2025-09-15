@@ -38,7 +38,7 @@ def handle_from_x() -> None:
     )
     data["key"] = ""
     to_handle = firebase_wrapper.ToHandle(**data)
-    screenshot_manager = manager.Manager(
+    screenshot_manager = screenshot.Manager(
         screenshot.Screenshot,
         1,
     )

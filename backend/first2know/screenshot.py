@@ -25,10 +25,22 @@ C_LOG_SECONDS = 10
 GOOD_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"  # noqa
 
 
+T = typing.TypeVar("T")
+
+
+class Register(typing.Generic[T]):
+    def __init__(self, value: T) -> None:
+        self.value = value
+
+
+Timer = Register[list[tuple[str, float]]]
+
+
 class Request(BaseModel):
     key: str
     data_input: firebase_wrapper.DataInput
     evaluation: typing.Optional[str] = None
+    timer: typing.Optional[Register[list[tuple[str, float]]]] = None
 
 
 class Response(BaseModel):
@@ -77,19 +89,18 @@ class Screenshot:
     ) -> Response:
         s = time.time()
 
-        class C:
-            c = 0
-            now = s
+        latest = Register(s)
 
-            def __init__(self) -> None:
-                C.c += 1
-                now = time.time()
-                diff = now - C.now
-                C.now = now
-                if diff > C_LOG_SECONDS:
-                    logger.log(f"screenshot.C {C.c} {request.key} {diff}")
+        def C(key: str) -> None:
+            now = time.time()
+            diff = now - latest.value
+            latest.value = now
+            if request.timer:
+                request.timer.value.append((key, diff))
+            if diff > C_LOG_SECONDS:
+                logger.log(f"screenshot.C {key} {request.key} {diff}")
 
-        C()
+        C("init")
 
         params = dict(request.data_input.params or {})
 
@@ -108,25 +119,23 @@ class Screenshot:
                 )
             page = await context.new_page()
             page.set_default_timeout(30001)
-            C()
-            if request.data_input.raw_proxy:
-                if not request.data_input.url:
-                    raise Exception("raw_proxy.url.false")
-                proxy_result = proxy.proxy(
-                    proxy.Request(
-                        url=request.data_input.url,
-                        params=proxy.Params(**params),
+            C("new_page")
+            try:
+                if request.data_input.raw_proxy:
+                    if not request.data_input.url:
+                        raise Exception("raw_proxy.url.false")
+                    proxy_result = proxy.proxy(
+                        proxy.Request(
+                            url=request.data_input.url,
+                            params=proxy.Params(**params),
+                        )
                     )
-                )
-                await page.set_content(proxy_result)
-            elif request.data_input.url:
-                await page.set_extra_http_headers(params)
-                s = time.time()
-                try:
+                    await page.set_content(proxy_result)
+                elif request.data_input.url:
+                    await page.set_extra_http_headers(params)
                     await page.goto(request.data_input.url)
-                finally:
-                    d = time.time() - s
-                    logger.log(f"debug_duration: {d} {request.data_input.url}")
+            finally:
+                C("goto")
             raw_evaluation = (
                 None
                 if request.data_input.evaluate is None
@@ -135,7 +144,7 @@ class Screenshot:
                     request.evaluation,
                 )
             )
-            C()
+            C("eval")
             str_evaluation = (
                 raw_evaluation
                 if type(raw_evaluation) is str
@@ -172,7 +181,7 @@ class Screenshot:
                 img_data = encoded.decode("utf-8")
         finally:
             await context.close()
-        C()
+        C("screenshot")
 
         if raw_evaluation is None:
             md5 = crypt.str_to_md5(img_data)
@@ -184,13 +193,14 @@ class Screenshot:
         self.log(
             " ".join(
                 [
+                    "screenshot.__acall__",
                     f"{elapsed:.3f}s",
                     f"{len(img_data)/1000}kb",
                     datetime.datetime.now().strftime("%H:%M:%S.%f"),
                 ]
             )
         )
-        C()
+        C("finish")
         return Response(
             img_data=img_data,
             evaluation=evaluation,

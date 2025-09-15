@@ -53,7 +53,7 @@ class TestFirst2Know(unittest.TestCase):
                 key="",
             )
 
-            rval = cron.handle(to_handle, manager.Manager(screenshot.Screenshot, 1))
+            rval = cron.handle(to_handle, screenshot.Manager(screenshot.Screenshot, 1))
             rval = rval.split(" - ")[0]
 
         self.assertEqual(rval, "write_data")
@@ -91,7 +91,7 @@ class TestFirst2Know(unittest.TestCase):
             data_input=data_input,
             evaluation=None,
         )
-        m = manager.Manager(screenshot.Screenshot, num_to_run)
+        m = screenshot.Manager(screenshot.Screenshot, num_to_run)
         try:
             with concurrent.futures.ThreadPoolExecutor(num_to_run) as executor:
                 s = time.time()

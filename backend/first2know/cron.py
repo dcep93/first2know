@@ -46,7 +46,7 @@ class Vars:
 def main() -> None:
     Vars.is_just_cron = True
     init()
-    screenshot_manager = manager.Manager(
+    screenshot_manager = screenshot.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
@@ -62,7 +62,7 @@ def get_memory_mb() -> float:
 
 
 def loop() -> bool:
-    screenshot_manager = manager.Manager(
+    screenshot_manager = screenshot.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
@@ -126,7 +126,7 @@ def refresh_access_token() -> str:
     return new_token
 
 
-def run(screenshot_manager: manager.Manager) -> typing.List[str]:
+def run(screenshot_manager: screenshot.Manager) -> typing.List[str]:
     Vars.latest_time = time.time()
     Vars.count += 1
     to_handle_arr = firebase_wrapper.get_to_handle()
@@ -146,20 +146,20 @@ def run(screenshot_manager: manager.Manager) -> typing.List[str]:
 
 def handle(
     to_handle: firebase_wrapper.ToHandle,
-    screenshot_manager: manager.Manager,
+    screenshot_manager: screenshot.Manager,
 ) -> str:
-    s = time.time()
-    result = helper(to_handle, screenshot_manager)
+    timer = screenshot.Timer([])
+    result = helper(to_handle, screenshot_manager, timer)
     Vars.counts[result] += 1
-    e = time.time()
-    rval = f"{result} - {e-s}"
+    rval = f"{result} - {timer.value}"
     Vars.latest_result.append(rval)
     return rval
 
 
 def helper(
     to_handle: firebase_wrapper.ToHandle,
-    screenshot_manager: manager.Manager,
+    screenshot_manager: screenshot.Manager,
+    timer: screenshot.Timer,
 ) -> str:
     data_output = (
         firebase_wrapper.DataOutput()
@@ -194,6 +194,7 @@ def helper(
         key=to_handle.key or "cron.impossible",
         data_input=to_handle.data_input,
         evaluation=evaluation,
+        timer=timer,
     )
 
     try:

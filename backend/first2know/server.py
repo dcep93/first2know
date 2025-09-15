@@ -33,7 +33,7 @@ class Vars:
 
 def init() -> None:
     cron.init()
-    Vars.screenshot_manager = manager.Manager(
+    Vars.screenshot_manager = screenshot.Manager(
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
