@@ -191,10 +191,11 @@ def handle(
             e,
             exceptions.Src.playwright_screenshot,
         )
-        if not ignorable_exception is None:
-            return str(ignorable_exception)
         traceback_err = traceback.format_exc()
-        err_str = f"{type(e)}: {e}\n{traceback_err}"
+        err_str = f"traceback_err: {type(e)}: {e}\n{traceback_err}"
+        if not ignorable_exception is None:
+            logger.log(err_str)
+            return str(ignorable_exception)
         data_output.error = firebase_wrapper.ErrorType(
             version=VERSION, time=time.time(), message=err_str
         )
