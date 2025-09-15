@@ -275,6 +275,7 @@ def helper(
         [
             url_message,
             f"https://first2know.web.app/{to_handle.key}",
+            screenshot_response.md5,
             # json.dumps(
             #     {"to_handle": to_handle.model_dump_json(), "old_data": old_data_str},
             #     indent=2,
