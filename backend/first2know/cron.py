@@ -151,7 +151,7 @@ def handle(
     timer = screenshot.Timer(value=[])
     result = helper(to_handle, screenshot_manager, timer)
     Vars.counts[result] += 1
-    rval = f"{result} - {timer.value}"
+    rval = f"{result} - {to_handle.key} - {sum([v[1] for v in timer.value])} - {timer.value}"
     Vars.latest_result.append(rval)
     return rval
 
