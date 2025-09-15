@@ -19,7 +19,7 @@ from . import proxy
 from . import recorded_sha
 from . import screenshot
 
-NUM_SCREENSHOTTERS = 3
+NUM_SCREENSHOTTERS = 1
 MAX_CRON_AGE = 300
 
 process = cron.psutil.Process(cron.os.getpid())
