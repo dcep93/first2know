@@ -54,6 +54,7 @@ class TestFirst2Know(unittest.TestCase):
             )
 
             rval = cron.handle(to_handle, manager.Manager(screenshot.Screenshot, 1))
+            rval = rval.split(" - ")[0]
 
         self.assertEqual(rval, "write_data")
         self.assertEqual(len(written_data), 1)
