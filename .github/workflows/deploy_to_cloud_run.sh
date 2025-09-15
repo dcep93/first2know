@@ -49,6 +49,7 @@ gcloud beta run deploy "first2know" \
   --image "${IMG_URL}" \
   --platform managed \
   --allow-unauthenticated \
+  --no-cpu-throttling \
   --cpu 4 \
   --memory 2Gi \
   --scaling 1 \

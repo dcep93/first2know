@@ -57,20 +57,16 @@ def main() -> None:
     print(Vars.latest_result)
 
 
-def get_memory_mb() -> float:
-    return Vars._process.memory_info().rss / 1000000
-
-
-def loop() -> bool:
-    screenshot_manager = screenshot.Manager(
-        screenshot.Screenshot,
-        NUM_SCREENSHOTTERS,
-    )
-    try:
-        rval = loop_with_manager(screenshot_manager)
-    finally:
-        screenshot_manager.close()
-    return rval
+# def loop() -> bool:
+#     screenshot_manager = screenshot.Manager(
+#         screenshot.Screenshot,
+#         NUM_SCREENSHOTTERS,
+#     )
+#     try:
+#         rval = loop_with_manager(screenshot_manager)
+#     finally:
+#         screenshot_manager.close()
+#     return rval
 
 
 F = typing.TypeVar("F", bound=typing.Callable[..., typing.Any])
