@@ -72,6 +72,7 @@ def get_() -> JSONResponse:
         "alive_age_s": alive_age_s,
         "alive_age_h": alive_age_s / 3600,
         "health_count": Vars.health,
+        "avg_cron_age": alive_age_s / (cron.Vars.count + 1),
         "cron_age": cron_age,
         "cron_count": cron.Vars.count,
         "cron_results": cron.Vars.latest_result,
