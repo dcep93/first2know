@@ -96,7 +96,7 @@ class Screenshot:
             now = time.time()
             diff = now - latest.value
             latest.value = now
-            timer.value.append((key, diff))
+            timer.value.append((key, round(diff, 2)))
             if diff > C_LOG_SECONDS:
                 logger.log(f"screenshot.C {key} {request.key} {diff}")
 
