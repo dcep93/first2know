@@ -18,7 +18,7 @@ from . import proxy
 from . import recorded_sha
 from . import screenshot
 
-NUM_SCREENSHOTTERS = 2
+NUM_SCREENSHOTTERS = 4
 MAX_CRON_AGE = 300
 
 
