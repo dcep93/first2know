@@ -88,7 +88,7 @@ def get_() -> JSONResponse:
 def get_health() -> JSONResponse:
     Vars.health += 1
     rval = get_()
-    logger.log(rval.body)
+    logger.log(rval.body.decode("utf-8"))
     return rval
 
 
