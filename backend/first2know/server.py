@@ -78,7 +78,6 @@ def get_() -> JSONResponse:
         "recorded_sha": recorded_sha.recorded_sha,
         "status_code": status_code,
     }
-    logger.log(f"get_ {json.dumps(content)}")
     return JSONResponse(
         status_code=status_code,
         content=content,
@@ -88,7 +87,9 @@ def get_() -> JSONResponse:
 @web_app.get("/health")
 def get_health() -> JSONResponse:
     Vars.health += 1
-    return get_()
+    rval = get_()
+    logger.log(json.dumps(rval.content))
+    return rval
 
 
 @web_app.get("/start_time")
