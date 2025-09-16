@@ -50,6 +50,10 @@ class Response(BaseModel):
     timer: Timer
 
 
+class Vars:
+    states: dict[str, str] = {}
+
+
 Manager = manager.Manager[Request, Response]
 
 
@@ -93,6 +97,7 @@ class Screenshot:
         latest = Register(value=s)
 
         def C(key: str) -> None:
+            Vars.states[self.id] = key
             now = time.time()
             diff = now - latest.value
             latest.value = now
