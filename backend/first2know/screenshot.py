@@ -84,7 +84,7 @@ class Screenshot:
 
     def __call__(self, request: Request) -> Response:
 
-        r = asyncio.run(self.__acall__(request))
+        r = asyncio.run(asyncio.wait_for(self.__acall__(request), timeout=60))
         return r
 
     async def __acall__(
