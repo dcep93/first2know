@@ -28,7 +28,11 @@ function RoutedEdit(props: { toHandle: ToHandleType }) {
               data_output:
                 props.toHandle.data_output === null
                   ? null
-                  : { ...props.toHandle.data_output, time: null, error: null },
+                  : {
+                      ...props.toHandle.data_output,
+                      time: Date.now() / 1000,
+                      error: null,
+                    },
             })
             .then(() => props.toHandle.key)
         }

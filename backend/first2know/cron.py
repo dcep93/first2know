@@ -21,6 +21,9 @@ DEBOUNCE_SECONDS = 5 * 60
 
 LOOP_SLEEP_SECONDS = 10
 
+STALE_REFRESH_SECONDS = 300
+STALE_THROW_DIFFERENCE_SECONDS = 90
+
 
 def init() -> None:
     firebase_wrapper.init()
@@ -162,22 +165,25 @@ def helper(
     screenshot_manager: screenshot.Manager,
     timer: screenshot.Timer,
 ) -> str:
+    now = float(time.time())
+
     data_output = (
-        firebase_wrapper.DataOutput()
+        firebase_wrapper.DataOutput(time=now)
         if to_handle.data_output is None
         else to_handle.data_output
     )
 
-    now = float(time.time())
-    previous_time = data_output.time
     previous_error = data_output.error
+    previous_time = data_output.time
 
     if Vars.is_just_cron:
         logger.log(f"is_just_cron.to_handle {to_handle}")
     elif previous_error is not None and previous_error.version == VERSION:
         return "previous_error"
-    elif previous_time is not None and previous_time > now:
+    elif previous_time > now:
         return "previous_time"
+
+    age = now - previous_time
 
     url_message = (
         "no_url" if not to_handle.data_input.url else f"url: {to_handle.data_input.url}"
@@ -209,9 +215,10 @@ def helper(
         )
         traceback_err = traceback.format_exc()
         err_str = f"traceback_err: {type(e)}: {e}\n{traceback_err}"
-        if not ignorable_exception is None:
-            logger.log(err_str)
-            return str(ignorable_exception)
+        if age < STALE_REFRESH_SECONDS + STALE_THROW_DIFFERENCE_SECONDS:
+            if not ignorable_exception is None:
+                logger.log(err_str)
+                return str(ignorable_exception)
         data_output.error = firebase_wrapper.ErrorType(
             version=VERSION, time=time.time(), message=err_str
         )
@@ -235,15 +242,13 @@ def helper(
         )
         raise e
 
-    if screenshot_response.evaluation == exceptions.IGNORE:
-        return screenshot_response.evaluation
-
     old_md5 = (
         None if data_output.screenshot_data is None else data_output.screenshot_data.md5
     )
     if screenshot_response.md5 == old_md5:
-        if data_output.error is not None:
+        if age > STALE_REFRESH_SECONDS or data_output.error is not None:
             data_output.error = None
+            data_output.time = now
             to_handle.data_output = data_output
             firebase_wrapper.write_data(to_handle)
         return "old_md5"
