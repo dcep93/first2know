@@ -13,8 +13,8 @@ export type ScreenshotDataType = {
 };
 
 export type DataOutputType = {
-  screenshot_data?: ScreenshotDataType;
   time: number;
+  screenshot_data: ScreenshotDataType | null;
   error: { version: string; time: number; message: string } | null;
 };
 
@@ -32,7 +32,7 @@ export type DataInputType = {
 export type ToHandleType = {
   key: string;
   data_input: DataInputType;
-  data_output: DataOutputType | null;
+  data_output: DataOutputType;
   user: string;
 };
 
@@ -61,7 +61,11 @@ function encryptToHandle(toHandle: ToHandleType): WrappedToHandleType {
 function pushToHandle(data_input: DataInputType): Promise<string> {
   const toHandle: ToHandleType = {
     data_input,
-    data_output: null,
+    data_output: {
+      time: Date.now() / 1000,
+      screenshot_data: null,
+      error: null,
+    },
     user: LOCAL_USER!.email,
     key: "",
   };

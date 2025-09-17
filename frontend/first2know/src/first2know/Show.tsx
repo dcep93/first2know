@@ -21,7 +21,14 @@ export function RenderToHandle(props: { toHandle: ToHandleType }) {
   return (
     <div>
       <pre className={styles.toHandlePre}>
-        {JSON.stringify(props.toHandle, null, 2)}
+        {JSON.stringify(
+          {
+            age_s: Date.now() / 1000 - props.toHandle.data_output.time,
+            ...props.toHandle,
+          },
+          null,
+          2
+        )}
       </pre>
     </div>
   );

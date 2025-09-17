@@ -46,9 +46,9 @@ class DataInput(BaseModel):
 
 class ToHandle(BaseModel):
     data_input: DataInput
+    data_output: DataOutput
     user: str
     key: typing.Optional[str]
-    data_output: typing.Optional[DataOutput] = None
 
 
 class Vars:
