@@ -49,6 +49,7 @@ class TestFirst2Know(unittest.TestCase):
 
             to_handle = firebase_wrapper.ToHandle(
                 data_input=firebase_wrapper.DataInput(url="https://example.com"),
+                data_output=firebase_wrapper.DataOutput(time=time.time()),
                 user="user@email.com",
                 key="",
             )
