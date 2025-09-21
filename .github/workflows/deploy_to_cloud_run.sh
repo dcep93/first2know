@@ -52,7 +52,8 @@ gcloud beta run deploy "first2know" \
   --no-cpu-throttling \
   --cpu 4 \
   --memory 2Gi \
-  --scaling 1 \
+  --min-instances 1 \
+  --max-instances 1 \
   --timeout 300 \
   --liveness-probe httpGet.path=/health
 
