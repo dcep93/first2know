@@ -13,7 +13,7 @@ from . import email_wrapper
 from . import logger
 
 # update version to clear errors
-VERSION = "6.2.0"
+VERSION = "7.0.0"
 
 NUM_SCREENSHOTTERS = 2
 
