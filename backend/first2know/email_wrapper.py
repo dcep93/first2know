@@ -25,24 +25,27 @@ def _build_server() -> smtplib.SMTP:
     return server
 
 
-def send_text_email(
-    email_to: str, subject: str, pre: typing.Optional[str], text: str
-) -> None:
+def _get_pre(block: str) -> str:
+    return f'<pre style="white-space:pre">{block}</pre>'
+
+
+def send_text_email(email_to: str, subject: str, blocks: list[str]) -> None:
     msg = EmailMessage()
     msg["From"] = secrets.Vars.secrets.email_user
     msg["To"] = email_to
     msg["Subject"] = subject
 
+    body = "\n".join([_get_pre(block) for block in blocks])
+
     html_content = f"""
     <html>
         <body>
-            {f'<pre>{pre}</pre>' if pre else ''}
-            <div>{text}</div>
+            {body}
         </body>
     </html>
     """
 
-    msg.set_content(text)
+    msg.set_content("\n".join(blocks))
     msg.add_alternative(html_content, subtype="html")
 
     try:
@@ -70,7 +73,7 @@ def send_img_email(
     <html>
         <body>
             <img src="cid:{img_cid}" alt="Embedded Image">
-            <pre>{text}</pre>
+            {_get_pre(text)}
             <div>{time.time()}</div>
         </body>
     </html>

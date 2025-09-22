@@ -229,20 +229,17 @@ def helper(
         )
         to_handle.data_output = data_output
         firebase_wrapper.write_data(to_handle)
-        text = "\n".join(
-            [
-                str(type(e)),
-                url_message,
-                f"https://first2know.web.app/{to_handle.key}",
-            ]
-        )
         if Vars.is_just_cron:
             return "error"
         email_wrapper.send_text_email(
             to_handle.user,
             subject,
-            err_str,
-            text,
+            [
+                err_str,
+                str(type(e)),
+                url_message,
+                f"https://first2know.web.app/{to_handle.key}",
+            ],
         )
         raise e
 
@@ -284,8 +281,10 @@ def helper(
         email_wrapper.send_text_email(
             to_handle.user,
             subject,
-            screenshot_response.evaluation,
-            text,
+            [
+                str(screenshot_response.evaluation),
+                text,
+            ],
         )
     else:
         email_wrapper.send_img_email(
