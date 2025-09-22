@@ -41,6 +41,7 @@ def send_text_email(email_to: str, subject: str, blocks: list[str]) -> None:
     <html>
         <body>
             {body}
+            <div>{time.time()}</div>
         </body>
     </html>
     """
