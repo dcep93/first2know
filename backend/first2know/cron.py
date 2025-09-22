@@ -107,7 +107,8 @@ def loop_with_manager(
             return True
 
         resp = run(screenshot_manager)
-        time.sleep(LOOP_SLEEP_SECONDS)
+        duration = time.time() - now
+        time.sleep(LOOP_SLEEP_SECONDS - duration)
 
 
 # refresh token is not actually used to auth anymore
