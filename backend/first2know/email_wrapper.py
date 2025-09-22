@@ -1,4 +1,5 @@
 import base64
+import html
 import smtplib
 import sys
 import time
@@ -26,7 +27,7 @@ def _build_server() -> smtplib.SMTP:
 
 
 def _get_pre(block: str) -> str:
-    return f'<pre style="white-space:pre; color:red;display:block;overflow-x:auto;word-wrap:normal;overflow-wrap:normal;display:block">{block}</pre>'
+    return f'<pre style="white-space:pre; display:block;overflow-x:auto;word-wrap:normal;overflow-wrap:normal;display:block;min-width:max-content;">{html.escape(block)}</pre>'
 
 
 def send_text_email(email_to: str, subject: str, blocks: list[str]) -> None:
