@@ -106,7 +106,11 @@ def loop_with_manager(
             logger.log(f"loop_with_manager.exit {loops}")
             return True
 
-        resp = run(screenshot_manager)
+        try:
+            resp = run(screenshot_manager)
+        except Exception as e:
+            traceback_err = traceback.format_exc()
+            logger.log(traceback_err)
         duration = time.time() - now
         time.sleep(LOOP_SLEEP_SECONDS - duration)
 
