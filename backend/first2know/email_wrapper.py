@@ -2,6 +2,7 @@ import base64
 import smtplib
 import sys
 import time
+import typing
 
 from email.message import EmailMessage
 
@@ -24,7 +25,9 @@ def _build_server() -> smtplib.SMTP:
     return server
 
 
-def send_text_email(email_to: str, subject: str, text: str) -> None:
+def send_text_email(
+    email_to: str, subject: str, pre: typing.Optional[str], text: str
+) -> None:
     msg = EmailMessage()
     msg["From"] = secrets.Vars.secrets.email_user
     msg["To"] = email_to
@@ -33,7 +36,8 @@ def send_text_email(email_to: str, subject: str, text: str) -> None:
     html_content = f"""
     <html>
         <body>
-            <pre>{text}</pre>
+            {f'<pre>{pre}</pre>' if pre else ''}
+            <div>{text}</div>
         </body>
     </html>
     """
@@ -49,11 +53,11 @@ def send_text_email(email_to: str, subject: str, text: str) -> None:
         sys.exit(1)
 
 
-def send_email(
+def send_img_email(
     email_to: str,
     subject: str,
-    text: str,
     img_data: str,
+    text: str,
 ) -> None:
     msg = EmailMessage()
     msg["From"] = secrets.Vars.secrets.email_user
@@ -84,5 +88,5 @@ def send_email(
         with _build_server() as server:
             server.send_message(msg)
     except Exception as e:
-        logger.log(f"email_wrapper.send_message {e}")
+        logger.log(f"email_wrapper.send_img_email {e}")
         sys.exit(1)

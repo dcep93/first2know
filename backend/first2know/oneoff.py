@@ -19,7 +19,7 @@ def handle_from_x() -> None:
     {
       "data_input": {
         "evaluate": "new Promise((resolve, reject) => {\\nfunction helper(i) {\\n  if (i < 0) return resolve(\\"first2know_ignore\\")\\n  const contents = Array.from(document.getElementsByClassName(\\"recentActivityDetail\\"))\\n    .map(e => e.innerText.split(\\"\\\\n\\"))\\n  if (contents.length > 0) {\\n    return resolve(JSON.stringify(contents, null, 2))\\n  }\\n  setTimeout(() => helper(i - 10), 10)\\n}\\nhelper(300)\\n})",
-        "evaluation_to_img": false,
+        "send_evaluation": false,
         "url": "https://example.com",
         "urlx": "https://fantasy.espn.com/football/recentactivity?leagueId=203836968"
       },

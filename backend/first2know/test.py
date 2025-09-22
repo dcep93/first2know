@@ -12,7 +12,6 @@ from . import crypt
 from . import email_wrapper
 from . import firebase_wrapper
 from . import logger
-from . import manager
 from . import screenshot
 from . import secrets
 
@@ -142,11 +141,11 @@ class TestFirst2Know(unittest.TestCase):
             screenshot_response.evaluation,
         )
 
-    def test_evaluation_to_img(self) -> None:
+    def test_send_evaluation(self) -> None:
         data_input = firebase_wrapper.DataInput(
             url="https://example.com",
             evaluate="document.body.innerHTML",
-            evaluation_to_img=True,
+            send_evaluation=True,
         )
         screenshot_response = screenshot.Screenshot()(
             screenshot.Request(

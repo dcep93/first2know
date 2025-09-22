@@ -236,14 +236,13 @@ def helper(
                 f"https://first2know.web.app/{to_handle.key}",
             ]
         )
-        err_img_data = screenshot.str_to_binary_data(err_str)
         if Vars.is_just_cron:
             return "error"
-        email_wrapper.send_email(
+        email_wrapper.send_text_email(
             to_handle.user,
             subject,
+            err_str,
             text,
-            err_img_data,
         )
         raise e
 
@@ -272,26 +271,29 @@ def helper(
         error=None,
     )
 
+    Vars.write_count += 1
+
     text = "\n\n".join(
         [
             url_message,
             f"https://first2know.web.app/{to_handle.key}",
-            screenshot_response.md5,
-            # json.dumps(
-            #     {"to_handle": to_handle.model_dump_json(), "old_data": old_data_str},
-            #     indent=2,
-            # ),
         ]
     )
 
-    Vars.write_count += 1
-
-    email_wrapper.send_email(
-        to_handle.user,
-        subject,
-        text,
-        screenshot_response.img_data,
-    )
+    if screenshot_response.img_data is None:
+        email_wrapper.send_text_email(
+            to_handle.user,
+            subject,
+            screenshot_response.evaluation,
+            text,
+        )
+    else:
+        email_wrapper.send_img_email(
+            to_handle.user,
+            subject,
+            screenshot_response.img_data,
+            text,
+        )
 
     logger.log(
         f"cron.log.handled {to_handle.key} {to_handle.data_output.model_dump_json()}"

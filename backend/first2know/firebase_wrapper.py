@@ -1,11 +1,13 @@
 # https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
+from __future__ import annotations
+
 import json
 import threading
 import time
 import typing
 
-from pydantic import BaseModel  # type: ignore
+from pydantic import BaseModel
 
 from google.auth import credentials as auth_creds  # type: ignore
 import firebase_admin  # type: ignore
@@ -39,7 +41,7 @@ class DataInput(BaseModel):
     cookies: typing.Optional[typing.Dict[str, typing.Dict[str, str]]] = None
     selector: typing.Optional[str] = None
     evaluate: typing.Optional[str] = None
-    evaluation_to_img: typing.Optional[bool] = False
+    send_evaluation: typing.Optional[bool] = False
     user_agent_hack: typing.Optional[bool] = None
     raw_proxy: typing.Optional[bool] = None
 

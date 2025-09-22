@@ -35,9 +35,7 @@ def init() -> None:
         NUM_SCREENSHOTTERS,
     )
     email_wrapper.send_text_email(
-        "dcep93@gmail.com",
-        "startup",
-        recorded_sha.recorded_sha,
+        "dcep93@gmail.com", "startup", None, recorded_sha.recorded_sha
     )
 
 

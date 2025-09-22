@@ -1,7 +1,6 @@
 import asyncio
 import base64
 import datetime
-import io
 import json
 import os
 import time
@@ -9,8 +8,6 @@ import typing
 import uuid
 
 from pydantic import BaseModel  # type: ignore
-
-from PIL import Image, ImageDraw  # type: ignore
 
 from . import crypt
 from . import exceptions
@@ -43,7 +40,7 @@ class Request(BaseModel):
 
 
 class Response(BaseModel):
-    img_data: str
+    img_data: typing.Optional[str]
     evaluation: typing.Optional[str]
     md5: str
     elapsed: float
@@ -157,10 +154,10 @@ class Screenshot:
             )
 
             if (
-                request.data_input.evaluation_to_img
+                request.data_input.send_evaluation
                 or raw_evaluation == exceptions.IGNORE
             ):
-                img_data = str_to_binary_data(str_evaluation)
+                img_data = None
             else:
                 if request.data_input.selector is None:
                     to_screenshot = page
@@ -200,7 +197,7 @@ class Screenshot:
                 [
                     "screenshot.__acall__",
                     f"{elapsed:.3f}s",
-                    f"{len(img_data)/1000}kb",
+                    f"{len(img_data)/1000 if img_data else -1}kb",
                     datetime.datetime.now().strftime("%H:%M:%S.%f"),
                 ]
             )
@@ -213,22 +210,3 @@ class Screenshot:
             elapsed=elapsed,
             timer=timer,
         )
-
-
-def str_to_binary_data(s: str) -> str:
-    text = s.encode("latin-1", "ignore").decode("latin-1")
-    lines = text.split("\n")
-    padding_pixels = 50
-    pixels_per_row = 15.2
-    pixels_per_column = 6.6
-    width = int(2 * padding_pixels + (pixels_per_column * max([len(i) for i in lines])))
-    height = int(2 * padding_pixels + (pixels_per_row * len(lines)))
-    img = Image.new("1", (width, height))
-    draw = ImageDraw.Draw(img)
-    draw.text((padding_pixels, padding_pixels), text, fill=255)
-    img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format="PNG")
-    binary_data = img_byte_arr.getvalue()
-    encoded = base64.b64encode(binary_data)
-    img_data = encoded.decode("utf-8")
-    return img_data

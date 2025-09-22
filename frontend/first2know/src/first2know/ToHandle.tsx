@@ -125,7 +125,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
           css_selector:{" "}
           <input
             ref={cssSelectorRef}
-            disabled={props.toHandle?.data_input.evaluation_to_img || false}
+            disabled={props.toHandle?.data_input.send_evaluation || false}
             defaultValue={props.toHandle?.data_input.selector || undefined}
             type="text"
           />
@@ -137,9 +137,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
               (cssSelectorRef.current!.disabled =
                 evaluationToImgRef.current!.checked)
             }
-            defaultChecked={
-              props.toHandle?.data_input.evaluation_to_img || false
-            }
+            defaultChecked={props.toHandle?.data_input.send_evaluation || false}
             ref={evaluationToImgRef}
             type="checkbox"
           />
@@ -194,7 +192,7 @@ function getData(): DataInputType {
     cookies,
     selector: cssSelectorRef.current!.value || null,
     evaluate: evaluateRef.current!.value || null,
-    evaluation_to_img: evaluationToImgRef.current!.checked || null,
+    send_evaluation: evaluationToImgRef.current!.checked || null,
     user_agent_hack: userAgentRef.current!.checked || null,
     raw_proxy: rawProxyRef.current!.checked || null,
   };

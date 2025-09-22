@@ -24,7 +24,7 @@ export type DataInputType = {
   cookies: { [domain: string]: { [key: string]: string } } | null;
   selector: string | null;
   evaluate: string | null;
-  evaluation_to_img: boolean | null;
+  send_evaluation: boolean | null;
   raw_proxy: boolean | null;
   user_agent_hack: boolean | null;
 };
