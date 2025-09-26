@@ -34,9 +34,6 @@ def init() -> None:
         screenshot.Screenshot,
         NUM_SCREENSHOTTERS,
     )
-    email_wrapper.send_text_email(
-        "dcep93@gmail.com", "startup", [recorded_sha.recorded_sha]
-    )
 
 
 web_app = FastAPI()

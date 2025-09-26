@@ -6,6 +6,7 @@ import traceback
 import concurrent.futures
 import typing
 
+from . import recorded_sha
 from . import exceptions
 from . import firebase_wrapper
 from . import screenshot
@@ -118,10 +119,20 @@ def loop_with_manager(
 # refresh token is not actually used to auth anymore
 # it's still used to detect if a new cron has been spun up and taken over
 def refresh_access_token() -> str:
-    logger.log("refresh_access_token.start")
-    new_token = str(time.time())
+    now = time.time()
+    prev_token = firebase_wrapper.get_token()
+    if prev_token:
+        age = now - float(prev_token)
+        if age < 60 * 60 * 24:
+            email_wrapper.send_text_email(
+                "dcep93@gmail.com", "startup", [recorded_sha.recorded_sha, prev_token]
+            )
+    else:
+        age = -1
+    logger.log(f"refresh_access_token.age {age}")
+
+    new_token = str(now)
     firebase_wrapper.write_token(new_token)
-    logger.log("refresh_access_token.end")
     return new_token
 
 
