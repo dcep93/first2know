@@ -123,7 +123,7 @@ def refresh_access_token() -> str:
     prev_token = firebase_wrapper.get_token()
     if prev_token:
         age = now - float(prev_token)
-        if age < 60 * 60 * 24:
+        if age < 60 * 60:
             email_wrapper.send_text_email(
                 "dcep93@gmail.com", "startup", [recorded_sha.recorded_sha, prev_token]
             )
