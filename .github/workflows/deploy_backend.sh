@@ -8,7 +8,7 @@ SECRETS_JSON="$2"
 cd "$(dirname "$0")"
 
 function c() {
-  curl --fail https://first2know-125082277118.us-east1.run.app/
+  curl --fail https://first2know-461120033887.us-east1.run.app/
 }
 
 DIFF="$(git diff HEAD^ ../../backend)"
