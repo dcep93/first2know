@@ -4,7 +4,7 @@ set -euo pipefail
 
 # # requires billing!
 # # create a new project every 3 months once trial expires
-# # first2know20250716@cloudshell:~
+# # first2know20251005@cloudshell:~$
 # set -e
 # nvm install 16.4.0
 # gcloud services enable compute
@@ -21,7 +21,6 @@ set -euo pipefail
 # gcloud projects add-iam-policy-binding "$GOOGLE_CLOUD_PROJECT" --member="serviceAccount:$IAM@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com" --role="roles/viewer"
 # gcloud iam service-accounts keys create gac.json --iam-account "$IAM@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com"
 # cat gac.json
-# echo 125082277118
 
 SA_KEY="$1"
 
