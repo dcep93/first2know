@@ -284,6 +284,7 @@ def helper(
     text = "\n\n".join(
         [
             url_message,
+            screenshot_response.md5,
             f"https://first2know.web.app/{to_handle.key}",
         ]
     )
