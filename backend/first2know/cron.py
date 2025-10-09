@@ -183,6 +183,8 @@ def helper(
 ) -> str:
     now = float(time.time())
 
+    initial_json = to_handle.model_dump_json()
+
     data_output = (
         firebase_wrapper.DataOutput(time=now)
         if to_handle.data_output is None
@@ -307,7 +309,7 @@ def helper(
         )
 
     logger.log(
-        f"cron.log.handled {to_handle.key} {to_handle.data_output.model_dump_json()}"
+        f"cron.log.handled {to_handle.key} {to_handle.data_output.model_dump_json()} {initial_json}"
     )
 
     firebase_wrapper.write_data(to_handle)
