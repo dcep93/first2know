@@ -109,7 +109,7 @@ def _extract_to_handle(
     decrypted = crypt.decrypt(d["encrypted"], d["user"])
     loaded = json.loads(decrypted)
     loaded["key"] = key
-    return ToHandle.parse_obj(loaded)
+    return ToHandle.model_validate(loaded)
 
 
 def minimize_dict(d: typing.Any) -> typing.Any:
@@ -119,7 +119,7 @@ def minimize_dict(d: typing.Any) -> typing.Any:
 
 
 def write_data(to_handle: ToHandle) -> None:
-    d = to_handle.dict()
+    d = to_handle.model_dump()
     dd = minimize_dict(d)
     ddd = json.dumps(dd)
     encrypted = crypt.encrypt(ddd, to_handle.user)
