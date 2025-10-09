@@ -1,10 +1,12 @@
 # https://console.firebase.google.com/u/0/project/first2know/database/first2know-default-rtdb/data
 
 import json
+import os
 import threading
 import time
 import typing
 
+import requests  # type: ignore
 from pydantic import BaseModel
 
 from google.auth import credentials as auth_creds  # type: ignore
@@ -74,6 +76,16 @@ def init() -> None:
         },
     )
 
+    def refListen() -> None:
+        try:
+            db.reference("/to_handle").listen(listenF)
+        except requests.exceptions.HTTPError as e:
+            logger.log(f"firebase_wrapper.listen error: {e}")
+        except Exception:
+            logger.log("firebase_wrapper.listen unexpected error")
+
+        Vars._raw_all_to_handle = None
+
     def listenF(event: db.Event) -> None:
         if Vars._raw_all_to_handle is None:
             logger.log("firebase_wrapper.init.listenF")
@@ -81,10 +93,7 @@ def init() -> None:
             return
         Vars._raw_all_to_handle = db.reference("/to_handle").get()
 
-    threading.Thread(
-        target=lambda: db.reference("/to_handle").listen(listenF),
-        daemon=True,
-    ).start()
+    threading.Thread(target=refListen, daemon=True).start()
     logger.log("firebase_wrapper.init.initialized")
 
 
