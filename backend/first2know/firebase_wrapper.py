@@ -98,7 +98,7 @@ def wait_10s_for_data() -> None:
 
 def get_to_handle() -> typing.List[ToHandle]:
     if Vars._raw_all_to_handle is None:
-        return []
+        raise Exception("get_to_handle.null")
     return [_extract_to_handle(k, v) for k, v in Vars._raw_all_to_handle.items()]
 
 
