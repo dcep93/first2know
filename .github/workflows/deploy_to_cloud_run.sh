@@ -50,7 +50,7 @@ gcloud beta run deploy "first2know" \
   --platform managed \
   --allow-unauthenticated \
   --no-cpu-throttling \
-  --cpu 4 \
+  --cpu 2 \
   --memory 2Gi \
   --min-instances 1 \
   --max-instances 1 \
