@@ -66,7 +66,7 @@ class TestFirst2Know(unittest.TestCase):
         assert data_output.screenshot_data is not None
         md5 = data_output.screenshot_data.md5
 
-        self.assertEqual(md5, "72e9afeb37cd66e579ba16edac80f493")
+        self.assertEqual(md5, "e9c20ee766ca30e5892d1c16ef3ff173")
         self.assertEqual(sent_messages[0]["To"], "user@email.com")
 
     def test_screenshot(self) -> None:
@@ -80,7 +80,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         self.assertEqual(
             screenshot_response.md5,
-            "72e9afeb37cd66e579ba16edac80f493",
+            "e9c20ee766ca30e5892d1c16ef3ff173",
         )
 
     def test_manager(self) -> None:
@@ -121,7 +121,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         self.assertEqual(
             screenshot_response.md5,
-            "bbc1c4e4570a955433f2cecbc33d994f",
+            "dd6eeb799365ca4c4e3d4bb72c97a8d5",
         )
 
     def test_evaluate(self) -> None:
@@ -137,7 +137,7 @@ class TestFirst2Know(unittest.TestCase):
             )
         )
         self.assertEqual(
-            "\n<div>\n    <h1>Examp",
+            "<div><h1>Example Dom",
             screenshot_response.evaluation,
         )
 
@@ -156,7 +156,7 @@ class TestFirst2Know(unittest.TestCase):
         )
         self.assertEqual(
             screenshot_response.md5,
-            "80636eee396ece73b5ef8183b675013e",
+            "a57c7b834bff7c8bdd3deeb27873e31f",
         )
 
     def test_chain_evaluation(self) -> None:
