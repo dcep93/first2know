@@ -113,7 +113,9 @@ def loop_with_manager(
             traceback_err = traceback.format_exc()
             logger.log(traceback_err)
         duration = time.time() - now
-        time.sleep(LOOP_SLEEP_SECONDS - duration)
+        to_sleep = LOOP_SLEEP_SECONDS - duration
+        if to_sleep > 0:
+            time.sleep(to_sleep)
 
 
 # refresh token is not actually used to auth anymore

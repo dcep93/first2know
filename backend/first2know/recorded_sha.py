@@ -1,1 +1,1 @@
-recorded_sha = "unknown x"
+recorded_sha = "unknown"
