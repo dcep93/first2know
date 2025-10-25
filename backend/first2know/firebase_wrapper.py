@@ -132,9 +132,15 @@ def write_data(to_handle: ToHandle) -> None:
     dd = minimize_dict(d)
     ddd = json.dumps(dd)
     encrypted = crypt.encrypt(ddd, to_handle.user)
-    db.reference(f"to_handle/{to_handle.key}").set(
-        {"encrypted": encrypted, "user": to_handle.user}
-    )
+    raw_entry = {"encrypted": encrypted, "user": to_handle.user}
+
+    if (
+        Vars._raw_all_to_handle is not None
+        and to_handle.key is not None
+    ):
+        Vars._raw_all_to_handle[to_handle.key] = raw_entry
+
+    db.reference(f"to_handle/{to_handle.key}").set(raw_entry)
 
 
 def write_token(token: str) -> None:
