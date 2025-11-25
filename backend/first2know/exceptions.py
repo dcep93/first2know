@@ -28,7 +28,7 @@ def get_ignorable_exception(
         if e.__class__ == playwright._impl._errors.Error:
             if e.message.startswith("Browser closed.\n"):  # type: ignore
                 return IgnorableException("browser_closed")
-            if e.message.startswith("net::ERR_CONNECTION_RESET at"):  # type: ignore
+            if e.message.startswith("Page.goto: net::ERR_CONNECTION_RESET at"):  # type: ignore
                 return IgnorableException("connection_reset")
             if e.message.startswith("Page.evaluate: Execution context was destroyed, most likely because of a navigation."):  # type: ignore
                 return IgnorableException("page.evaluate")
