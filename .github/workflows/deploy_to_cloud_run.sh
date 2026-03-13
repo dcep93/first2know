@@ -57,5 +57,11 @@ gcloud beta run deploy "first2know" \
   --timeout 300 \
   --liveness-probe httpGet.path=/health
 
+
+gcloud container images delete \
+  us.gcr.io/${GOOGLE_CLOUD_PROJECT}/stem420/backend \
+  --force-delete-tags \
+  --quiet
+
 # # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # # gcloud beta app repair
