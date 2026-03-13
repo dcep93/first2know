@@ -23,6 +23,32 @@ set -euo pipefail
 # gcloud iam service-accounts keys create gac.json --iam-account "$IAM@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com"
 # cat gac.json
 
+# cat > policy.json <<'EOF'
+# [
+#   {
+#     "name": "delete-old",
+#     "action": { "type": "Delete" },
+#     "condition": {
+#       "tagState": "any",
+#       "olderThan": "1s"
+#     }
+#   },
+#   {
+#     "name": "keep-last-2",
+#     "action": { "type": "Keep" },
+#     "mostRecentVersions": {
+#       "keepCount": 2
+#     }
+#   }
+# ]
+# EOF
+
+# gcloud artifacts repositories set-cleanup-policies us.gcr.io \
+#   --project="${GOOGLE_CLOUD_PROJECT}" \
+#   --location=us \
+#   --policy=policy.json \
+#   --no-dry-run
+
 SA_KEY="$1"
 
 REGION="us-east1"
@@ -57,11 +83,6 @@ gcloud beta run deploy "first2know" \
   --timeout 300 \
   --liveness-probe httpGet.path=/health
 
-
-gcloud container images delete \
-  us.gcr.io/${GOOGLE_CLOUD_PROJECT}/stem420/backend \
-  --force-delete-tags \
-  --quiet
 
 # # gsutil -m rm -r "gs://us.artifacts.${GOOGLE_CLOUD_PROJECT}.appspot.com"
 # # gcloud beta app repair
