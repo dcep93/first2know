@@ -59,6 +59,9 @@ npm install google-auth-library
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
 GOOGLE_CLOUD_PROJECT="$(jq -r .project_id < "$GOOGLE_APPLICATION_CREDENTIALS")"
 
+echo $GOOGLE_CLOUD_PROJECT asdf
+exit 1
+
 cd ../../backend
 echo 'ENTRYPOINT [ "make", "server" ]' >>Dockerfile
 
