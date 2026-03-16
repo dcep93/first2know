@@ -12,7 +12,7 @@ function c() {
 }
 
 DIFF="$(git diff HEAD^ ../../backend)"
-if [[ -z "$DIFF" ]]; then
+if [[ -z "x$DIFF" ]]; then
   echo "no diff"
   c && exit 0 || true
 else
