@@ -23,9 +23,9 @@ def get_ignorable_exception(
     if src == Src.playwright_screenshot:
         if e.__class__ == asyncio.exceptions.TimeoutError:
             return IgnorableException("asyncio_timeout")
-        if e.__class__ == playwright._impl._errors.TimeoutError:
+        if e.__class__ == playwright._impl._errors.TimeoutError:  # type: ignore
             return IgnorableException("playwright_timeout")
-        if e.__class__ == playwright._impl._errors.Error:
+        if e.__class__ == playwright._impl._errors.Error:  # type: ignore
             if e.message.startswith("Browser closed.\n"):  # type: ignore
                 return IgnorableException("browser_closed")
             if e.message.startswith("Page.goto: net::ERR_CONNECTION_RESET at"):  # type: ignore
@@ -36,7 +36,7 @@ def get_ignorable_exception(
                 return IgnorableException("page.evaluate.ignore\n")
 
     if src == Src.screenshot_null_location:
-        if e.__class__ == playwright._impl._errors.Error:
+        if e.__class__ == playwright._impl._errors.Error: # type: ignore
             if e.getMessage() == "location: expected object, got null":  # type: ignore
                 return IgnorableException(f"1.{src.value}")
 
