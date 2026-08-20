@@ -31,17 +31,11 @@ def legacy_key(password: str, encryption_key: str) -> bytes:
 def main() -> None:
     old_secrets = json.loads(require_environment("OLD_SECRETS_JSON"))
     old_password = old_secrets.get("email_password")
-    expected_user = old_secrets.get("email_user")
     if not isinstance(old_password, str) or not old_password:
         raise RuntimeError("SECRETS_JSON does not contain email_password")
-    if not isinstance(expected_user, str) or not expected_user:
-        raise RuntimeError("SECRETS_JSON does not contain email_user")
 
     new_key = require_environment("NEW_FERNET_KEY").encode()
     new_fernet = Fernet(new_key)
-    old_fernet = Fernet(legacy_key(old_password, expected_user))
-    if new_key == legacy_key(old_password, expected_user):
-        raise RuntimeError("Replacement key unexpectedly matches the legacy key")
 
     response = requests.get(
         FIREBASE_URL,
@@ -59,6 +53,7 @@ def main() -> None:
 
     migrated: dict[str, dict[str, Any]] = {}
     plaintext_by_id: dict[str, bytes] = {}
+    record_user: str | None = None
 
     # Complete every validation and decryption before issuing the single write.
     for record_id, raw_record in records.items():
@@ -68,8 +63,17 @@ def main() -> None:
         user = raw_record.get("user")
         if not isinstance(encrypted, str) or not encrypted:
             raise RuntimeError("A Firebase record has no encrypted payload")
-        if user != expected_user:
-            raise RuntimeError("A Firebase record belongs to an unexpected user")
+        if not isinstance(user, str) or not user:
+            raise RuntimeError("A Firebase record has no user")
+        if record_user is None:
+            record_user = user
+        elif user != record_user:
+            raise RuntimeError("Firebase records belong to more than one user")
+
+        old_key = legacy_key(old_password, user)
+        if new_key == old_key:
+            raise RuntimeError("Replacement key unexpectedly matches the legacy key")
+        old_fernet = Fernet(old_key)
 
         try:
             plaintext = old_fernet.decrypt(encrypted.encode())
