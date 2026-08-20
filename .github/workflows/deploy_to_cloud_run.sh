@@ -50,11 +50,12 @@ gcloud beta run deploy "first2know" \
   --image "${IMG_URL}" \
   --platform managed \
   --allow-unauthenticated \
-  --no-cpu-throttling \
+  --cpu-throttling \
   --cpu 2 \
   --memory 2Gi \
-  --min-instances 1 \
+  --min-instances 0 \
   --max-instances 1 \
+  --set-env-vars FIRST2KNOW_RUN_CRON=0 \
   --timeout 300 \
   --liveness-probe httpGet.path=/health
 

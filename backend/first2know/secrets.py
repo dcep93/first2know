@@ -7,6 +7,7 @@ from pydantic import BaseModel  # type: ignore
 class Secrets(BaseModel):
     email_user: str
     email_password: str
+    fernet_key: str = ""
 
 
 local_secret_path = os.path.join(

@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import traceback
 import typing
@@ -20,6 +21,7 @@ from . import screenshot
 
 NUM_SCREENSHOTTERS = 4
 MAX_CRON_AGE = 15 * 60
+CRON_ENABLED = os.environ.get("FIRST2KNOW_RUN_CRON", "1") != "0"
 
 
 class Vars:
@@ -57,7 +59,12 @@ def get_() -> JSONResponse:
     now = time.time()
     alive_age_s = now - Vars.start_time
     cron_age = now - cron.Vars.latest_time
-    status_code = 200 if cron.Vars.running and cron_age < MAX_CRON_AGE else 530
+    status_code = (
+        200
+        if not CRON_ENABLED
+        or (cron.Vars.running and cron_age < MAX_CRON_AGE)
+        else 530
+    )
     content = {
         "write_count": cron.Vars.write_count,
         "health_count": Vars.health,
@@ -66,6 +73,7 @@ def get_() -> JSONResponse:
         "avg_cron_age": alive_age_s / (cron.Vars.count + 1),
         "cron_age": cron_age,
         "cron_count": cron.Vars.count,
+        "cron_enabled": CRON_ENABLED,
         "cron_results": cron.Vars.latest_result,
         "cron_running": cron.Vars.running,
         "counts": cron.Vars.counts,

@@ -32,6 +32,11 @@ def decrypt(encrypted_string: str, encryption_key: str) -> str:
 
 @lru_cache
 def get_fernet_key_bytes(encryption_key: str) -> bytes:
+    if (
+        secrets.Vars.secrets.fernet_key
+        and encryption_key == secrets.Vars.secrets.email_user
+    ):
+        return secrets.Vars.secrets.fernet_key.encode("utf-8")
     small_key = str_to_md5(secrets.Vars.secrets.email_password + encryption_key)
     big_key = small_key * 32
     fernet_key_bytes = big_key.encode("utf-8")[:32]
