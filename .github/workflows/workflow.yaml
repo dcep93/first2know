@@ -43,4 +43,6 @@ jobs:
             ${{ runner.os }}
 
       - run: bash .github/workflows/deploy_frontend.sh '${{ secrets.SA_KEY }}'
-      - run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'
+      - name: backend deployment disabled; Windows Funnel serves the API
+        if: ${{ false }}
+        run: bash .github/workflows/deploy_backend.sh '${{ secrets.BACKEND_SA_KEY }}' '${{ secrets.SECRETS_JSON }}'

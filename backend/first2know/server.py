@@ -19,7 +19,7 @@ from . import proxy
 from . import recorded_sha
 from . import screenshot
 
-NUM_SCREENSHOTTERS = 4
+NUM_SCREENSHOTTERS = 1
 MAX_CRON_AGE = 15 * 60
 CRON_ENABLED = os.environ.get("FIRST2KNOW_RUN_CRON", "1") != "0"
 

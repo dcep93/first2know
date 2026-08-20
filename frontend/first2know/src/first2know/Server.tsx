@@ -5,7 +5,7 @@ const FETCH_INTERVAL_MS = 1000;
 
 export const url = IS_LOCAL
   ? "http://localhost:8000"
-  : "https://first2know-461120033887.us-east1.run.app";
+  : "https://desktop-2uo8g83.tail789685.ts.net";
 
 export function clog<T>(t: T): T {
   console.log(t);
