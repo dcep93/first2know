@@ -31,6 +31,7 @@ export type DataInputType = {
 
 export type ToHandleType = {
   key: string;
+  disabled: boolean | null;
   data_input: DataInputType;
   data_output: DataOutputType;
   user: string;
@@ -58,8 +59,12 @@ function encryptToHandle(toHandle: ToHandleType): WrappedToHandleType {
   return { user: LOCAL_USER!.email, encrypted };
 }
 
-function pushToHandle(data_input: DataInputType): Promise<string> {
+function pushToHandle(
+  data_input: DataInputType,
+  disabled: boolean | null
+): Promise<string> {
   const toHandle: ToHandleType = {
+    disabled,
     data_input,
     data_output: {
       time: Date.now() / 1000,

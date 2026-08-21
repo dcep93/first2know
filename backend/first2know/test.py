@@ -19,6 +19,43 @@ logger.logger.disabled = True
 
 
 class TestFirst2Know(unittest.TestCase):
+    def test_disabled_cron_does_not_run_screenshot(self) -> None:
+        class FailIfCalledManager:
+            def run(self, request: screenshot.Request) -> screenshot.Response:
+                raise AssertionError("disabled cron invoked the screenshot manager")
+
+        to_handle = firebase_wrapper.ToHandle(
+            disabled=True,
+            data_input=firebase_wrapper.DataInput(url="https://example.com"),
+            data_output=firebase_wrapper.DataOutput(
+                time=time.time(),
+                error=firebase_wrapper.ErrorType(
+                    version="different-version",
+                    time=time.time(),
+                    message="old error",
+                ),
+            ),
+            user="user@email.com",
+            key="disabled-test",
+        )
+
+        rval = cron.handle(
+            to_handle,
+            typing.cast(screenshot.Manager, FailIfCalledManager()),
+        )
+
+        self.assertEqual(rval.split(" - ")[-2], "disabled")
+
+    def test_disabled_defaults_to_none(self) -> None:
+        to_handle = firebase_wrapper.ToHandle(
+            data_input=firebase_wrapper.DataInput(),
+            data_output=firebase_wrapper.DataOutput(time=time.time()),
+            user="user@email.com",
+            key="default-test",
+        )
+
+        self.assertIsNone(to_handle.disabled)
+
     def test_cron_handle(self) -> None:
         sent_messages: list[email_wrapper.EmailMessage] = []
         written_data: list[firebase_wrapper.ToHandle] = []

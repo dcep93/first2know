@@ -12,8 +12,12 @@ const paramsRef = createRef<HTMLInputElement>();
 const evaluateRef = createRef<HTMLTextAreaElement>();
 const evaluationToImgRef = createRef<HTMLInputElement>();
 const cssSelectorRef = createRef<HTMLInputElement>();
+const disabledRef = createRef<HTMLInputElement>();
 
-type SubmitType = (data_input: DataInputType) => Promise<string>;
+type SubmitType = (
+  data_input: DataInputType,
+  disabled: boolean | null
+) => Promise<string>;
 
 function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
   const [resp_data, update] = useState<
@@ -28,8 +32,7 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
       <button
         onClick={() =>
           Promise.resolve()
-            .then(() => getData())
-            .then((data_input) => props.submit(data_input))
+            .then(() => props.submit(getData(), getDisabled()))
             .then((key) =>
               props.toHandle ? alert("success") : navigate(`/${key}`)
             )
@@ -41,11 +44,23 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
       >
         Submit
       </button>
+      <div>
+        disabled: {" "}
+        <input
+          ref={disabledRef}
+          defaultChecked={props.toHandle?.disabled || false}
+          type="checkbox"
+        />
+      </div>
       <form
         onSubmit={(e) =>
           Promise.resolve(e.preventDefault())
             .then(() => update(null))
-            .then(() => getData())
+            .then(() => {
+              if (disabledRef.current!.checked)
+                throw new Error("Job is disabled");
+              return getData();
+            })
             .then((data_input) => ({
               evaluation:
                 props.toHandle?.data_output?.screenshot_data?.evaluation ||
@@ -196,6 +211,10 @@ function getData(): DataInputType {
     user_agent_hack: userAgentRef.current!.checked || null,
     raw_proxy: rawProxyRef.current!.checked || null,
   };
+}
+
+function getDisabled(): boolean | null {
+  return disabledRef.current!.checked || null;
 }
 
 export default ToHandle;

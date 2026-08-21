@@ -47,6 +47,7 @@ class DataInput(BaseModel):
 
 
 class ToHandle(BaseModel):
+    disabled: typing.Optional[bool] = None
     data_input: DataInput
     data_output: DataOutput
     user: str

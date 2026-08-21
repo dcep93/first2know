@@ -20,10 +20,11 @@ function RoutedEdit(props: { toHandle: ToHandleType }) {
     <>
       <ToHandle
         toHandle={props.toHandle}
-        submit={(data_input) =>
+        submit={(data_input, disabled) =>
           firebase
             .updateToHandle({
               ...props.toHandle,
+              disabled,
               data_input,
               data_output:
                 props.toHandle.data_output === null

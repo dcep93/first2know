@@ -183,6 +183,9 @@ def helper(
     screenshot_manager: screenshot.Manager,
     timer: screenshot.Timer,
 ) -> str:
+    if to_handle.disabled:
+        return "disabled"
+
     now = float(time.time())
 
     initial_json = to_handle.model_dump_json()
