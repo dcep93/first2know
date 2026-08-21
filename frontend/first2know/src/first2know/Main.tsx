@@ -18,26 +18,38 @@ class Main extends FirebaseWrapper<ToHandleType[]> {
   }
 
   render() {
-    if (this.state === null) return <>Loading...</>;
+    if (this.state === null)
+      return <div className="loadingState">Loading first2know…</div>;
     return <Helper toHandles={this.state.state || []} />;
   }
 }
 
 function Helper(props: { toHandles: ToHandleType[] }) {
   return (
-    <div>
-      <User />
-      {LOCAL_USER && (
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path=":key"
-              element={<MainRoutedEdit toHandles={props.toHandles} />}
-            />
-            <Route index element={<Home toHandles={props.toHandles} />} />
-          </Routes>
-        </BrowserRouter>
-      )}
+    <div className="appShell">
+      <header className="appHeader">
+        <div className="brand">
+          <div className="brandMark">f2k</div>
+          <div className="brandCopy">
+            <strong>first2know</strong>
+            <span>Quiet monitoring. Immediate signals.</span>
+          </div>
+        </div>
+        <User />
+      </header>
+      <main className="appMain">
+        {LOCAL_USER && (
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path=":key"
+                element={<MainRoutedEdit toHandles={props.toHandles} />}
+              />
+              <Route index element={<Home toHandles={props.toHandles} />} />
+            </Routes>
+          </BrowserRouter>
+        )}
+      </main>
       <Server />
     </div>
   );

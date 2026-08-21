@@ -19,30 +19,29 @@ if (LOCAL_USER)
 
 function User() {
   return LOCAL_USER ? (
-    <div>
-      <div>
-        {LOCAL_USER.email}
+    <div className="userBar">
+      <span className="userEmail">{LOCAL_USER.email}</span>
+      <div className="userActions">
         <button
           onClick={() => {
             localStorage.removeItem(USER_STORAGE_KEY);
             window.location.reload();
           }}
-          className="button"
+          className="secondaryButton"
         >
           Log out
         </button>
         {isAdmin(LOCAL_USER.email) ? (
-          <span>
-            {" "}
-            <a href={url}>admin</a>
-          </span>
+          <a className="secondaryLink" href={url}>
+            admin
+          </a>
         ) : null}
       </div>
     </div>
   ) : (
-    <div>
+    <div className="userBar">
       <button
-        style={{ display: "flex", alignItems: "center" }}
+        className="loginButton"
         onClick={() =>
           Promise.resolve()
             .then(() =>
@@ -72,7 +71,7 @@ function User() {
             .catch((err) => alert(err))
         }
       >
-        <span>LOGIN</span>
+        <span>Login</span>
         <FcGoogle style={{ fontSize: "large" }} />
       </button>
     </div>

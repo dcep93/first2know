@@ -4,14 +4,31 @@ import styles from "./index.module.css";
 
 function Show(props: { toHandles: ToHandleType[] }): JSX.Element {
   return (
-    <div>
+    <div className="monitorGrid">
       {props.toHandles.map((toHandle) => (
-        <div key={toHandle.key}>
-          <RenderToHandle toHandle={toHandle} />
-          <div>
-            <Link to={`/${toHandle.key}`}>Edit {toHandle.key}</Link>
+        <article className="monitorCard" key={toHandle.key}>
+          <header className="monitorCardHeader">
+            <div className="monitorIdentity">
+              <strong>{toHandle.key}</strong>
+              <span>{toHandle.data_input.url || "No URL configured"}</span>
+            </div>
+            <div className="monitorMeta">
+              <span
+                className={`statusPill ${
+                  toHandle.disabled ? "statusPillDisabled" : "statusPillOnline"
+                }`}
+              >
+                {toHandle.disabled ? "Disabled" : "Active"}
+              </span>
+              <Link className="buttonLink" to={`/${toHandle.key}`}>
+                Edit
+              </Link>
+            </div>
+          </header>
+          <div className="monitorJson">
+            <RenderToHandle toHandle={toHandle} />
           </div>
-        </div>
+        </article>
       ))}
     </div>
   );

@@ -27,5 +27,23 @@ export default function Server() {
     initializedIter = true;
     iter();
   }, [iter]);
-  return <pre>{JSON.stringify(resp, null, 2)}</pre>;
+  const online = resp?.status_code === 200;
+  return (
+    <section className="serverPanel">
+      <div className="panelHeading">
+        <div>
+          <h2>Backend status</h2>
+          <p>The complete live health response refreshes every second.</p>
+        </div>
+        <span
+          className={`statusPill ${
+            online ? "statusPillOnline" : "statusPillOffline"
+          }`}
+        >
+          {online ? "Online" : "Connecting"}
+        </span>
+      </div>
+      <pre className="serverOutput">{JSON.stringify(resp, null, 2)}</pre>
+    </section>
+  );
 }

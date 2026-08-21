@@ -28,171 +28,205 @@ function ToHandle(props: { toHandle?: ToHandleType; submit: SubmitType }) {
   const defaultParamsValue = props.toHandle?.data_input.params;
   const defaultCookiesValue = props.toHandle?.data_input.cookies;
   return (
-    <div>
-      <button
-        onClick={() =>
-          Promise.resolve()
-            .then(() => props.submit(getData(), getDisabled()))
-            .then((key) =>
-              props.toHandle ? alert("success") : navigate(`/${key}`)
-            )
-            .catch((err) => {
-              alert(err);
-              throw err;
-            })
-        }
-      >
-        Submit
-      </button>
-      <div>
-        disabled: {" "}
-        <input
-          ref={disabledRef}
-          defaultChecked={props.toHandle?.disabled || false}
-          type="checkbox"
-        />
-      </div>
-      <form
-        onSubmit={(e) =>
-          Promise.resolve(e.preventDefault())
-            .then(() => update(null))
-            .then(() => {
-              if (disabledRef.current!.checked)
-                throw new Error("Job is disabled");
-              return getData();
-            })
-            .then((data_input) => ({
-              evaluation:
-                props.toHandle?.data_output?.screenshot_data?.evaluation ||
-                null,
-              ...data_input,
-            }))
-            .then((data) => JSON.stringify(data))
-            .then((body) =>
-              fetch(`${url}/screenshot`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body,
-              })
-            )
-            .then((resp) => resp.json())
-            .then(clog)
-            .then((resp_data: any) =>
-              resp_data.err ? Promise.reject(resp_data.err) : update(resp_data)
-            )
-            .catch((err) => {
-              update({ err: `${err}` } as any);
-              throw err;
-            })
-        }
-      >
+    <section className="editorCard">
+      <header className="editorHeading">
         <div>
-          url:{" "}
-          <input
-            ref={urlRef}
-            defaultValue={props.toHandle?.data_input.url}
-            type="text"
-          />
+          <h2>{props.toHandle ? "Edit monitor" : "Monitor details"}</h2>
+          <p>
+            {props.toHandle
+              ? props.toHandle.key
+              : "Configure every request and notification option."}
+          </p>
         </div>
-        <div>
-          raw proxy ?
-          <input
-            ref={rawProxyRef}
-            defaultChecked={props.toHandle?.data_input.raw_proxy || false}
-            type="checkbox"
-          />
-        </div>
-        <div>
-          user agent hack:{" "}
-          <input
-            ref={userAgentRef}
-            defaultChecked={props.toHandle?.data_input.user_agent_hack || false}
-            type="checkbox"
-          />
-        </div>
-        <div>
-          params:{" "}
-          <input
-            ref={paramsRef}
-            defaultValue={
-              defaultParamsValue === null
-                ? undefined
-                : JSON.stringify(defaultParamsValue)
+        <span
+          className={`statusPill ${
+            props.toHandle?.disabled
+              ? "statusPillDisabled"
+              : "statusPillOnline"
+          }`}
+        >
+          {props.toHandle?.disabled ? "Disabled" : "Active"}
+        </span>
+      </header>
+      <div className="editorBody">
+        <div className="topActions">
+          <button
+            onClick={() =>
+              Promise.resolve()
+                .then(() => props.submit(getData(), getDisabled()))
+                .then((key) =>
+                  props.toHandle ? alert("success") : navigate(`/${key}`)
+                )
+                .catch((err) => {
+                  alert(err);
+                  throw err;
+                })
             }
-            type="text"
-          />
+          >
+            Submit
+          </button>
         </div>
-        <div>
-          cookies:{" "}
-          <input
-            ref={cookiesRef}
-            defaultValue={
-              defaultCookiesValue === null
-                ? undefined
-                : JSON.stringify(defaultCookiesValue)
-            }
-            type="text"
-          />
-        </div>
-        <div>
-          css_selector:{" "}
-          <input
-            ref={cssSelectorRef}
-            disabled={props.toHandle?.data_input.send_evaluation || false}
-            defaultValue={props.toHandle?.data_input.selector || undefined}
-            type="text"
-          />
-        </div>
-        <div>
-          js_evaluate: {"("}transform evaluation to img
-          <input
-            onChange={() =>
-              (cssSelectorRef.current!.disabled =
-                evaluationToImgRef.current!.checked)
-            }
-            defaultChecked={props.toHandle?.data_input.send_evaluation || false}
-            ref={evaluationToImgRef}
-            type="checkbox"
-          />
-          {")"}
-          <div>
-            <textarea
-              style={{ width: "40em", height: "10em" }}
-              defaultValue={props.toHandle?.data_input.evaluate || undefined}
-              ref={evaluateRef}
+
+        <div className="toggleGrid">
+          <label className="toggleControl">
+            <span>Disabled</span>
+            <input
+              ref={disabledRef}
+              defaultChecked={props.toHandle?.disabled || false}
+              type="checkbox"
             />
-          </div>
+          </label>
+          <label className="toggleControl">
+            <span>Raw proxy</span>
+            <input
+              ref={rawProxyRef}
+              defaultChecked={props.toHandle?.data_input.raw_proxy || false}
+              type="checkbox"
+            />
+          </label>
+          <label className="toggleControl">
+            <span>User agent hack</span>
+            <input
+              ref={userAgentRef}
+              defaultChecked={
+                props.toHandle?.data_input.user_agent_hack || false
+              }
+              type="checkbox"
+            />
+          </label>
         </div>
-        <input type="submit" value="Check Screenshot" />
-      </form>
-      <div>
-        <div>
+
+        <form
+          className="monitorForm"
+          onSubmit={(e) =>
+            Promise.resolve(e.preventDefault())
+              .then(() => update(null))
+              .then(() => {
+                if (disabledRef.current!.checked)
+                  throw new Error("Job is disabled");
+                return getData();
+              })
+              .then((data_input) => ({
+                evaluation:
+                  props.toHandle?.data_output?.screenshot_data?.evaluation ||
+                  null,
+                ...data_input,
+              }))
+              .then((data) => JSON.stringify(data))
+              .then((body) =>
+                fetch(`${url}/screenshot`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body,
+                })
+              )
+              .then((resp) => resp.json())
+              .then(clog)
+              .then((resp_data: any) =>
+                resp_data.err
+                  ? Promise.reject(resp_data.err)
+                  : update(resp_data)
+              )
+              .catch((err) => {
+                update({ err: `${err}` } as any);
+                throw err;
+              })
+          }
+        >
+          <div className="fieldGrid">
+            <label className="field fieldFull">
+              <span className="fieldLabel">URL</span>
+              <input
+                ref={urlRef}
+                defaultValue={props.toHandle?.data_input.url}
+                type="text"
+              />
+            </label>
+            <label className="field">
+              <span className="fieldLabel">Params</span>
+              <input
+                ref={paramsRef}
+                defaultValue={
+                  defaultParamsValue === null
+                    ? undefined
+                    : JSON.stringify(defaultParamsValue)
+                }
+                type="text"
+              />
+            </label>
+            <label className="field">
+              <span className="fieldLabel">Cookies</span>
+              <input
+                ref={cookiesRef}
+                defaultValue={
+                  defaultCookiesValue === null
+                    ? undefined
+                    : JSON.stringify(defaultCookiesValue)
+                }
+                type="text"
+              />
+            </label>
+            <label className="field fieldFull">
+              <span className="fieldLabel">CSS selector</span>
+              <input
+                ref={cssSelectorRef}
+                disabled={props.toHandle?.data_input.send_evaluation || false}
+                defaultValue={props.toHandle?.data_input.selector || undefined}
+                type="text"
+              />
+            </label>
+            <div className="codeField fieldFull">
+              <span className="fieldLabel">JS evaluate</span>
+              <label className="toggleControl">
+                <span>Transform evaluation to img</span>
+                <input
+                  onChange={() =>
+                    (cssSelectorRef.current!.disabled =
+                      evaluationToImgRef.current!.checked)
+                  }
+                  defaultChecked={
+                    props.toHandle?.data_input.send_evaluation || false
+                  }
+                  ref={evaluationToImgRef}
+                  type="checkbox"
+                />
+              </label>
+              <textarea
+                defaultValue={props.toHandle?.data_input.evaluate || undefined}
+                ref={evaluateRef}
+              />
+            </div>
+          </div>
+          <div className="formActions">
+            <input type="submit" value="Check Screenshot" />
+          </div>
+        </form>
+
+        <div className="previewPanel">
           {resp_data === undefined ? undefined : resp_data === null ? (
             <img src={loading} alt="" />
           ) : resp_data.err ? (
-            <pre>{resp_data.err}</pre>
+            <pre className="errorOutput">{resp_data.err}</pre>
           ) : (
             <div>
               <img
                 src={`data:image/png;base64,${resp_data.img_data}`}
                 alt="img_data"
               />
-              <div>
-                <pre>
-                  {JSON.stringify(
-                    { ...resp_data, img_data: undefined },
-                    null,
-                    2
-                  )}
-                </pre>
-              </div>
+              <pre className="serverOutput">
+                {JSON.stringify(
+                  { ...resp_data, img_data: undefined },
+                  null,
+                  2
+                )}
+              </pre>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

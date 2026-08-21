@@ -5,19 +5,21 @@ import ToHandle from "./ToHandle";
 
 function Edit(props: { toHandle: ToHandleType }) {
   return (
-    <>
-      <RoutedEdit toHandle={props.toHandle} />
-      <div>
-        <Link to="/">Home</Link>
+    <div>
+      <div className="backRow">
+        <Link className="backLink" to="/">
+          ← Home
+        </Link>
       </div>
-    </>
+      <RoutedEdit toHandle={props.toHandle} />
+    </div>
   );
 }
 
 function RoutedEdit(props: { toHandle: ToHandleType }) {
   const navigate = useNavigate();
   return (
-    <>
+    <div className="pageStack">
       <ToHandle
         toHandle={props.toHandle}
         submit={(data_input, disabled) =>
@@ -42,24 +44,33 @@ function RoutedEdit(props: { toHandle: ToHandleType }) {
             .then(() => props.toHandle.key)
         }
       />
-      <button
-        onClick={() => {
-          if (
-            window.confirm(
-              `Do you really want to delete ${props.toHandle.key}?`
+      <div className="dangerActions">
+        <button
+          className="dangerButton"
+          onClick={() => {
+            if (
+              window.confirm(
+                `Do you really want to delete ${props.toHandle.key}?`
+              )
             )
-          )
-            firebase
-              .deleteToHandle(props.toHandle.key)
-              .then(() => navigate("/"));
-        }}
-      >
-        Delete {props.toHandle.key}
-      </button>
-      <div>
-        <RenderToHandle toHandle={props.toHandle} />
+              firebase
+                .deleteToHandle(props.toHandle.key)
+                .then(() => navigate("/"));
+          }}
+        >
+          Delete {props.toHandle.key}
+        </button>
       </div>
-    </>
+      <section className="monitorCard rawDataPanel">
+        <div className="panelHeading">
+          <div>
+            <h2>Raw monitor data</h2>
+            <p>The complete decrypted state remains visible.</p>
+          </div>
+        </div>
+        <RenderToHandle toHandle={props.toHandle} />
+      </section>
+    </div>
   );
 }
 
