@@ -442,25 +442,25 @@ code {
   min-width: 0;
 }
 
-.monitorIdentity strong,
-.monitorIdentity span {
+.monitorIdentity span,
+.monitorIdentity code {
   display: block;
 }
 
-.monitorIdentity strong {
-  overflow: hidden;
-  font-size: 0.92rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.monitorUrl {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
-.monitorIdentity span {
-  margin-top: 0.25rem;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 0.78rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.monitorKey {
+  margin-top: 0.38rem;
+  color: #26364d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.79rem;
+  font-weight: 450;
+  overflow-wrap: anywhere;
 }
 
 .monitorMeta {
@@ -470,7 +470,60 @@ code {
   gap: 0.55rem;
 }
 
+.monitorSummary {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+}
+
+.monitorSummary div {
+  min-width: 0;
+}
+
+.monitorSummary span,
+.monitorSummary strong {
+  display: block;
+}
+
+.monitorSummary span {
+  margin-bottom: 0.2rem;
+  color: var(--muted);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.monitorSummary strong {
+  color: #34445a;
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
 .monitorJson {
+  border-top: 1px solid var(--line);
+}
+
+.monitorJson summary {
+  padding: 0.75rem 1rem;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 750;
+  list-style-position: inside;
+}
+
+.monitorJson summary:hover {
+  background: #f7fafc;
+}
+
+.monitorJson[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.monitorJson > div {
   padding: 0.25rem;
 }
 
@@ -607,6 +660,11 @@ code {
   .monitorMeta {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .monitorSummary {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
   }
 
   textarea {

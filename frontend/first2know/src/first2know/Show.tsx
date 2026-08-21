@@ -5,31 +5,61 @@ import styles from "./index.module.css";
 function Show(props: { toHandles: ToHandleType[] }): JSX.Element {
   return (
     <div className="monitorGrid">
-      {props.toHandles.map((toHandle) => (
-        <article className="monitorCard" key={toHandle.key}>
-          <header className="monitorCardHeader">
-            <div className="monitorIdentity">
-              <strong>{toHandle.key}</strong>
-              <span>{toHandle.data_input.url || "No URL configured"}</span>
+      {props.toHandles.map((toHandle) => {
+        const hasError = Boolean(toHandle.data_output.error);
+        const status = toHandle.disabled
+          ? "Disabled"
+          : hasError
+          ? "Error"
+          : "Active";
+        const statusClass = toHandle.disabled
+          ? "statusPillDisabled"
+          : hasError
+          ? "statusPillOffline"
+          : "statusPillOnline";
+        const mode = toHandle.data_input.send_evaluation
+          ? "Evaluation"
+          : toHandle.data_input.selector
+          ? "Element screenshot"
+          : "Page screenshot";
+
+        return (
+          <article className="monitorCard" key={toHandle.key}>
+            <header className="monitorCardHeader">
+              <div className="monitorIdentity">
+                <span className="monitorUrl">
+                  {toHandle.data_input.url || "No URL configured"}
+                </span>
+                <code className="monitorKey">{toHandle.key}</code>
+              </div>
+              <div className="monitorMeta">
+                <span className={`statusPill ${statusClass}`}>{status}</span>
+                <Link className="buttonLink" to={`/${toHandle.key}`}>
+                  Edit
+                </Link>
+              </div>
+            </header>
+            <div className="monitorSummary">
+              <div>
+                <span>Mode</span>
+                <strong>{mode}</strong>
+              </div>
+              <div>
+                <span>Stored time</span>
+                <strong>
+                  {new Date(
+                    toHandle.data_output.time * 1000
+                  ).toLocaleString()}
+                </strong>
+              </div>
             </div>
-            <div className="monitorMeta">
-              <span
-                className={`statusPill ${
-                  toHandle.disabled ? "statusPillDisabled" : "statusPillOnline"
-                }`}
-              >
-                {toHandle.disabled ? "Disabled" : "Active"}
-              </span>
-              <Link className="buttonLink" to={`/${toHandle.key}`}>
-                Edit
-              </Link>
-            </div>
-          </header>
-          <div className="monitorJson">
-            <RenderToHandle toHandle={toHandle} />
-          </div>
-        </article>
-      ))}
+            <details className="monitorJson">
+              <summary>View full JSON</summary>
+              <RenderToHandle toHandle={toHandle} />
+            </details>
+          </article>
+        );
+      })}
     </div>
   );
 }
